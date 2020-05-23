@@ -1,3 +1,12 @@
+<a href="https://github.com/piotr-iohk/cardano-wallet-rb/releases">
+  <img src="https://img.shields.io/github/release/piotr-iohk/cardano-wallet-rb.svg" />
+</a>
+<a href="https://codecov.io/gh/piotr-iohk/cardano-wallet-rb">
+  <img src="https://codecov.io/gh/piotr-iohk/cardano-wallet-rb/branch/master/graph/badge.svg?token=OmUMUeyR21" />
+</a>
+<a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
+  <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
+</a>
 
 # cardano-wallet-rb
 
@@ -67,13 +76,22 @@ Refer to documentation.
 
 ## Development
 
- - Make sure tests are passing (`rake`)
- - Develop and add tests
- - Make sure tests are passing (`rake`)
+In order to spin up environment for development and testing `docker-compose` can be used.
+
+    $ NETWORK=testnet WALLET=dev-master-byron NODE=latest docker-compose up --detach
+
+This starts:
+  - `cardano-node` latest [release](https://github.com/input-output-hk/cardano-node/releases)
+  - `cardano-wallet-byron` [master](https://github.com/input-output-hk/cardano-wallet)
+
+Run tests on top of that:
+
+    $ rake
+
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/piotr-iohk/cardano-wallet-rb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/piotr-iohk/cardano_wallet/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/piotr-iohk/cardano-wallet-rb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/piotr-iohk/cardano-wallet-rb/blob/master/CODE_OF_CONDUCT.md).
 
 
 ## License
@@ -82,4 +100,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the `cardano-wallet-rb` project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/piotr-iohk/cardano_wallet/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the `cardano-wallet-rb` project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/piotr-iohk/cardano-wallet-rb/blob/master/CODE_OF_CONDUCT.md).
