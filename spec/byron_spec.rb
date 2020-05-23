@@ -39,6 +39,16 @@ RSpec.describe CardanoWallet::Byron do
       expect(l.code).to eq 200
     end
 
+    it "I could get a wallet" do
+      g = BYRON.wallets.get "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
+      expect(g.code).to eq 404
+    end
+
+    it "I could delete a wallet" do
+      g = BYRON.wallets.delete "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
+      expect(g.code).to eq 404
+    end
+
     it "I can create, get and delete byron icarus wallet from mnemonics" do
       wallet = BYRON.wallets.create({style: "icarus",
                          name: "Wallet from mnemonic_sentence",

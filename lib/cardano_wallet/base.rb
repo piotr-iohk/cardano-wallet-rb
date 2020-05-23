@@ -38,5 +38,10 @@ module CardanoWallet
     def misc
       Misc.new @opt
     end
+
+    # Init API for Proxy
+    def proxy
+      Proxy.new @opt
+    end
   end
 end

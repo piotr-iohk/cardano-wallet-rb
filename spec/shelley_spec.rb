@@ -40,6 +40,20 @@ RSpec.describe CardanoWallet::Shelley do
       expect(l.code).to eq 200
     end
 
+    it "I could get a wallet" do
+      pending "Shelley wallets not supported yet"
+
+      g = SHELLEY.wallets.get "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
+      expect(g.code).to eq 404
+    end
+
+    it "I could delete a wallet" do
+      pending "Shelley wallets not supported yet"
+      
+      g = SHELLEY.wallets.delete "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
+      expect(g.code).to eq 404
+    end
+
     it "I can create, get and delete wallet from mnemonics" do
       pending "Shelley wallets not supported yet"
 
