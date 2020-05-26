@@ -2,7 +2,7 @@ module CardanoWallet
   class Base
     include HTTParty
 
-    attr_reader :opt
+    attr_accessor :opt
 
     def initialize(opt = {})
       raise ArgumentError, "argument should be Hash" unless opt.is_a?(Hash)
