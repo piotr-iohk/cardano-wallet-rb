@@ -1,3 +1,6 @@
+<a href="https://badge.fury.io/rb/cardano_wallet">
+  <img src="https://badge.fury.io/rb/cardano_wallet.svg" alt="Gem Version">
+</a>
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/releases">
   <img src="https://img.shields.io/github/release/piotr-iohk/cardano-wallet-rb.svg" />
 </a>
@@ -28,6 +31,12 @@ Or install it yourself as:
 
     $ gem install cardano_wallet
 
+## Documentation
+
+For ruby doc see: https://rubydoc.info/gems/cardano_wallet.
+
+For `cardano-wallet` REST Api see: https://input-output-hk.github.io/cardano-wallet/api/edge/.
+
 ## Usage
 
 ### Initialize
@@ -42,8 +51,10 @@ CW2 = CardanoWallet.new({port: 443,
                         protocol: "https",
                         cacert: "/root/ca.cert",
                         pem: "/root/client.pem"})
+CW3 = CardanoWallet.new({url: "http://localhost:8090/v2"})
 ```
-### Excercise the API
+
+### Exercise
 ```ruby
 CW = CardanoWallet.new
 
@@ -59,8 +70,8 @@ end
 
 #Shelley
 w = SHELLEY.wallets.create{name: "Wallet1",
-	                       mnemonic_sentence: %w[vintage poem topic machine hazard cement dune glimpse fix brief account badge mass silly business],
-	                       passphrase: "Secure Passphrase"}
+                       mnemonic_sentence: %w[vintage poem topic machine hazard cement dune glimpse fix brief account badge mass silly business],
+                       passphrase: "Secure Passphrase"}
 
 SHELLEY.wallets.get(w['id'])
 
@@ -72,7 +83,7 @@ MISC.network.clock
 PROXY.submit_external_transaction(File.new("/tmp/blob.bin").read)
 ```
 
-Refer to documentation.
+Refer to [documentation](https://rubydoc.info/gems/cardano_wallet) for more details.
 
 ## Development
 
