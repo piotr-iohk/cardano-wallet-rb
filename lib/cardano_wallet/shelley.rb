@@ -42,6 +42,12 @@ module CardanoWallet
         StakePools.new @opt
       end
 
+      # API for Migrations
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
+      def migrations
+        Migrations.new @opt
+      end
+
     end
 
     # API for Wallets
@@ -249,6 +255,34 @@ module CardanoWallet
       def delegation_fees(wid)
         self.class.get("/wallets/#{wid}/delegation-fees")
       end
+    end
+
+    # Shelley migrations
+    # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
+    class Migrations < Base
+      def initialize opt
+        super
+      end
+
+      # Calculate migration cost
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getShelleyWalletMigrationInfo
+      def cost(wid)
+        self.class.get("/wallets/#{wid}/migrations")
+      end
+
+      # Migrate all funds from Shelley wallet.
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/migrateShelleyWallet
+      # @param wid [String] wallet id
+      # @param passphrase [String] wallet's passphrase
+      # @param [Array] array of addresses
+      def migrate(wid, passphrase, addresses)
+        self.class.post("/wallets/#{wid}/migrations",
+        :body => { :addresses => addresses,
+                   :passphrase => passphrase
+                 }.to_json,
+        :headers => { 'Content-Type' => 'application/json' } )
+      end
+
     end
   end
 end

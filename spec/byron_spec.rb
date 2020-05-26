@@ -211,7 +211,7 @@ RSpec.describe CardanoWallet::Byron do
     it "I could migrate all my funds" do
       id = create_byron_wallet "random"
       migr = BYRON.migrations.migrate(id, PASS, ADDRS_BYRON)
-      expect(migr.code).to eq 501
+      expect(migr.code).to eq 403
     end
   end
 end

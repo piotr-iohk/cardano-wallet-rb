@@ -49,7 +49,7 @@ RSpec.describe CardanoWallet::Shelley do
 
     it "I could delete a wallet" do
       pending "Shelley wallets not supported yet"
-      
+
       g = SHELLEY.wallets.delete "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
       expect(g.code).to eq 404
     end
@@ -263,6 +263,28 @@ RSpec.describe CardanoWallet::Shelley do
       pools = SHELLEY.stake_pools
       fees = pools.delegation_fees id
       expect(fees.code).to eq 200
+    end
+  end
+
+  describe CardanoWallet::Shelley::Migrations do
+    after(:each) do
+      delete_all
+    end
+
+    it "I could calculate migration cost" do
+      pending "Shelley wallets not supported yet"
+
+      id = create_shelley_wallet
+      cost = SHELLEY.migrations.cost(id)
+      expect(cost.code).to eq 403
+    end
+
+    it "I could migrate all my funds" do
+      pending "Shelley wallets not supported yet"
+      
+      id = create_shelley_wallet
+      migr = SHELLEY.migrations.migrate(id, PASS, ADDRS)
+      expect(migr.code).to eq 501
     end
   end
 
