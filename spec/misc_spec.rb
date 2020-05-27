@@ -14,7 +14,7 @@ RSpec.describe CardanoWallet::Misc do
     end
 
     it "Can check network parameters" do
-      expect(NETWORK.parameters("latest").code).to eq 200
+      expect(NETWORK.parameters.code).to eq 200
     end
   end
 
