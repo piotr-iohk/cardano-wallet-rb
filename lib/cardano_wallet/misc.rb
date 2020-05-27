@@ -38,8 +38,8 @@ module CardanoWallet
 
       # Check network parameters
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkParameters
-      def parameters(epoch_id)
-        self.class.get("/network/parameters/#{epoch_id}")
+      def parameters
+        self.class.get("/network/parameters")
       end
 
     end
