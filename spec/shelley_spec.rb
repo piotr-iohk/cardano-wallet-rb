@@ -6,13 +6,14 @@ RSpec.describe CardanoWallet::Shelley do
              addr1ss8ju4alq5jl7rd92yczukcup4z7jnr97y8nqu4tvu4v7lukxngc60euugt6kvd3hdzply0hwpykd7nfdmssz0wm4255cht5rvhrgfr32q6ueh]
   PASS = "Secure Passphrase"
   TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-  # SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
+  SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
+  SHELLEY = CardanoWallet.new.shelley
 
   def create_shelley_wallet
     CardanoWallet.new.shelley.wallets.
                   create({name: "Wallet from mnemonic_sentence",
                           passphrase: PASS,
-                          mnemonic_sentence: MNEMONICS
+                          mnemonic_sentence: mnemonic_sentence("15")
                          })['id']
   end
 
@@ -23,10 +24,6 @@ RSpec.describe CardanoWallet::Shelley do
     end
   end
 
-  before(:all) do
-    SHELLEY = CardanoWallet.new.shelley
-  end
-
   describe CardanoWallet::Shelley::Wallets do
 
     after(:each) do
@@ -34,82 +31,103 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I can list wallets" do
-      pending "Shelley wallets not supported yet"
-
       l = SHELLEY.wallets.list
       expect(l.code).to eq 200
+      expect(l.size).to eq 0
+
+      create_shelley_wallet
+      l = SHELLEY.wallets.list
+      expect(l.code).to eq 200
+      expect(l.size).to eq 1
     end
 
-    it "I could get a wallet" do
-      pending "Shelley wallets not supported yet"
-
-      g = SHELLEY.wallets.get "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
+    it "When wallet does not exist it gives 404" do
+      wid = create_shelley_wallet
+      SHELLEY.wallets.delete wid
+      g = SHELLEY.wallets.get wid
       expect(g.code).to eq 404
+
+      d = SHELLEY.wallets.delete wid
+      expect(d.code).to eq 404
     end
 
-    it "I could delete a wallet" do
-      pending "Shelley wallets not supported yet"
+    describe "Create wallets" do
+      it "Create param must be hash" do
+        w = SHELLEY.wallets
+        expect{w.create("That's bad param")}.to raise_error ArgumentError, "argument should be Hash"
+      end
 
-      g = SHELLEY.wallets.delete "db66f3d0d796c6aa0ad456a36d5a3ee88d62bd5d"
-      expect(g.code).to eq 404
+      it "I can create, get and delete wallet from mnemonics" do
+        w = SHELLEY.wallets
+        wallet = w.create({name: "Wallet from mnemonic_sentence",
+                           passphrase: "Secure Passphrase",
+                           mnemonic_sentence: mnemonic_sentence("15"),
+                           })
+        expect(wallet.code).to eq 201
+        wid = wallet['id']
+        expect(w.get(wid).code).to eq 200
+        expect(w.delete(wid).code).to eq 204
+      end
+
+      it "I can create, get and delete wallet from mnemonics / second factor" do
+        w = SHELLEY.wallets
+        wallet = w.create({name: "Wallet from mnemonic_sentence",
+                           passphrase: "Secure Passphrase",
+                           mnemonic_sentence: mnemonic_sentence("15"),
+                           mnemonic_second_factor: mnemonic_sentence("12")
+                           })
+        expect(wallet.code).to eq 201
+        wid = wallet['id']
+        expect(w.get(wid).code).to eq 200
+        expect(w.delete(wid).code).to eq 204
+      end
+
+      it "I can set address pool gap" do
+        pool_gap = 55
+        w = SHELLEY.wallets
+        wallet = w.create({name: "Wallet from mnemonic_sentence",
+                           passphrase: "Secure Passphrase",
+                           mnemonic_sentence: mnemonic_sentence("15"),
+                           address_pool_gap: pool_gap
+                           })
+        expect(wallet.code).to eq 201
+        addr = SHELLEY.addresses.list(wallet['id'])
+        expect(addr.code).to eq 200
+        expect(addr.size).to eq pool_gap
+      end
+
+      it "I can create, get and delete wallet from pub key" do
+        w = SHELLEY.wallets
+        wallet = w.create({name: "Wallet from pub key",
+                           account_public_key: "b47546e661b6c1791452d003d375756dde6cac2250093ce4630f16b9b9c0ac87411337bda4d5bc0216462480b809824ffb48f17e08d95ab9f1b91d391e48e66b",
+                           address_pool_gap: 20,
+                           })
+        expect(wallet.code).to eq 201
+        wid = wallet['id']
+        expect(w.get(wid).code).to eq 200
+        expect(w.delete(wid).code).to eq 204
+      end
     end
 
-    it "I can create, get and delete wallet from mnemonics" do
-      pending "Shelley wallets not supported yet"
+    describe "Update wallet" do
+      it "Can update_metadata" do
+        new_name = "New wallet name"
+        w = SHELLEY.wallets
+        id = create_shelley_wallet
+        expect(w.update_metadata(id, {name: new_name}).code).to eq 200
+        expect(w.get(id)['name']).to eq new_name
+      end
 
-      w = SHELLEY.wallets
-      wallet = w.create({name: "Wallet from mnemonic_sentence",
-                         passphrase: "Secure Passphrase",
-                         mnemonic_sentence: MNEMONICS,
-                         })
-      expect(wallet.code).to eq 201
-      wid = wallet['id']
-      expect(w.get(wid).code).to eq 200
-      expect(w.delete(wid).code).to eq 204
-    end
-
-    it "I can create, get and delete wallet from pub key" do
-      pending "Shelley wallets not supported yet"
-
-      w = SHELLEY.wallets
-      wallet = w.create({name: "Wallet from pub key",
-                         account_public_key: "b47546e661b6c1791452d003d375756dde6cac2250093ce4630f16b9b9c0ac87411337bda4d5bc0216462480b809824ffb48f17e08d95ab9f1b91d391e48e66b",
-                         address_pool_gap: 20,
-                         })
-      expect(wallet.code).to eq 201
-      wid = wallet['id']
-      expect(w.get(wid).code).to eq 200
-      expect(w.delete(wid).code).to eq 204
-    end
-
-    it "Create param must be hash" do
-      pending "Shelley wallets not supported yet"
-
-      w = SHELLEY.wallets
-      expect{w.create("That's bad param")}.to raise_error ArgumentError, "argument should be Hash"
-    end
-
-    it "Can update_metadata" do
-      pending "Shelley wallets not supported yet"
-
-      w = SHELLEY.wallets
-      id = create_shelley_wallet
-      expect(w.update_metadata(id,{name: "New wallet name"}).code).to eq 200
-    end
-
-    it "Can update_passphrase" do
-      pending "Shelley wallets not supported yet"
-
-      w = SHELLEY.wallets
-      id = create_shelley_wallet
-      upd = w.update_passphrase(id,{old_passphrase: "Secure Passphrase",
-                                    new_passphrase: "Securer Passphrase"})
-      expect(upd.code).to eq 204
+      it "Can update_passphrase" do
+        w = SHELLEY.wallets
+        id = create_shelley_wallet
+        upd = w.update_passphrase(id,{old_passphrase: "Secure Passphrase",
+                                      new_passphrase: "Securer Passphrase"})
+        expect(upd.code).to eq 204
+      end
     end
 
     it "Can see utxo" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       utxo = SHELLEY.wallets.utxo(id)
       expect(utxo.code).to eq 200
@@ -123,17 +141,19 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "Can list addresses" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       shelley_addr = CardanoWallet.new.shelley.addresses
       addresses = shelley_addr.list id
       expect(addresses.code).to eq 200
-      expect(addresses.size).to eq 30
+      expect(addresses.size).to eq 20
 
       addresses_unused = shelley_addr.list id, {state: "used"}
       expect(addresses_unused.code).to eq 200
-      expect(addresses_unused.size).to eq 10
+      expect(addresses_unused.size).to eq 0
+
+      addresses_unused = shelley_addr.list id, {state: "unused"}
+      expect(addresses_unused.code).to eq 200
+      expect(addresses_unused.size).to eq 20
     end
   end
 
@@ -143,23 +163,21 @@ RSpec.describe CardanoWallet::Shelley do
       delete_all
     end
 
-    it "Can trigger random coin selection" do
-      pending "Shelley wallets not supported yet"
-
+    it "I could trigger random coin selection - if had money" do
       wid = create_shelley_wallet
+      addresses = SHELLEY.addresses.list(wid)
       addr_amount =
-         {ADDRS[0] => 123,
-          ADDRS[1] => 456
+         {addresses[0]['id'] => 123,
+          addresses[1]['id'] => 456
          }
 
       rnd = SHELLEY.coin_selections.random wid, addr_amount
-      expect(rnd.code).to eq 200
+      expect(rnd.code).to eq 403
+      expect(rnd).to include "not_enough_money"
     end
 
     it "ArgumentError on bad argument address_amount" do
-      pending "Shelley wallets not supported yet"
-
-      wid = "123123123"
+      wid = create_shelley_wallet
       payments =[[{addr1: 1, addr2: 2}], "addr:123", 123]
       cs = SHELLEY.coin_selections
       payments.each do |p|
@@ -176,8 +194,6 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "Can list transactions" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       txs = SHELLEY.transactions
 
@@ -191,29 +207,31 @@ RSpec.describe CardanoWallet::Shelley do
 
     end
 
-    it "Can create transaction" do
-      pending "Shelley wallets not supported yet"
-
+    it "I could create transaction - if I had money" do
       id = create_shelley_wallet
+      target_id = create_shelley_wallet
+      address = SHELLEY.addresses.list(target_id)[0]['id']
+
       txs = SHELLEY.transactions
 
-      tx_sent = txs.create(id, PASS, {ADDRS[0] => 1000000})
-      expect(tx_sent.code).to eq 202
+      tx_sent = txs.create(id, PASS, {address => 1000000})
+      expect(tx_sent.code).to eq 403
+      expect(tx_sent).to include "not_enough_money"
     end
 
-    it "Can estimate fees" do
-      pending "Shelley wallets not supported yet"
-
+    it "I could estimate transaction fee - if I had money" do
       id = create_shelley_wallet
+      target_id = create_shelley_wallet
+      address = SHELLEY.addresses.list(target_id)[0]['id']
+
       txs = SHELLEY.transactions
 
-      fees = txs.payment_fees(id, {ADDRS[0] => 1000000})
-      expect(fees.code).to eq 202
+      fees = txs.payment_fees(id, {address => 1000000})
+      expect(fees.code).to eq 403
+      expect(fees).to include "not_enough_money"
     end
 
     it "I could forget transaction" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       txs = SHELLEY.transactions
       res = txs.forget(id, TXID)
@@ -228,43 +246,35 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "Can list stake pools" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      expect(pools.list(id).code).to eq 200
+      expect(pools.list(id).code).to eq 501
     end
 
-    it "Can join stake pool" do
-      pending "Shelley wallets not supported yet"
-
+    it "I could join Stake Pool - if I knew it's id" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      pool_id = pools.list(id)[0]['id']
-      join = pools.join(pool_id, id, PASS)
-      expect(join.code).to eq 202
+      # pool_id = pools.list(id)[0]['id']
+
+      join = pools.join(SPID, id, PASS)
+      expect(join.code).to eq 404
+      expect(join).to include "no_such_pool"
     end
 
-    it "I could quit stake pool" do
-      pending "Shelley wallets not supported yet"
-
-      id = SHELLEY.
-             wallets.create({name: "Wallet from mnemonic_sentence",
-                             passphrase: PASS,
-                             mnemonic_sentence: MNEMONICS2
-                             })['id']
+    it "I could quit stake pool - if I was delegating" do
+      id = create_shelley_wallet
       pools = SHELLEY.stake_pools
       quit = pools.quit(id, PASS)
       expect(quit.code).to eq 403
+      expect(quit).to include "not_delegating_to"
     end
 
-    it "Can check delegation fees" do
-      pending "Shelley wallets not supported yet"
-
+    it "I could check delegation fees - if I could cover fee" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
       fees = pools.delegation_fees id
-      expect(fees.code).to eq 200
+      expect(fees.code).to eq 403
+      expect(fees).to include "cannot_cover_fee"
     end
   end
 
