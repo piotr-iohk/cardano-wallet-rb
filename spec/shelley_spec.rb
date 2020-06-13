@@ -6,7 +6,7 @@ RSpec.describe CardanoWallet::Shelley do
              addr1ss8ju4alq5jl7rd92yczukcup4z7jnr97y8nqu4tvu4v7lukxngc60euugt6kvd3hdzply0hwpykd7nfdmssz0wm4255cht5rvhrgfr32q6ueh]
   PASS = "Secure Passphrase"
   TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-  SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
+  # SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
 
   def create_shelley_wallet
     CardanoWallet.new.shelley.wallets.
@@ -23,11 +23,11 @@ RSpec.describe CardanoWallet::Shelley do
     end
   end
 
-  describe CardanoWallet::Shelley::Wallets do
+  before(:all) do
+    SHELLEY = CardanoWallet.new.shelley
+  end
 
-    before(:all) do
-      SHELLEY = CardanoWallet.new.shelley
-    end
+  describe CardanoWallet::Shelley::Wallets do
 
     after(:each) do
       delete_all
@@ -230,8 +230,9 @@ RSpec.describe CardanoWallet::Shelley do
     it "Can list stake pools" do
       pending "Shelley wallets not supported yet"
 
+      id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      expect(pools.list.code).to eq 200
+      expect(pools.list(id).code).to eq 200
     end
 
     it "Can join stake pool" do
@@ -239,7 +240,8 @@ RSpec.describe CardanoWallet::Shelley do
 
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      join = pools.join(SPID, id, PASS)
+      pool_id = pools.list(id)[0]['id']
+      join = pools.join(pool_id, id, PASS)
       expect(join.code).to eq 202
     end
 
@@ -281,7 +283,7 @@ RSpec.describe CardanoWallet::Shelley do
 
     it "I could migrate all my funds" do
       pending "Shelley wallets not supported yet"
-      
+
       id = create_shelley_wallet
       migr = SHELLEY.migrations.migrate(id, PASS, ADDRS)
       expect(migr.code).to eq 501
