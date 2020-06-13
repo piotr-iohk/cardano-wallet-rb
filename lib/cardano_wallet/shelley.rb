@@ -230,8 +230,8 @@ module CardanoWallet
 
       # List all stake pools
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listStakePools
-      def list
-        self.class.get("/stake-pools")
+      def list(wid)
+        self.class.get("/wallets/#{wid}/stake-pools")
       end
 
       # Join stake pool
