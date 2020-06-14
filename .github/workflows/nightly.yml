@@ -2,8 +2,8 @@ name: Nightly
 
 on:
   schedule:
-    # run on 1 am utc
-    cron:  '* 1 * * *'
+  # run on 18 pm utc
+  - cron:  '* 18 * * *'
 
 jobs:
   test:

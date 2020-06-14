@@ -194,7 +194,7 @@ RSpec.describe CardanoWallet::Shelley do
       tx_sent = SHELLEY.transactions.create(wid, PASS, {address => amt})
       expect(tx_sent.code).to eq 202
 
-      eventually do
+      eventually "Funds are on target wallet: #{target_id}" do
         available = SHELLEY.wallets.get(target_id)['balance']['available']['quantity']
         total = SHELLEY.wallets.get(target_id)['balance']['total']['quantity']
         (available == amt) && (total == amt)

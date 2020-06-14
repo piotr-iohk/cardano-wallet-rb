@@ -30,6 +30,8 @@ TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
 SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
 BYRON = CardanoWallet.new.byron
 SHELLEY = CardanoWallet.new.shelley
+# timeout in seconds for custom verifications
+TIMEOUT = 300
 
 def create_shelley_wallet
   SHELLEY.wallets.create({name: "Wallet from mnemonic_sentence",
@@ -71,9 +73,17 @@ def wait_for_byron_wallet_to_sync(wid)
   end
 end
 
-def eventually(&block)
-  while(block.call == false) do
+##
+# wait until action passed as &block returns true or TIMEOUT is reached
+def eventually(label, &block)
+  current_time = Time.now
+  timeout_treshold = current_time + TIMEOUT
+  while(block.call == false) && (current_time <= timeout_treshold) do
     sleep 5
+    current_time = Time.now
+  end
+  if (current_time > timeout_treshold)
+    fail "Action '#{label}' did not resolve within timeout: #{TIMEOUT}s"
   end
 end
 
