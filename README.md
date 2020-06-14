@@ -11,6 +11,9 @@
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
   <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
 </a>
+<a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ANightly">
+  <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly/badge.svg" />
+</a>
 
 # cardano-wallet-rb
 
