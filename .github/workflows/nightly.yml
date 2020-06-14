@@ -1,17 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
-# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
-
-name: Tests
+name: Nightly
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    # run on 1 am utc
+    cron:  '* 1 * * *'
 
 jobs:
   test:
@@ -31,8 +23,10 @@ jobs:
         ruby-version: 2.6
     - name: Install dependencies
       run: bundle install
-    - name: Run all tests except nighlty
-      run: bundle exec rspec . -t ~nightly
+    - name: Wait until node is synced
+      run: bundle exec rake wait_until_node_synced
+    - name: Run all tests
+      run: bundle exec rspec
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
