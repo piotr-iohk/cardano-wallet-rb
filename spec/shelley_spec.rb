@@ -1,33 +1,9 @@
 RSpec.describe CardanoWallet::Shelley do
 
-  MNEMONICS = %w[absurd seat ball together donate bulk sustain loop convince capital peanut mutual notice improve jewel]
-  MNEMONICS2 = %w[vintage poem topic machine hazard cement dune glimpse fix brief account badge mass silly business]
-  ADDRS = %w[addr1snt2ut07p5pcatwv73dr3qsrh3sjwmvme066khg2jvvtf9fhaen98psd5hpwkff894ydfquegwk6jwc7jrgaajvasftue49r25sl2kp6mew98t
-             addr1ss8ju4alq5jl7rd92yczukcup4z7jnr97y8nqu4tvu4v7lukxngc60euugt6kvd3hdzply0hwpykd7nfdmssz0wm4255cht5rvhrgfr32q6ueh]
-  PASS = "Secure Passphrase"
-  TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-  SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
-  SHELLEY = CardanoWallet.new.shelley
-
-  def create_shelley_wallet
-    CardanoWallet.new.shelley.wallets.
-                  create({name: "Wallet from mnemonic_sentence",
-                          passphrase: PASS,
-                          mnemonic_sentence: mnemonic_sentence("15")
-                         })['id']
-  end
-
-  def delete_all
-    ws = CardanoWallet.new.shelley.wallets
-    ws.list.each do |w|
-      ws.delete w['id']
-    end
-  end
-
   describe CardanoWallet::Shelley::Wallets do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I can list wallets" do
@@ -137,7 +113,7 @@ RSpec.describe CardanoWallet::Shelley do
   describe CardanoWallet::Shelley::Addresses do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list addresses" do
@@ -160,7 +136,7 @@ RSpec.describe CardanoWallet::Shelley do
   describe CardanoWallet::Shelley::CoinSelections do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I could trigger random coin selection - if had money" do
@@ -190,7 +166,7 @@ RSpec.describe CardanoWallet::Shelley do
   describe CardanoWallet::Shelley::Transactions do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list transactions" do
@@ -211,7 +187,6 @@ RSpec.describe CardanoWallet::Shelley do
       id = create_shelley_wallet
       target_id = create_shelley_wallet
       address = SHELLEY.addresses.list(target_id)[0]['id']
-
       txs = SHELLEY.transactions
 
       tx_sent = txs.create(id, PASS, {address => 1000000})
@@ -242,7 +217,7 @@ RSpec.describe CardanoWallet::Shelley do
   describe CardanoWallet::Shelley::StakePools do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list stake pools" do
@@ -280,23 +255,23 @@ RSpec.describe CardanoWallet::Shelley do
 
   describe CardanoWallet::Shelley::Migrations do
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I could calculate migration cost" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
       cost = SHELLEY.migrations.cost(id)
       expect(cost.code).to eq 403
+      expect(cost).to include "nothing_to_migrate"
     end
 
     it "I could migrate all my funds" do
-      pending "Shelley wallets not supported yet"
-
       id = create_shelley_wallet
-      migr = SHELLEY.migrations.migrate(id, PASS, ADDRS)
-      expect(migr.code).to eq 501
+      target_id = create_shelley_wallet
+      addrs = SHELLEY.addresses.list(target_id).map{ |a| a['id'] }
+      migr = SHELLEY.migrations.migrate(id, PASS, addrs)
+      expect(migr.code).to eq 403
+      expect(migr).to include "nothing_to_migrate"
     end
   end
 

@@ -1,31 +1,9 @@
 RSpec.describe CardanoWallet::Byron do
 
-  MNEMONICS12 = %w[run exist tilt jealous minute pattern bicycle hire frost slogan ship bachelor]
-  MNEMONICS15 = %w[absurd seat ball together donate bulk sustain loop convince capital peanut mutual notice improve jewel]
-  PASS = "Secure Passphrase"
-  TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-  BYRON = CardanoWallet.new.byron
-
-  def create_byron_wallet(style = "random")
-    style == "random" ? mnem = MNEMONICS12 : mnem = MNEMONICS15
-    BYRON.wallets.create({style: style,
-                          name: "Wallet from mnemonic_sentence",
-                          passphrase: PASS,
-                          mnemonic_sentence: mnem
-                         })['id']
-  end
-
-  def delete_all
-    ws = BYRON.wallets
-    ws.list.each do |w|
-      ws.delete w['id']
-    end
-  end
-
   describe CardanoWallet::Byron::Wallets do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I can list byron wallets" do
@@ -47,7 +25,7 @@ RSpec.describe CardanoWallet::Byron do
       wallet = BYRON.wallets.create({style: "icarus",
                          name: "Wallet from mnemonic_sentence",
                          passphrase: "Secure Passphrase",
-                         mnemonic_sentence: MNEMONICS15,
+                         mnemonic_sentence: mnemonic_sentence("15"),
                          })
       expect(wallet.code).to eq 201
       wid = wallet['id']
@@ -59,7 +37,7 @@ RSpec.describe CardanoWallet::Byron do
       wallet = BYRON.wallets.create({style: "random",
                          name: "Wallet from mnemonic_sentence",
                          passphrase: "Secure Passphrase",
-                         mnemonic_sentence: MNEMONICS12,
+                         mnemonic_sentence: mnemonic_sentence("12"),
                          })
       expect(wallet.code).to eq 201
       wid = wallet['id']
@@ -96,7 +74,7 @@ RSpec.describe CardanoWallet::Byron do
   describe CardanoWallet::Byron::Addresses do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list addresses - random" do
@@ -176,7 +154,7 @@ RSpec.describe CardanoWallet::Byron do
 
   describe CardanoWallet::Byron::Transactions do
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list transactions - random" do
@@ -235,7 +213,7 @@ RSpec.describe CardanoWallet::Byron do
 
   describe CardanoWallet::Byron::Migrations do
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I could calculate migration cost" do
