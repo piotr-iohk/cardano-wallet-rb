@@ -183,6 +183,24 @@ RSpec.describe CardanoWallet::Shelley do
 
     end
 
+    it "I can send transaction and funds are received", :nightly => true  do
+      amt = 1
+      wid = create_fixture_shelley_wallet
+      wait_for_shelley_wallet_to_sync(wid)
+      target_id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync(target_id)
+      address = SHELLEY.addresses.list(target_id)[0]['id']
+
+      tx_sent = SHELLEY.transactions.create(wid, PASS, {address => amt})
+      expect(tx_sent.code).to eq 202
+
+      eventually do
+        available = SHELLEY.wallets.get(target_id)['balance']['available']['quantity']
+        total = SHELLEY.wallets.get(target_id)['balance']['total']['quantity']
+        (available == amt) && (total == amt)
+      end
+    end
+
     it "I could create transaction - if I had money" do
       id = create_shelley_wallet
       target_id = create_shelley_wallet

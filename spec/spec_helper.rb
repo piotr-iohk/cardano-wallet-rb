@@ -38,6 +38,14 @@ def create_shelley_wallet
                          })['id']
 end
 
+def create_fixture_shelley_wallet
+  mnemonics = %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd]
+  SHELLEY.wallets.create({name: "Fixture wallet with funds",
+                          passphrase: PASS,
+                          mnemonic_sentence: mnemonics
+                         })['id']
+end
+
 def create_byron_wallet(style = "random")
   style == "random" ? mnem = mnemonic_sentence("12") : mnem = mnemonic_sentence("15")
   BYRON.wallets.create({style: style,
@@ -45,6 +53,28 @@ def create_byron_wallet(style = "random")
                         passphrase: PASS,
                         mnemonic_sentence: mnem
                        })['id']
+end
+
+def wait_for_shelley_wallet_to_sync(wid)
+  puts "Syncing Shelley wallet..."
+  while(SHELLEY.wallets.get(wid.to_s)['state']['status'] == "syncing") do
+    puts "  Syncing... #{SHELLEY.wallets.get(wid)['state']['progress']['quantity']}%"
+    sleep 5
+  end
+end
+
+def wait_for_byron_wallet_to_sync(wid)
+  puts "Syncing Byron wallet..."
+  while BYRON.wallets.get(wid)['state']['status'] == "syncing" do
+    puts "  Syncing... #{BYRON.wallets.get(wid)['state']['progress']['quantity']}%"
+    sleep 5
+  end
+end
+
+def eventually(&block)
+  while(block.call == false) do
+    sleep 5
+  end
 end
 
 def teardown
