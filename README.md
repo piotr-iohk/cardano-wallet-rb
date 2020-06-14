@@ -1,3 +1,4 @@
+
 <a href="https://badge.fury.io/rb/cardano_wallet">
   <img src="https://badge.fury.io/rb/cardano_wallet.svg" alt="Gem Version">
 </a>
@@ -87,18 +88,23 @@ Refer to [documentation](https://rubydoc.info/gems/cardano_wallet) for more deta
 
 ## Development
 
-In order to spin up environment for development and testing `docker-compose` can be used.
+In order to spin up environment for development and testing `docker-compose` can be used. For instance:
 
+    # Byron testnet
     $ NETWORK=testnet WALLET=dev-master-byron NODE=latest docker-compose up --detach
 
-This starts:
-  - `cardano-node` latest [release](https://github.com/input-output-hk/cardano-node/releases)
-  - `cardano-wallet-byron` [master](https://github.com/input-output-hk/cardano-wallet)
+or
+
+    # Shelley testnet
+    $ NODE=1.13.0 WALLET=dev-master-shelley NODE_CONFIG_PATH=`pwd`/spec/shelley-testnet/ docker-compose -f docker-compose-shelley.yml up
 
 Run tests on top of that:
 
     $ rake
 
+Clean up docker stuff after, e.g.:
+
+    $ NETWORK=... docker-compose down --rmi all --remove-orphans
 
 ## Contributing
 

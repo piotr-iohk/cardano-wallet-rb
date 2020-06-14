@@ -1,37 +1,9 @@
 RSpec.describe CardanoWallet::Byron do
 
-  MNEMONICS12 = %w[run exist tilt jealous minute pattern bicycle hire frost slogan ship bachelor]
-  MNEMONICS15 = %w[absurd seat ball together donate bulk sustain loop convince capital peanut mutual notice improve jewel]
-  ADDRS_BYRON = %w[37btjrVyb4KCgcSqewWsE43i1CDYXZgk52TMTXak2H3JdA7w2tbnVrUGcn9kz6e48aMSeQAiXjb8DToKgWTvUsF9EJrkK5pa9Uhd1Goq4MsCXuLGjy
-             37btjrVyb4KECAbGSZucHRWZnbfDs1qu5E6WLQsJDVMGKwqySd84oUXLtjoUfRYqQ2S4bcYBLMSCizhyZ13rdV1A8BJsMfyKnqWJjPq83uhaFPBMDo]
-  PASS = "Secure Passphrase"
-  TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-
-  def create_byron_wallet(style = "random")
-    style == "random" ? mnem = MNEMONICS12 : mnem = MNEMONICS15
-    CardanoWallet.new.byron.wallets.
-                  create({style: style,
-                          name: "Wallet from mnemonic_sentence",
-                          passphrase: PASS,
-                          mnemonic_sentence: mnem
-                         })['id']
-  end
-
-  def delete_all
-    ws = CardanoWallet.new.byron.wallets
-    ws.list.each do |w|
-      ws.delete w['id']
-    end
-  end
-
   describe CardanoWallet::Byron::Wallets do
 
-    before(:all) do
-      BYRON = CardanoWallet.new.byron
-    end
-
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I can list byron wallets" do
@@ -53,7 +25,7 @@ RSpec.describe CardanoWallet::Byron do
       wallet = BYRON.wallets.create({style: "icarus",
                          name: "Wallet from mnemonic_sentence",
                          passphrase: "Secure Passphrase",
-                         mnemonic_sentence: MNEMONICS15,
+                         mnemonic_sentence: mnemonic_sentence("15"),
                          })
       expect(wallet.code).to eq 201
       wid = wallet['id']
@@ -65,7 +37,7 @@ RSpec.describe CardanoWallet::Byron do
       wallet = BYRON.wallets.create({style: "random",
                          name: "Wallet from mnemonic_sentence",
                          passphrase: "Secure Passphrase",
-                         mnemonic_sentence: MNEMONICS12,
+                         mnemonic_sentence: mnemonic_sentence("12"),
                          })
       expect(wallet.code).to eq 201
       wid = wallet['id']
@@ -102,7 +74,7 @@ RSpec.describe CardanoWallet::Byron do
   describe CardanoWallet::Byron::Addresses do
 
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list addresses - random" do
@@ -110,10 +82,29 @@ RSpec.describe CardanoWallet::Byron do
       addresses = BYRON.addresses.list id
       expect(addresses.code).to eq 200
       expect(addresses.size).to eq 0
+
+      BYRON.addresses.create(id, {passphrase: PASS})
+      addresses = BYRON.addresses.list id
+      expect(addresses.code).to eq 200
+      expect(addresses.size).to eq 1
     end
 
     it "Can list addresses - icarus" do
       id = create_byron_wallet "icarus"
+      addresses_unused = BYRON.addresses.list id, {state: "unused"}
+      expect(addresses_unused.code).to eq 200
+      expect(addresses_unused.size).to eq 20
+    end
+
+    it "Can list addresses - ledger" do
+      id = create_byron_wallet "ledger"
+      addresses_unused = BYRON.addresses.list id, {state: "unused"}
+      expect(addresses_unused.code).to eq 200
+      expect(addresses_unused.size).to eq 20
+    end
+
+    it "Can list addresses - trezor" do
+      id = create_byron_wallet "trezor"
       addresses_unused = BYRON.addresses.list id, {state: "unused"}
       expect(addresses_unused.code).to eq 200
       expect(addresses_unused.size).to eq 20
@@ -131,20 +122,39 @@ RSpec.describe CardanoWallet::Byron do
 
     it "I could import address - random" do
       id = create_byron_wallet
-      addr_import = BYRON.addresses.import(id, ADDRS_BYRON[0])
-      expect(addr_import.code).to eq 403
+      addr = BYRON.addresses.create(id, {passphrase: PASS})['id']
+      addr_import = BYRON.addresses.import(id, addr)
+      expect(addr_import.code).to eq 204
     end
 
-    it "I could import address - icarus" do
+    it "I cannot import address - icarus" do
       id = create_byron_wallet "icarus"
-      addr_import = BYRON.addresses.import(id, ADDRS_BYRON[0])
+      addr = BYRON.addresses.list(id)[0]['id']
+      addr_import = BYRON.addresses.import(id, addr)
       expect(addr_import.code).to eq 403
+      expect(addr_import).to include "invalid_wallet_type"
+    end
+
+    it "I cannot import address - ledger" do
+      id = create_byron_wallet "ledger"
+      addr = BYRON.addresses.list(id)[0]['id']
+      addr_import = BYRON.addresses.import(id, addr)
+      expect(addr_import.code).to eq 403
+      expect(addr_import).to include "invalid_wallet_type"
+    end
+
+    it "I cannot import address - trezor" do
+      id = create_byron_wallet "trezor"
+      addr = BYRON.addresses.list(id)[0]['id']
+      addr_import = BYRON.addresses.import(id, addr)
+      expect(addr_import.code).to eq 403
+      expect(addr_import).to include "invalid_wallet_type"
     end
   end
 
   describe CardanoWallet::Byron::Transactions do
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "Can list transactions - random" do
@@ -175,18 +185,22 @@ RSpec.describe CardanoWallet::Byron do
 
     it "I could send tx if I had money" do
       id = create_byron_wallet
-      txs = BYRON.transactions
+      target_id = create_byron_wallet "icarus"
+      target_addr = BYRON.addresses.list(target_id)[0]['id']
 
-      tx_sent = txs.create(id, PASS, {ADDRS_BYRON[0] => 1000000})
+      tx_sent = BYRON.transactions.create(id, PASS, {target_addr => 1000000})
       expect(tx_sent.code).to eq 403
+      expect(tx_sent).to include "not_enough_money"
     end
 
     it "I could estimate fees if I had money" do
       id = create_byron_wallet
-      txs = BYRON.transactions
+      target_id = create_byron_wallet "icarus"
+      target_addr = BYRON.addresses.list(target_id)[0]['id']
 
-      fees = txs.payment_fees(id, {ADDRS_BYRON[0] => 1000000})
+      fees = BYRON.transactions.payment_fees(id, {target_addr => 1000000})
       expect(fees.code).to eq 403
+      expect(fees).to include "not_enough_money"
     end
 
     it "I could forget transaction" do
@@ -199,7 +213,7 @@ RSpec.describe CardanoWallet::Byron do
 
   describe CardanoWallet::Byron::Migrations do
     after(:each) do
-      delete_all
+      teardown
     end
 
     it "I could calculate migration cost" do
@@ -210,7 +224,9 @@ RSpec.describe CardanoWallet::Byron do
 
     it "I could migrate all my funds" do
       id = create_byron_wallet "random"
-      migr = BYRON.migrations.migrate(id, PASS, ADDRS_BYRON)
+      target_wal_id = create_byron_wallet "icarus"
+      addresses = BYRON.addresses.list(target_wal_id).map{ |a| a['id'] }
+      migr = BYRON.migrations.migrate(id, PASS, addresses)
       expect(migr.code).to eq 403
     end
   end

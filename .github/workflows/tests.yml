@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up cardano-wallet
-      run: docker-compose up --detach
+      run: NODE_CONFIG_PATH=`pwd`/spec/shelley-testnet docker-compose -f docker-compose-shelley.yml up --detach
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -37,5 +37,5 @@ jobs:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NETWORK: testnet
-      WALLET: dev-master-byron
-      NODE: latest
+      WALLET: dev-master-shelley
+      NODE: 1.13.0
