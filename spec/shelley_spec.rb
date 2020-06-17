@@ -241,7 +241,7 @@ RSpec.describe CardanoWallet::Shelley do
     it "Can list stake pools" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      expect(pools.list(id).code).to eq 501
+      expect(pools.list(id).code).to eq 200
     end
 
     it "I could join Stake Pool - if I knew it's id" do
