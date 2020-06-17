@@ -2,6 +2,7 @@
   "activeSlotsCoeff": 0.05,
   "protocolParams": {
     "poolDecayRate": 0,
+    "minPoolCost":0,
     "poolDeposit": 500000000,
     "protocolVersion": {
       "minor": 0,
