@@ -238,10 +238,12 @@ RSpec.describe CardanoWallet::Shelley do
       teardown
     end
 
-    it "Can list stake pools" do
-      id = create_shelley_wallet
+    it "Can list stake pools only when stake is provided" do
       pools = SHELLEY.stake_pools
-      expect(pools.list(id).code).to eq 200
+      expect(pools.list({stake: 1000}).code).to eq 200
+
+      expect(pools.list.code).to eq 400
+      expect(pools.list).to include "query_param_missing"
     end
 
     it "I could join Stake Pool - if I knew it's id" do
