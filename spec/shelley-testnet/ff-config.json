@@ -51,7 +51,7 @@
     "127.0.0.1",
     12798
   ],
-  "minSeverity": "Debug",
+  "minSeverity": "Info",
   "options": {
     "mapBackends": {
       "cardano.node-metrics": [
