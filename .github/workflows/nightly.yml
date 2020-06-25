@@ -2,7 +2,7 @@ name: Nightly
 
 on:
   schedule:
-  - cron:  "0 21 * * *"
+  - cron:  "0 23 * * *"
 
 jobs:
   test:
