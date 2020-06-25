@@ -3,13 +3,11 @@ version: "3.5"
 services:
   cardano-node:
     image: inputoutput/cardano-node:${NODE}
-    environment:
-      NETWORK:
     volumes:
       - node-db:/data
       - node-ipc:/ipc
       - ${NODE_CONFIG_PATH}:/config
-    command: run --socket-path /ipc/node.socket --config /config/*-config.json --topology /config/*-topology.json --database-path /data
+    command: run --socket-path /ipc/node.socket --config /config/shelley_testnet-config.json --topology /config/shelley_testnet-topology.json --database-path /data
     restart: on-failure
 
   cardano-wallet:
@@ -20,7 +18,7 @@ services:
       - ${NODE_CONFIG_PATH}:/config
     ports:
       - 8090:8090
-    command: serve --testnet /config/*-genesis.json --node-socket /ipc/node.socket --database /wallet-db --listen-address 0.0.0.0
+    command: serve --testnet /config/shelley_testnet-genesis.json --node-socket /ipc/node.socket --database /wallet-db --listen-address 0.0.0.0
     restart: on-failure
 
 volumes:
