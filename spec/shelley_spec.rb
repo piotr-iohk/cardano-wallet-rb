@@ -169,6 +169,22 @@ RSpec.describe CardanoWallet::Shelley do
       teardown
     end
 
+    it "I could get a tx if I had proper id" do
+      wid = create_shelley_wallet
+      txs = SHELLEY.transactions
+      expect(txs.get(wid, TXID).code).to eq 404
+      expect(txs.get(wid, TXID)).to include "no_such_transaction"
+    end
+
+    it "I can see transaction by ID", :nightly => true do
+      wid = create_fixture_shelley_wallet
+      wait_for_shelley_wallet_to_sync wid
+      txs = SHELLEY.transactions
+      tx_id = get_fixture_shelley_wallet_tx_id
+      expect(txs.get(wid, tx_id).code).to eq 200
+      expect(txs.get(wid, tx_id)['id']).to eq tx_id
+    end
+
     it "Can list transactions" do
       id = create_shelley_wallet
       txs = SHELLEY.transactions

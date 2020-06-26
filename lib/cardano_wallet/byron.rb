@@ -161,6 +161,12 @@ module CardanoWallet
         super
       end
 
+      # Get tx by id
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronTransaction
+      def get(wid, tx_id)
+        self.class.get("/byron-wallets/#{wid}/transactions/#{tx_id}")
+      end
+
       # List all Byron wallet's transactions.
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronTransactions
       #

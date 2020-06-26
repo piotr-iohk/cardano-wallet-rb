@@ -157,57 +157,92 @@ RSpec.describe CardanoWallet::Byron do
       teardown
     end
 
-    it "Can list transactions - random" do
-      id = create_byron_wallet
-      txs = BYRON.transactions
+    # Run for random and icarus
+    ["random", "icarus"].each do |style|
 
-      expect(txs.list(id).code).to eq 200
-      expect(txs.list(id,
-                      {start: "2012-09-25T10:15:00Z",
-                       end: "2016-11-21T10:15:00Z",
-                       order: "ascending"}).code).
-                      to eq 200
-      expect(txs.list(id, {order: "bad_order"}).code).to eq 400
-    end
+      it "I could get a tx if I had proper id - #{style}" do
+        wid = create_byron_wallet style
+        txs = BYRON.transactions
+        expect(txs.get(wid, TXID).code).to eq 404
+        expect(txs.get(wid, TXID)).to include "no_such_transaction"
+      end
 
-    it "Can list transactions - icarus" do
-      id = create_byron_wallet "icarus"
-      txs = BYRON.transactions
+      it "I can see transaction by ID - #{style}", :nightly => true do
+        wid = create_fixture_byron_wallet style
+        wait_for_byron_wallet_to_sync wid
+        txs = BYRON.transactions
+        tx_id = get_fixture_byron_wallet_tx_id style
+        expect(txs.get(wid, tx_id).code).to eq 200
+        expect(txs.get(wid, tx_id)['id']).to eq tx_id
+      end
 
-      expect(txs.list(id).code).to eq 200
-      expect(txs.list(id,
-                      {start: "2012-09-25T10:15:00Z",
-                       end: "2016-11-21T10:15:00Z",
-                       order: "ascending"}).code).
-                      to eq 200
-      expect(txs.list(id, {order: "bad_order"}).code).to eq 400
-    end
+      it "I can see transaction by ID - #{style}", :nightly => true do
+        wid = create_fixture_byron_wallet style
+        wait_for_byron_wallet_to_sync wid
+        txs = BYRON.transactions
+        tx_id = get_fixture_byron_wallet_tx_id style
+        expect(txs.get(wid, tx_id).code).to eq 200
+        expect(txs.get(wid, tx_id)['id']).to eq tx_id
+      end
 
-    it "I could send tx if I had money" do
-      id = create_byron_wallet
-      target_id = create_byron_wallet "icarus"
-      target_addr = BYRON.addresses.list(target_id)[0]['id']
+      it "Can list transactions - #{style}" do
+        id = create_byron_wallet style
+        txs = BYRON.transactions
 
-      tx_sent = BYRON.transactions.create(id, PASS, {target_addr => 1000000})
-      expect(tx_sent.code).to eq 403
-      expect(tx_sent).to include "not_enough_money"
-    end
+        expect(txs.list(id).code).to eq 200
+        expect(txs.list(id,
+                        {start: "2012-09-25T10:15:00Z",
+                         end: "2016-11-21T10:15:00Z",
+                         order: "ascending"}).code).
+                        to eq 200
+        expect(txs.list(id, {order: "bad_order"}).code).to eq 400
+      end
 
-    it "I could estimate fees if I had money" do
-      id = create_byron_wallet
-      target_id = create_byron_wallet "icarus"
-      target_addr = BYRON.addresses.list(target_id)[0]['id']
+      it "I can send transaction and funds are received, #{style} -> shelley", :nightly => true  do
+        pending "Byron transactions not supported yet"
+        amt = 1
+        wid = create_fixture_byron_wallet style
+        wait_for_byron_wallet_to_sync(wid)
+        target_id = create_shelley_wallet
+        wait_for_shelley_wallet_to_sync(target_id)
+        address = SHELLEY.addresses.list(target_id)[0]['id']
 
-      fees = BYRON.transactions.payment_fees(id, {target_addr => 1000000})
-      expect(fees.code).to eq 403
-      expect(fees).to include "not_enough_money"
-    end
+        tx_sent = BYRON.transactions.create(wid, PASS, {address => amt})
+        expect(tx_sent.code).to eq 202
 
-    it "I could forget transaction" do
-      id = create_byron_wallet
-      txs = BYRON.transactions
-      res = txs.forget(id, TXID)
-      expect(res.code).to eq 404
+        eventually "Funds are on target wallet: #{target_id}" do
+          available = SHELLEY.wallets.get(target_id)['balance']['available']['quantity']
+          total = SHELLEY.wallets.get(target_id)['balance']['total']['quantity']
+          (available == amt) && (total == amt)
+        end
+      end
+
+      it "I could send tx if I had money - #{style}" do
+        id = create_byron_wallet style
+        target_id = create_byron_wallet "icarus"
+        target_addr = BYRON.addresses.list(target_id)[0]['id']
+
+        tx_sent = BYRON.transactions.create(id, PASS, {target_addr => 1000000})
+        expect(tx_sent.code).to eq 403
+        expect(tx_sent).to include "not_enough_money"
+      end
+
+      it "I could estimate fees if I had money - #{style}" do
+        id = create_byron_wallet style
+        target_id = create_byron_wallet "icarus"
+        target_addr = BYRON.addresses.list(target_id)[0]['id']
+
+        fees = BYRON.transactions.payment_fees(id, {target_addr => 1000000})
+        expect(fees.code).to eq 403
+        expect(fees).to include "not_enough_money"
+      end
+
+      it "I could forget transaction - #{style}" do
+        id = create_byron_wallet style
+        txs = BYRON.transactions
+        res = txs.forget(id, TXID)
+        expect(res.code).to eq 404
+      end
     end
   end
 

@@ -174,6 +174,12 @@ module CardanoWallet
         super
       end
 
+      # Get tx by id
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getTransaction
+      def get(wid, tx_id)
+        self.class.get("/wallets/#{wid}/transactions/#{tx_id}")
+      end
+
       # List all wallet's transactions
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listTransactions
       #

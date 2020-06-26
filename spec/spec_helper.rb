@@ -26,8 +26,10 @@ require "cardano_wallet"
 # Helpers
 
 PASS = "Secure Passphrase"
+# Artificial, non-existing id's
 TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
 SPID = "712dd028687560506e3b0b3874adbd929ab892591bfdee1221b5ee3796b79b70"
+###
 BYRON = CardanoWallet.new.byron
 SHELLEY = CardanoWallet.new.shelley
 # timeout in seconds for custom verifications
@@ -40,12 +42,26 @@ def create_shelley_wallet
                          })['id']
 end
 
+def get_fixture_shelley_wallet_tx_id
+  # Existing and on fixture_shelley_wallet
+  "40305407b686baabd9e06b1cae020618a8232d459ac723c125f0ca4f32d0825b"
+end
+
 def create_fixture_shelley_wallet
+  # Wallet with funds on shelley testnet
   mnemonics = %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd]
   SHELLEY.wallets.create({name: "Fixture wallet with funds",
                           passphrase: PASS,
                           mnemonic_sentence: mnemonics
                          })['id']
+end
+
+def wait_for_shelley_wallet_to_sync(wid)
+  puts "Syncing Shelley wallet..."
+  while(SHELLEY.wallets.get(wid.to_s)['state']['status'] == "syncing") do
+    puts "  Syncing... #{SHELLEY.wallets.get(wid)['state']['progress']['quantity']}%"
+    sleep 5
+  end
 end
 
 def create_byron_wallet(style = "random")
@@ -57,12 +73,30 @@ def create_byron_wallet(style = "random")
                        })['id']
 end
 
-def wait_for_shelley_wallet_to_sync(wid)
-  puts "Syncing Shelley wallet..."
-  while(SHELLEY.wallets.get(wid.to_s)['state']['status'] == "syncing") do
-    puts "  Syncing... #{SHELLEY.wallets.get(wid)['state']['progress']['quantity']}%"
-    sleep 5
+def get_fixture_byron_wallet_tx_id(style = "random")
+  # Existing and on fixture_byron_wallet
+  case style
+  when "random"
+    "31c10e7decd454143fb925dce6acb683c7a1d1f3a53973d00e79d62d607bc5cd"
+  when "icarus"
+    "0e66ea6f07cad0ed9890dff737858e75d2a625d09865d903adc015c30af3a086"
   end
+end
+
+def create_fixture_byron_wallet(style = "random")
+  # Wallet with funds on shelley testnet
+  case style
+  when "random"
+    mnemonics = %w[purchase carbon forest frog robot actual used news broken start plunge family]
+  when "icarus"
+    mnemonics = %w[security defense food inhale voyage tomorrow guess galaxy junior guilt vendor soon escape design pretty]
+  end
+
+  BYRON.wallets.create({style: style,
+                        name: "Fixture byron wallets with funds",
+                        passphrase: PASS,
+                        mnemonic_sentence: mnemonics
+                       })['id']
 end
 
 def wait_for_byron_wallet_to_sync(wid)
