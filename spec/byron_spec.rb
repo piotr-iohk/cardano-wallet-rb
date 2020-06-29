@@ -176,15 +176,6 @@ RSpec.describe CardanoWallet::Byron do
         expect(txs.get(wid, tx_id)['id']).to eq tx_id
       end
 
-      it "I can see transaction by ID - #{style}", :nightly => true do
-        wid = create_fixture_byron_wallet style
-        wait_for_byron_wallet_to_sync wid
-        txs = BYRON.transactions
-        tx_id = get_fixture_byron_wallet_tx_id style
-        expect(txs.get(wid, tx_id).code).to eq 200
-        expect(txs.get(wid, tx_id)['id']).to eq tx_id
-      end
-
       it "Can list transactions - #{style}" do
         id = create_byron_wallet style
         txs = BYRON.transactions
