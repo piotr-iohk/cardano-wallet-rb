@@ -262,14 +262,32 @@ RSpec.describe CardanoWallet::Shelley do
       expect(pools.list).to include "query_param_missing"
     end
 
+    it "Can join Stake Pool" do
+      id = create_fixture_shelley_wallet
+      pools = SHELLEY.stake_pools
+      pool_id = pools.list({stake: 1000}).sample['id']
+
+      join = pools.join(pool_id, id, PASS)
+      expect(join.code).to eq 202
+    end
+
     it "I could join Stake Pool - if I knew it's id" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      # pool_id = pools.list(id)[0]['id']
 
       join = pools.join(SPID, id, PASS)
       expect(join.code).to eq 404
       expect(join).to include "no_such_pool"
+    end
+
+    it "I could join Stake Pool - if I had enough to cover fee" do
+      id = create_shelley_wallet
+      pools = SHELLEY.stake_pools
+      pool_id = pools.list({stake: 1000})[0]['id']
+
+      join = pools.join(pool_id, id, PASS)
+      expect(join.code).to eq 403
+      expect(join).to include "cannot_cover_fee"
     end
 
     it "I could quit stake pool - if I was delegating" do
