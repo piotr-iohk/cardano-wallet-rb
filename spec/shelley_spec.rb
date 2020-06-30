@@ -266,8 +266,10 @@ RSpec.describe CardanoWallet::Shelley do
       id = create_fixture_shelley_wallet
       pools = SHELLEY.stake_pools
       pool_id = pools.list({stake: 1000}).sample['id']
+      puts pool_id
 
       join = pools.join(pool_id, id, PASS)
+      puts join
       expect(join.code).to eq 202
     end
 
