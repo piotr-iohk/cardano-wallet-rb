@@ -172,8 +172,8 @@ RSpec.describe CardanoWallet::Shelley do
     it "I could get a tx if I had proper id" do
       wid = create_shelley_wallet
       txs = SHELLEY.transactions
-      expect(txs.get(wid, TXID).code).to eq 404
       expect(txs.get(wid, TXID)).to include "no_such_transaction"
+      expect(txs.get(wid, TXID).code).to eq 404
     end
 
     it "I can see transaction by ID", :nightly => true do
@@ -224,8 +224,8 @@ RSpec.describe CardanoWallet::Shelley do
       txs = SHELLEY.transactions
 
       tx_sent = txs.create(id, PASS, {address => 1000000})
-      expect(tx_sent.code).to eq 403
       expect(tx_sent).to include "not_enough_money"
+      expect(tx_sent.code).to eq 403
     end
 
     it "I could estimate transaction fee - if I had money" do
@@ -236,8 +236,8 @@ RSpec.describe CardanoWallet::Shelley do
       txs = SHELLEY.transactions
 
       fees = txs.payment_fees(id, {address => 1000000})
-      expect(fees.code).to eq 403
       expect(fees).to include "not_enough_money"
+      expect(fees.code).to eq 403
     end
 
     it "I could forget transaction" do
@@ -258,8 +258,8 @@ RSpec.describe CardanoWallet::Shelley do
       pools = SHELLEY.stake_pools
       expect(pools.list({stake: 1000}).code).to eq 200
 
-      expect(pools.list.code).to eq 400
       expect(pools.list).to include "query_param_missing"
+      expect(pools.list.code).to eq 400
     end
 
     it "Can join and quit Stake Pool", :nightly => true do
@@ -290,6 +290,7 @@ RSpec.describe CardanoWallet::Shelley do
 
       puts "Quitting pool: #{pool_id}"
       quit = pools.quit(id, PASS)
+      expect(quit).to include "status"
       expect(quit.code).to eq 202
 
       quit_tx_id = quit['id']
@@ -324,34 +325,35 @@ RSpec.describe CardanoWallet::Shelley do
       pools = SHELLEY.stake_pools
 
       join = pools.join(SPID, id, PASS)
-      expect(join.code).to eq 404
       expect(join).to include "no_such_pool"
+      expect(join.code).to eq 404
     end
 
     it "I could join Stake Pool - if I had enough to cover fee" do
       id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync id
       pools = SHELLEY.stake_pools
       pool_id = pools.list({stake: 1000})[0]['id']
 
       join = pools.join(pool_id, id, PASS)
-      expect(join.code).to eq 403
       expect(join).to include "cannot_cover_fee"
+      expect(join.code).to eq 403
     end
 
     it "I could quit stake pool - if I was delegating" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
       quit = pools.quit(id, PASS)
-      expect(quit.code).to eq 403
       expect(quit).to include "not_delegating_to"
+      expect(quit.code).to eq 403
     end
 
     it "I could check delegation fees - if I could cover fee" do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
       fees = pools.delegation_fees id
-      expect(fees.code).to eq 403
       expect(fees).to include "cannot_cover_fee"
+      expect(fees.code).to eq 403
     end
   end
 
@@ -363,8 +365,8 @@ RSpec.describe CardanoWallet::Shelley do
     it "I could calculate migration cost" do
       id = create_shelley_wallet
       cost = SHELLEY.migrations.cost(id)
-      expect(cost.code).to eq 403
       expect(cost).to include "nothing_to_migrate"
+      expect(cost.code).to eq 403
     end
 
     it "I could migrate all my funds" do
@@ -372,8 +374,8 @@ RSpec.describe CardanoWallet::Shelley do
       target_id = create_shelley_wallet
       addrs = SHELLEY.addresses.list(target_id).map{ |a| a['id'] }
       migr = SHELLEY.migrations.migrate(id, PASS, addrs)
-      expect(migr.code).to eq 403
       expect(migr).to include "nothing_to_migrate"
+      expect(migr.code).to eq 403
     end
   end
 
