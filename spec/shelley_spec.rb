@@ -262,16 +262,62 @@ RSpec.describe CardanoWallet::Shelley do
       expect(pools.list).to include "query_param_missing"
     end
 
-    it "Can join Stake Pool" do
+    it "Can join and quit Stake Pool", :nightly => true do
       id = create_fixture_shelley_wallet
+      wait_for_shelley_wallet_to_sync id
+      #Get current active delegation if there is any
+      #and don't use it when picking pool_id
+      #otherwise the test could fail trying to join pool that wallet already joined
       pools = SHELLEY.stake_pools
-      pool_id = pools.list({stake: 1000}).sample['id']
-      puts pool_id
+      deleg = SHELLEY.wallets.get(id)['delegation']['active']
+      if deleg['status'] == "delegating"
+        current_pool_id = deleg['target']
+        pool_id = (pools.list({stake: 1000}).map{|p| p['id']} - [current_pool_id]).sample
+      else
+        pool_id = pools.list({stake: 1000}).sample['id']
+      end
 
+      puts "Joining pool: #{pool_id}"
       join = pools.join(pool_id, id, PASS)
-      puts join
+      expect(join).to include "status"
       expect(join.code).to eq 202
+
+      join_tx_id = join['id']
+      eventually "Checking if join tx id (#{join_tx_id}) is in_ledger" do
+        tx = SHELLEY.transactions.get(id, join_tx_id)
+        tx['status'] == "in_ledger"
+      end
+
+      puts "Quitting pool: #{pool_id}"
+      quit = pools.quit(id, PASS)
+      expect(quit.code).to eq 202
+
+      quit_tx_id = quit['id']
+      eventually "Checking if join tx id (#{quit_tx_id}) is in_ledger" do
+        tx = SHELLEY.transactions.get(id, quit_tx_id)
+        tx['status'] == "in_ledger"
+      end
     end
+
+    # it "Can join all pools from cardano_cli", :nightly => true do
+    #   id = create_fixture_shelley_wallet
+    #   wait_for_shelley_wallet_to_sync id
+    #
+    #   pools = File.read("spec/pools.txt")
+    #   pools.split.each do |pool_id|
+    #     puts "Tryin to join pool: #{pool_id}"
+    #     join = SHELLEY.stake_pools.join(pool_id, id, PASS)
+    #     join_tx_id = join['id']
+    #     puts join
+    #     puts join_tx_id
+    #     expect(join.code).to eq 202
+    #     eventually "Checking if join transaction tx is in_ledger" do
+    #       tx = SHELLEY.transactions.get(id, join_tx_id)
+    #       tx['status'] == "in_ledger"
+    #     end
+    #   end
+    #
+    # end
 
     it "I could join Stake Pool - if I knew it's id" do
       id = create_shelley_wallet
