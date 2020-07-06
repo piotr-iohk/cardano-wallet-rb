@@ -331,7 +331,6 @@ RSpec.describe CardanoWallet::Shelley do
 
     it "I could join Stake Pool - if I had enough to cover fee" do
       id = create_shelley_wallet
-      wait_for_shelley_wallet_to_sync id
       pools = SHELLEY.stake_pools
       pool_id = pools.list({stake: 1000})[0]['id']
 
