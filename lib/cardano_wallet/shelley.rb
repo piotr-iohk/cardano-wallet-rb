@@ -202,7 +202,7 @@ module CardanoWallet
       def create(wid, passphrase, payments, q = {})
         payments_formatted = Utils.format_payments(payments)
         q.empty? ? query = '' : query = Utils.to_query(q)
-        self.class.post("/wallets/#{wid}/transactions#{q}",
+        self.class.post("/wallets/#{wid}/transactions#{query}",
         :body => { :payments => payments_formatted,
                    :passphrase => passphrase
                  }.to_json,
