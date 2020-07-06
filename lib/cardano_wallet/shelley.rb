@@ -195,17 +195,18 @@ module CardanoWallet
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
       # @param payments [Hash] addres, amount pair
+      # @param q [Hash] query param (currently only withdrawRewards = true | false)
       #
       # @example
-      #   create(wid, passphrase, {addr1: 1000000})
-      def create(wid, passphrase, payments)
+      #   create(wid, passphrase, {addr1: 1000000}, q)
+      def create(wid, passphrase, payments, q = {})
         payments_formatted = Utils.format_payments(payments)
-        self.class.post("/wallets/#{wid}/transactions",
+        q.empty? ? query = '' : query = Utils.to_query(q)
+        self.class.post("/wallets/#{wid}/transactions#{q}",
         :body => { :payments => payments_formatted,
                    :passphrase => passphrase
                  }.to_json,
         :headers => { 'Content-Type' => 'application/json' } )
-
       end
 
       # Estimate fees for transaction
