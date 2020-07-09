@@ -22,6 +22,12 @@ module CardanoWallet
         Addresses.new @opt
       end
 
+      # API for CoinSelections
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
+      def coin_selections
+        CoinSelections.new @opt
+      end
+
       # Get API for Byron transactions
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
       def transactions
@@ -152,6 +158,26 @@ module CardanoWallet
         self.class.put("/byron-wallets/#{wid}/addresses/#{addr_id}")
       end
 
+    end
+
+    # API for CoinSelections
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
+    class CoinSelections < Base
+      def initialize opt
+        super
+      end
+
+      # Show random coin selection for particular payment
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/byronSelectCoins
+      #
+      # @example
+      #   random(wid, {address1: 123, address2: 456})
+      def random(wid, payments)
+        payments_formatted = Utils.format_payments(payments)
+        self.class.post("/byron-wallets/#{wid}/coin-selections/random",
+                        :body => {:payments => payments_formatted}.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
+      end
     end
 
     # Byron transactions
