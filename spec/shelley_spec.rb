@@ -283,7 +283,7 @@ RSpec.describe CardanoWallet::Shelley do
       teardown
     end
 
-    it "Can list stake pools only when stake is provided" do
+    it "Can list stake pools only when stake is provided", :nightly => true do
       pools = SHELLEY.stake_pools
       expect(pools.list({stake: 1000}).code).to eq 200
 
@@ -358,7 +358,7 @@ RSpec.describe CardanoWallet::Shelley do
       expect(join.code).to eq 404
     end
 
-    it "I could join Stake Pool - if I had enough to cover fee" do
+    it "I could join Stake Pool - if I had enough to cover fee", :nightly => true do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
       pool_id = pools.list({stake: 1000})[0]['id']
@@ -369,17 +369,15 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I could quit stake pool - if I was delegating" do
-      id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      quit = pools.quit(id, PASS)
+      quit = pools.quit(SPID, PASS)
       expect(quit).to include "not_delegating_to"
       expect(quit.code).to eq 403
     end
 
     it "I could check delegation fees - if I could cover fee" do
-      id = create_shelley_wallet
       pools = SHELLEY.stake_pools
-      fees = pools.delegation_fees id
+      fees = pools.delegation_fees SPID
       expect(fees).to include "cannot_cover_fee"
       expect(fees.code).to eq 403
     end
