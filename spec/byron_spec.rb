@@ -152,6 +152,36 @@ RSpec.describe CardanoWallet::Byron do
     end
   end
 
+  describe CardanoWallet::Byron::CoinSelections do
+
+    after(:each) do
+      teardown
+    end
+
+    it "I could trigger random coin selection - if had money" do
+      wid = create_byron_wallet "icarus"
+      addresses = BYRON.addresses.list(wid)
+      addr_amount =
+         {addresses[0]['id'] => 123,
+          addresses[1]['id'] => 456
+         }
+
+      rnd = BYRON.coin_selections.random wid, addr_amount
+      expect(rnd).to include "inputs_depleted"
+      expect(rnd.code).to eq 403
+    end
+
+    it "ArgumentError on bad argument address_amount" do
+      wid = create_byron_wallet
+      payments =[[{addr1: 1, addr2: 2}], "addr:123", 123]
+      cs = BYRON.coin_selections
+      payments.each do |p|
+        expect{ cs.random(wid, p) }.to raise_error ArgumentError,
+            "argument should be Hash"
+      end
+    end
+  end
+
   describe CardanoWallet::Byron::Transactions do
     after(:each) do
       teardown
