@@ -369,15 +369,19 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I could quit stake pool - if I was delegating" do
+      id = create_shelley_wallet
+
       pools = SHELLEY.stake_pools
-      quit = pools.quit(SPID, PASS)
+      quit = pools.quit(id, PASS)
       expect(quit).to include "not_delegating_to"
       expect(quit.code).to eq 403
     end
 
     it "I could check delegation fees - if I could cover fee" do
+      id = create_shelley_wallet
+
       pools = SHELLEY.stake_pools
-      fees = pools.delegation_fees SPID
+      fees = pools.delegation_fees(id)
       expect(fees).to include "cannot_cover_fee"
       expect(fees.code).to eq 403
     end

@@ -167,7 +167,7 @@ RSpec.describe CardanoWallet::Byron do
          }
 
       rnd = BYRON.coin_selections.random wid, addr_amount
-      expect(rnd).to include "inputs_depleted"
+      expect(rnd).to include "not_enough_money"
       expect(rnd.code).to eq 403
     end
 

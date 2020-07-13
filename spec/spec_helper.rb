@@ -28,7 +28,7 @@ require "cardano_wallet"
 PASS = "Secure Passphrase"
 # Artificial, non-existing id's
 TXID = "1acf9c0f504746cbd102b49ffaf16dcafd14c0a2f1bbb23af265fbe0a04951cc"
-SPID = "feea59bc6664572e631e9adfee77142cb51264156debf2e52970cc01"
+SPID = "feea59bc6664572e631e9adfee77142cb51264156debf2e52970cc00"
 ###
 BYRON = CardanoWallet.new.byron
 SHELLEY = CardanoWallet.new.shelley
