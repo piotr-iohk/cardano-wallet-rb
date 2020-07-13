@@ -44,7 +44,7 @@ end
 
 def get_fixture_shelley_wallet_tx_id
   # Existing and on fixture_shelley_wallet
-  "d43440a19aca81fd5e0c54964935da9344b86c9974359ae44cfa3632bbd09d3f"
+  "7dc804eec7fd054dc59375c51620119e2a95fcb229c4f68eb57e566dcf80be5b"
 end
 
 def create_fixture_shelley_wallet
@@ -77,9 +77,9 @@ def get_fixture_byron_wallet_tx_id(style = "random")
   # Existing and on fixture_byron_wallet
   case style
   when "random"
-    "735c0aa70bc2b0f2a6c944a5b9130ab24d0835aef17bcec0c39cfe8ca81f6122"
+    "a8d2228c05c9d2358ed6f2de92348d034d03aa58ad567ef4bcaf3dfd15b9c260"
   when "icarus"
-    "bde137315c8db66fd6723d66468eb922a2ef4706e26b6a8e235a1098d6d5c75c"
+    "723222e2fb28406311290d5d27c20e71d2f954706ba1d1405ec280f41918ad3b"
   end
 end
 
