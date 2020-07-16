@@ -64,6 +64,14 @@ def wait_for_shelley_wallet_to_sync(wid)
   end
 end
 
+def create_byron_wallet_with(mnem, style = "random")
+  BYRON.wallets.create({style: style,
+                        name: "Wallet from mnemonic_sentence",
+                        passphrase: PASS,
+                        mnemonic_sentence: mnem
+                       })['id']
+end
+
 def create_byron_wallet(style = "random")
   style == "random" ? mnem = mnemonic_sentence("12") : mnem = mnemonic_sentence("15")
   BYRON.wallets.create({style: style,

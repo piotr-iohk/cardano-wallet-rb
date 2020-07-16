@@ -200,7 +200,7 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I can send transaction and funds are received", :nightly => true  do
-      amt = 1
+      amt = 1000000
       wid = create_fixture_shelley_wallet
       wait_for_shelley_wallet_to_sync(wid)
       target_id = create_shelley_wallet
@@ -218,7 +218,7 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I can send transaction using 'withdrawRewards' flag and funds are received", :nightly => true  do
-      amt = 1
+      amt = 1000000
       wid = create_fixture_shelley_wallet
       wait_for_shelley_wallet_to_sync(wid)
       target_id = create_shelley_wallet

@@ -158,6 +158,16 @@ module CardanoWallet
         self.class.put("/byron-wallets/#{wid}/addresses/#{addr_id}")
       end
 
+      # Import addresses to Byron wallet.
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/importAddresses
+      # @param wid [String] wallet id
+      # @param addresses [Array] array of addresses
+      def bulk_import(wid, addresses)
+        self.class.put("/byron-wallets/#{wid}/addresses",
+        :body => { :addresses => addresses
+                 }.to_json,
+        :headers => { 'Content-Type' => 'application/json' } )
+      end
     end
 
     # API for CoinSelections
