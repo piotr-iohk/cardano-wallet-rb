@@ -224,7 +224,6 @@ RSpec.describe CardanoWallet::Byron do
       end
 
       it "I can send transaction and funds are received, #{style} -> shelley", :nightly => true  do
-        pending "Byron transactions not supported yet"
         amt = 1000000
         wid = create_fixture_byron_wallet style
         wait_for_byron_wallet_to_sync(wid)

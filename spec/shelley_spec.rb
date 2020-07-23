@@ -258,6 +258,10 @@ RSpec.describe CardanoWallet::Shelley do
       fees = txs.payment_fees(id, {address => 1000000})
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
+
+      fees = txs.payment_fees(id, {address => 1000000}, {withdrawRewards: true})
+      expect(fees).to include "not_enough_money"
+      expect(fees.code).to eq 403
     end
 
     it "I could forget transaction" do
