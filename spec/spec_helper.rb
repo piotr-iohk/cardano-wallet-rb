@@ -42,10 +42,6 @@ def create_shelley_wallet
                          })['id']
 end
 
-def get_fixture_shelley_wallet_tx_id
-  # Existing and on fixture_shelley_wallet
-  "7dc804eec7fd054dc59375c51620119e2a95fcb229c4f68eb57e566dcf80be5b"
-end
 
 def create_fixture_shelley_wallet
   # Wallet with funds on shelley testnet
@@ -81,15 +77,6 @@ def create_byron_wallet(style = "random")
                        })['id']
 end
 
-def get_fixture_byron_wallet_tx_id(style = "random")
-  # Existing and on fixture_byron_wallet
-  case style
-  when "random"
-    "a8d2228c05c9d2358ed6f2de92348d034d03aa58ad567ef4bcaf3dfd15b9c260"
-  when "icarus"
-    "723222e2fb28406311290d5d27c20e71d2f954706ba1d1405ec280f41918ad3b"
-  end
-end
 
 def create_fixture_byron_wallet(style = "random")
   # Wallet with funds on shelley testnet

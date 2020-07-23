@@ -176,15 +176,6 @@ RSpec.describe CardanoWallet::Shelley do
       expect(txs.get(wid, TXID).code).to eq 404
     end
 
-    it "I can see transaction by ID", :nightly => true do
-      wid = create_fixture_shelley_wallet
-      wait_for_shelley_wallet_to_sync wid
-      txs = SHELLEY.transactions
-      tx_id = get_fixture_shelley_wallet_tx_id
-      expect(txs.get(wid, tx_id).code).to eq 200
-      expect(txs.get(wid, tx_id)['id']).to eq tx_id
-    end
-
     it "Can list transactions" do
       id = create_shelley_wallet
       txs = SHELLEY.transactions
@@ -265,6 +256,10 @@ RSpec.describe CardanoWallet::Shelley do
       txs = SHELLEY.transactions
 
       fees = txs.payment_fees(id, {address => 1000000})
+      expect(fees).to include "not_enough_money"
+      expect(fees.code).to eq 403
+
+      fees = txs.payment_fees(id, {address => 1000000}, {withdrawRewards: true})
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end
