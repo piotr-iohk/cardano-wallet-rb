@@ -208,7 +208,7 @@ RSpec.describe CardanoWallet::Shelley do
       end
     end
 
-    it "I can send transaction using 'withdrawRewards' flag and funds are received", :nightly => true  do
+    it "I can send transaction using 'withdrawal' flag and funds are received", :nightly => true  do
       amt = 1000000
       wid = create_fixture_shelley_wallet
       wait_for_shelley_wallet_to_sync(wid)
@@ -216,7 +216,7 @@ RSpec.describe CardanoWallet::Shelley do
       wait_for_shelley_wallet_to_sync(target_id)
       address = SHELLEY.addresses.list(target_id)[0]['id']
 
-      tx_sent = SHELLEY.transactions.create(wid, PASS, {address => amt}, {withdrawRewards: true})
+      tx_sent = SHELLEY.transactions.create(wid, PASS, {address => amt}, 'self')
       expect(tx_sent.code).to eq 202
 
       eventually "Funds are on target wallet: #{target_id}" do
@@ -243,8 +243,8 @@ RSpec.describe CardanoWallet::Shelley do
       address = SHELLEY.addresses.list(target_id)[0]['id']
       txs = SHELLEY.transactions
 
-      tx_sent = txs.create(id, PASS, {address => 1000000}, {withdrawRewards: true})
-      expect(tx_sent).to include "not_enough_money"
+      tx_sent = txs.create(id, PASS, {address => 1000000}, 'self')
+      expect(tx_sent).to include "withdrawal_not_worth"
       expect(tx_sent.code).to eq 403
     end
 
@@ -259,7 +259,7 @@ RSpec.describe CardanoWallet::Shelley do
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
 
-      fees = txs.payment_fees(id, {address => 1000000}, {withdrawRewards: true})
+      fees = txs.payment_fees(id, {address => 1000000}, 'self')
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end

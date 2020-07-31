@@ -195,17 +195,26 @@ module CardanoWallet
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
       # @param payments [Hash] addres, amount pair
-      # @param q [Hash] query param (currently only withdrawRewards = true | false)
+      # @param withdrawal [Strin or Array] 'self' or mnemonic sentence
       #
       # @example
-      #   create(wid, passphrase, {addr1: 1000000}, q)
-      def create(wid, passphrase, payments, q = {})
+      #   create(wid, passphrase, {addr1: 1000000}, 'self')
+      def create(wid, passphrase, payments, withdrawal = nil)
         payments_formatted = Utils.format_payments(payments)
-        q.empty? ? query = '' : query = Utils.to_query(q)
-        self.class.post("/wallets/#{wid}/transactions#{query}",
-        :body => { :payments => payments_formatted,
-                   :passphrase => passphrase
-                 }.to_json,
+
+        if withdrawal
+          payload = { :payments => payments_formatted,
+                      :passphrase => passphrase,
+                      :withdrawal => withdrawal,
+                    }
+        else
+          payload = { :payments => payments_formatted,
+                      :passphrase => passphrase
+                    }
+        end
+
+        self.class.post("/wallets/#{wid}/transactions",
+        :body => payload.to_json,
         :headers => { 'Content-Type' => 'application/json' } )
       end
 
@@ -214,11 +223,19 @@ module CardanoWallet
       #
       # @example
       #   payment_fees(wid, {addr1: 1000000})
-      def payment_fees(wid, payments, q = {})
+      def payment_fees(wid, payments, withdrawal = nil)
         payments_formatted = Utils.format_payments(payments)
-        q.empty? ? query = '' : query = Utils.to_query(q)
-        self.class.post("/wallets/#{wid}/payment-fees#{query}",
-        :body => { :payments => payments_formatted }.to_json,
+
+        if withdrawal
+          payload = { :payments => payments_formatted,
+                      :withdrawal => withdrawal
+                    }
+        else
+          payload = { :payments => payments_formatted }
+        end
+
+        self.class.post("/wallets/#{wid}/payment-fees",
+        :body => payload.to_json,
         :headers => { 'Content-Type' => 'application/json' } )
       end
 
