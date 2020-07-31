@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up cardano-wallet
-      run: NODE_CONFIG_PATH=`pwd`/spec/shelley-testnet docker-compose -f docker-compose-shelley.yml up --detach
+      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -24,11 +24,11 @@ jobs:
       run: bundle install
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
-    - name: Run all tests
-      run: bundle exec rspec
+    - name: Run all tests (temporarily without nightly)
+      run: bundle exec rspec . -t ~nightly
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NETWORK: testnet
       WALLET: dev-master-shelley
-      NODE: master
+      NODE: 1.18.0
