@@ -244,7 +244,7 @@ RSpec.describe CardanoWallet::Shelley do
       txs = SHELLEY.transactions
 
       tx_sent = txs.create(id, PASS, {address => 1000000}, 'self')
-      expect(tx_sent).to include "withdrawal_not_worth"
+      expect(tx_sent).to include "not_enough_money"
       expect(tx_sent.code).to eq 403
     end
 
@@ -344,7 +344,7 @@ RSpec.describe CardanoWallet::Shelley do
     #
     # end
 
-    it "I could join Stake Pool - if I knew it's id" do
+    it "I could join Stake Pool - if I knew it's id", :nightly => true do
       id = create_shelley_wallet
       pools = SHELLEY.stake_pools
 
