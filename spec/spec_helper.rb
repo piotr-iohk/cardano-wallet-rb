@@ -44,7 +44,8 @@ end
 
 
 def create_fixture_shelley_wallet
-  # Wallet with funds on shelley testnet
+  # Wallet with funds on shelley testnet:
+  # addr1qq9grthf479qmyygzrenk6yqqhtvf3aq2xy5jfscm334qsvs47mevx68ut5g3jt5gxntcaygv3szmhzyytdjfat9758schw95w
   mnemonics = %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd]
   SHELLEY.wallets.create({name: "Fixture wallet with funds",
                           passphrase: PASS,

@@ -193,8 +193,8 @@ RSpec.describe CardanoWallet::Shelley do
     it "I can send transaction and funds are received", :nightly => true  do
       amt = 1000000
       wid = create_fixture_shelley_wallet
-      wait_for_shelley_wallet_to_sync(wid)
       target_id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync(wid)
       wait_for_shelley_wallet_to_sync(target_id)
       address = SHELLEY.addresses.list(target_id)[0]['id']
 
@@ -211,8 +211,8 @@ RSpec.describe CardanoWallet::Shelley do
     it "I can send transaction using 'withdrawal' flag and funds are received", :nightly => true  do
       amt = 1000000
       wid = create_fixture_shelley_wallet
-      wait_for_shelley_wallet_to_sync(wid)
       target_id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync(wid)
       wait_for_shelley_wallet_to_sync(target_id)
       address = SHELLEY.addresses.list(target_id)[0]['id']
 
@@ -223,6 +223,37 @@ RSpec.describe CardanoWallet::Shelley do
         available = SHELLEY.wallets.get(target_id)['balance']['available']['quantity']
         total = SHELLEY.wallets.get(target_id)['balance']['total']['quantity']
         (available == amt) && (total == amt)
+      end
+    end
+
+    it "I can send transaction with metadata", :nightly => true  do
+      amt = 1000000
+      metadata = {"1": [ ["k", "v"] ]}
+
+      wid = create_fixture_shelley_wallet
+      target_id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync(wid)
+      wait_for_shelley_wallet_to_sync(target_id)
+      address = SHELLEY.addresses.list(target_id)[0]['id']
+
+      tx_sent = SHELLEY.transactions.create(wid,
+                                            PASS,
+                                            {address => amt},
+                                            nil,
+                                            metadata
+                                           )
+      expect(tx_sent.code).to eq 202
+
+      eventually "Funds are on target wallet: #{target_id}" do
+        available = SHELLEY.wallets.get(target_id)['balance']['available']['quantity']
+        total = SHELLEY.wallets.get(target_id)['balance']['total']['quantity']
+        (available == amt) && (total == amt)
+      end
+
+      eventually "Metadata is present on sent tx: #{tx_sent['id']}" do
+        meta_src = SHELLEY.transactions.get(wid, tx_sent['id'])['metadata']
+        meta_dst = SHELLEY.transactions.get(target_id, tx_sent['id'])['metadata']
+        (meta_src == metadata) && (meta_dst == metadata)
       end
     end
 
@@ -248,6 +279,27 @@ RSpec.describe CardanoWallet::Shelley do
       expect(tx_sent.code).to eq 403
     end
 
+    it "I can estimate fee", :nightly => true  do
+      amt = 1000000
+      metadata = {"1": [ ["k", "v"] ]}
+
+      wid = create_fixture_shelley_wallet
+      target_id = create_shelley_wallet
+      wait_for_shelley_wallet_to_sync(wid)
+      address = SHELLEY.addresses.list(target_id)[0]['id']
+
+      txs = SHELLEY.transactions
+      fees = txs.payment_fees(id, {address => amt})
+      expect(fees.code).to eq 200
+
+      fees = txs.payment_fees(id, {address => amt}, 'self')
+      expect(fees.code).to eq 200
+
+      fees = txs.payment_fees(id, {address => amt}, 'self', metadata)
+      expect(fees.code).to eq 200
+
+    end
+
     it "I could estimate transaction fee - if I had money" do
       id = create_shelley_wallet
       target_id = create_shelley_wallet
@@ -260,6 +312,10 @@ RSpec.describe CardanoWallet::Shelley do
       expect(fees.code).to eq 403
 
       fees = txs.payment_fees(id, {address => 1000000}, 'self')
+      expect(fees).to include "not_enough_money"
+      expect(fees.code).to eq 403
+
+      fees = txs.payment_fees(id, {address => 1000000}, 'self', {"1" => "abc"})
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end
