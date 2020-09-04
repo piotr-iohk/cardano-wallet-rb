@@ -195,23 +195,18 @@ module CardanoWallet
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
       # @param payments [Hash] addres, amount pair
-      # @param withdrawal [Strin or Array] 'self' or mnemonic sentence
+      # @param withdrawal [String or Array] 'self' or mnemonic sentence
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       #
       # @example
-      #   create(wid, passphrase, {addr1: 1000000}, 'self')
-      def create(wid, passphrase, payments, withdrawal = nil)
+      #   create(wid, passphrase, {addr1: 1000000}, 'self', {"1": "abc"})
+      def create(wid, passphrase, payments, withdrawal = nil, metadata = nil)
         payments_formatted = Utils.format_payments(payments)
-
-        if withdrawal
-          payload = { :payments => payments_formatted,
-                      :passphrase => passphrase,
-                      :withdrawal => withdrawal,
-                    }
-        else
-          payload = { :payments => payments_formatted,
-                      :passphrase => passphrase
-                    }
-        end
+        payload = { :payments => payments_formatted,
+                    :passphrase => passphrase
+                  }
+        payload[:withdrawal] = withdrawal if withdrawal
+        payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/transactions",
         :body => payload.to_json,
@@ -222,17 +217,13 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
-      #   payment_fees(wid, {addr1: 1000000})
-      def payment_fees(wid, payments, withdrawal = nil)
+      #   payment_fees(wid, {addr1: 1000000}, {"1": "abc"})
+      def payment_fees(wid, payments, withdrawal = nil, metadata = nil)
         payments_formatted = Utils.format_payments(payments)
+        payload = { :payments => payments_formatted }
 
-        if withdrawal
-          payload = { :payments => payments_formatted,
-                      :withdrawal => withdrawal
-                    }
-        else
-          payload = { :payments => payments_formatted }
-        end
+        payload[:withdrawal] = withdrawal if withdrawal
+        payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/payment-fees",
         :body => payload.to_json,

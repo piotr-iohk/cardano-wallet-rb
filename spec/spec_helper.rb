@@ -33,7 +33,7 @@ SPID = "feea59bc6664572e631e9adfee77142cb51264156debf2e52970cc00"
 BYRON = CardanoWallet.new.byron
 SHELLEY = CardanoWallet.new.shelley
 # timeout in seconds for custom verifications
-TIMEOUT = 300
+TIMEOUT = 60
 
 def create_shelley_wallet
   SHELLEY.wallets.create({name: "Wallet from mnemonic_sentence",
@@ -44,7 +44,9 @@ end
 
 
 def create_fixture_shelley_wallet
-  # Wallet with funds on shelley testnet
+  # Wallet with funds on shelley testnet:
+  # id: b1fb863243a9ae451bc4e2e662f60ff217b126e2
+  # addr: addr1qq9grthf479qmyygzrenk6yqqhtvf3aq2xy5jfscm334qsvs47mevx68ut5g3jt5gxntcaygv3szmhzyytdjfat9758schw95w
   mnemonics = %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd]
   SHELLEY.wallets.create({name: "Fixture wallet with funds",
                           passphrase: PASS,
@@ -82,8 +84,12 @@ def create_fixture_byron_wallet(style = "random")
   # Wallet with funds on shelley testnet
   case style
   when "random"
+    # id: 94c0af1034914f4455b7eb795ebea74392deafe9
+    # addr: 37btjrVyb4KEciULDrqJDBh6SjgPqi9JJ5qQqWGgvtsB7GcsuqorKceMTBRudFK8zDu3btoC5FtN7K1PEHmko4neQPfV9TDVfivc9JTZVNPKtRd4w2
     mnemonics = %w[purchase carbon forest frog robot actual used news broken start plunge family]
   when "icarus"
+    # id: a468e96ab85ad2043e48cf2e5f3437b4356769f4
+    # addr: 2cWKMJemoBahV5kQm7SzV7Yc2b4vyqLE7oYJiEkd5GE5GCKzSCgh9HBaRKkdVrxzsEuRb
     mnemonics = %w[security defense food inhale voyage tomorrow guess galaxy junior guilt vendor soon escape design pretty]
   end
 

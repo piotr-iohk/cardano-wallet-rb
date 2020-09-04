@@ -1,1 +1,1 @@
-NETWORK=testnet WALLET=dev-master-byron NODE=master docker-compose $1
+NETWORK=testnet WALLET=dev-master-shelley NODE=1.19.0 NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml $1
