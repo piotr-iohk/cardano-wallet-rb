@@ -24,8 +24,8 @@ jobs:
       run: bundle install
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
-    - name: Run all tests (temporarily without nightly)
-      run: bundle exec rspec . -t ~nightly
+    - name: Run all tests
+      run: bundle exec rspec . 
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
