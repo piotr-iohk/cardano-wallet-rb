@@ -52,7 +52,12 @@ RSpec.describe CardanoWallet::Shelley do
 
     it "I can send transaction with metadata" do
       amt = 1000000
-      metadata = {"1" => "cardano"}
+      metadata = { "0"=>{ "string"=>"cardano" },
+                   "1"=>{ "int"=>14 },
+                   "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+                   "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+                   "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                                   { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
 
       address = SHELLEY.addresses.list(@target_id_meta)[0]['id']
       tx_sent = SHELLEY.transactions.create(@wid,
@@ -79,7 +84,12 @@ RSpec.describe CardanoWallet::Shelley do
 
     it "I can estimate fee" do
       amt = 1000000
-      metadata = {"1": "cardano"}
+      metadata = { "0"=>{ "string"=>"cardano" },
+                   "1"=>{ "int"=>14 },
+                   "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+                   "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+                   "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                                   { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
 
       address = SHELLEY.addresses.list(@target_id)[0]['id']
 
@@ -386,7 +396,14 @@ RSpec.describe CardanoWallet::Shelley do
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
 
-      fees = txs.payment_fees(id, {address => 1000000}, 'self', {"1" => "abc"})
+      metadata = { "0"=>{ "string"=>"cardano" },
+                   "1"=>{ "int"=>14 },
+                   "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+                   "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+                   "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                                   { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+
+      fees = txs.payment_fees(id, {address => 1000000}, 'self', metadata)
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end
