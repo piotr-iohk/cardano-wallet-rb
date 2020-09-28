@@ -15,6 +15,11 @@ module CardanoWallet
       def network
         Network.new @opt
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Utils
+      def utils
+        Utils.new @opt
+      end
     end
 
     # API for Network
@@ -40,6 +45,19 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkParameters
       def parameters
         self.class.get("/network/parameters")
+      end
+
+    end
+
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Utils
+    class Utils < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/inspectAddress
+      def addresses(address_id)
+        self.class.get("/addresses/#{address_id}")
       end
 
     end
