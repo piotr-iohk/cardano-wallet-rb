@@ -13,7 +13,11 @@ module CardanoWallet
       opt[:url] ||= "#{opt[:protocol]}://#{opt[:host]}:#{opt[:port]}/v2"
       opt[:cacert] ||= ''
       opt[:pem] ||= ''
+      opt[:timeout] ||= -1
       self.class.base_uri opt[:url]
+      unless(opt[:timeout] == -1)
+        self.class.default_timeout(opt[:timeout].to_i)
+      end
 
       unless opt[:cacert].empty?
         ENV['SSL_CERT_FILE'] = opt[:cacert]
