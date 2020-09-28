@@ -24,10 +24,16 @@ RSpec.describe CardanoWallet do
         expect(n.code).to eq 200
       end
 
+      it "Can set timeout" do
+        n = CardanoWallet.new({timeout: 120, port: 8090}).misc.network.information
+        expect(n.code).to eq 200
+      end
+
       it "Can set certs to fly with Daedalus" do
         options = { protocol: "https",
                     host: "localhost",
                     port: "4673",
+                    timeout: 120,
                     cacert: "#{Dir.pwd}/spec/certs/ca.crt",
                     pem: "#{Dir.pwd}/spec/certs/client.pem"
                   }
