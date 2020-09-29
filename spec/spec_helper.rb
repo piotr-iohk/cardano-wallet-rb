@@ -33,7 +33,7 @@ SPID = "feea59bc6664572e631e9adfee77142cb51264156debf2e52970cc00"
 BYRON = CardanoWallet.new.byron
 SHELLEY = CardanoWallet.new.shelley
 # timeout in seconds for custom verifications
-TIMEOUT = 60
+TIMEOUT = 120
 
 def create_shelley_wallet
   SHELLEY.wallets.create({name: "Wallet from mnemonic_sentence",
