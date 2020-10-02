@@ -65,7 +65,6 @@ CW = CardanoWallet.new
 BYRON = CW.byron
 SHELLEY = CW.shelley
 MISC = CW.misc
-PROXY = CW.proxy
 
 #Byron
 BYRON.wallets.list.each_with_index do |wal, i|
@@ -82,9 +81,8 @@ SHELLEY.wallets.get(w['id'])
 #Misc
 MISC.network.information
 MISC.network.clock
-
-#Proxy
-PROXY.submit_external_transaction(File.new("/tmp/blob.bin").read)
+MISC.proxy.submit_external_transaction(File.new("/tmp/blob.bin").read)
+MISC.utils.addresses("addr_test1vqrlltfahghjxl5sy5h5mvfrrlt6me5fqphhwjqvj5jd88cccqcek")
 ```
 
 Refer to [documentation](https://rubydoc.info/gems/cardano_wallet) for more details.
