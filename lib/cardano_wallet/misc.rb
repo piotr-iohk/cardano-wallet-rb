@@ -25,6 +25,33 @@ module CardanoWallet
       def proxy
         Proxy.new @opt
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Settings
+      def settings
+        Settings.new @opt
+      end
+    end
+
+    # API for Network
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Settings
+    class Settings < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSettings
+      def get
+        self.class.get("/settings")
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putSettings
+      def update(params)
+        CardanoWallet::Utils.verify_param_is_hash!(params)
+        self.class.put("/settings",
+                       :body => {"settings" => params}.to_json,
+                       :headers => { 'Content-Type' => 'application/json' }
+                      )
+      end
     end
 
     # API for Network

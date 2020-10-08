@@ -17,6 +17,8 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     after(:all) do
+      settings = CardanoWallet.new.misc.settings
+      s = settings.update({:pool_metadata_source => "none"})
       teardown
     end
 
@@ -166,6 +168,28 @@ RSpec.describe CardanoWallet::Shelley do
         tx = SHELLEY.transactions.get(@wid, quit_tx_id)
         tx['status'] == "in_ledger"
       end
+    end
+
+    it "Pool metadata is updated when settings are updated" do
+      settings = CardanoWallet.new.misc.settings
+      pools = SHELLEY.stake_pools
+
+      s = settings.update({:pool_metadata_source => "direct"})
+      expect(s.code).to eq 204
+
+      eventually "Pools have metadata when 'pool_metadata_source' => 'direct'" do
+        sps = pools.list({stake: 1000})
+        sps.select{|p| p['metadata']}.size > 0
+      end
+
+      s = settings.update({:pool_metadata_source => "none"})
+      expect(s.code).to eq 204
+
+      eventually "Pools have no metadata when 'pool_metadata_source' => 'none'" do
+        sps = pools.list({stake: 1000})
+        sps.select{|p| p['metadata']}.size == 0
+      end
+
     end
   end
 
