@@ -83,4 +83,25 @@ RSpec.describe CardanoWallet::Misc do
     end
   end
 
+  describe CardanoWallet::Misc::Settings do
+    before(:all) do
+        SETTINGS = CardanoWallet.new.misc.settings
+    end
+
+    after(:all) do
+      SETTINGS.update({:pool_metadata_source => "none"})
+    end
+
+    ["direct", "https://smash.pl", "none"].each do |strategy|
+      it "I can read and update settings to #{strategy}" do
+        s = SETTINGS.update({:pool_metadata_source => strategy})
+        expect(s.code).to eq 204
+
+        g = SETTINGS.get
+        expect(g['pool_metadata_source']).to eq strategy
+        expect(g.code).to eq 200
+      end
+    end
+  end
+
 end
