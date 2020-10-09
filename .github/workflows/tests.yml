@@ -38,4 +38,4 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NETWORK: testnet
       WALLET: dev-master-shelley
-      NODE: 1.20.0
+      NODE: 1.21.1
