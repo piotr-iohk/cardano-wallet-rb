@@ -23,7 +23,7 @@ RSpec.describe CardanoWallet::Byron do
       amt = 1000000
       address = SHELLEY.addresses.list(target_wid)[0]['id']
 
-      tx_sent = BYRON.transactions.create(source_wid, PASS, {address => amt})
+      tx_sent = BYRON.transactions.create(source_wid, PASS, [{address => amt}])
       expect(tx_sent['status']).to eq "pending"
       expect(tx_sent.code).to eq 202
 
@@ -217,10 +217,10 @@ RSpec.describe CardanoWallet::Byron do
     it "I could trigger random coin selection - if had money" do
       wid = create_byron_wallet "icarus"
       addresses = BYRON.addresses.list(wid)
-      addr_amount =
-         {addresses[0]['id'] => 123,
-          addresses[1]['id'] => 456
-         }
+      addr_amount = [
+         { addresses[0]['id'] => 123 },
+         { addresses[1]['id'] => 456 }
+        ]
 
       rnd = BYRON.coin_selections.random wid, addr_amount
       expect(rnd).to include "not_enough_money"
@@ -229,12 +229,16 @@ RSpec.describe CardanoWallet::Byron do
 
     it "ArgumentError on bad argument address_amount" do
       wid = create_byron_wallet
-      payments =[[{addr1: 1, addr2: 2}], "addr:123", 123]
+      p =[[{addr1: 1, addr2: 2}], "addr:123", 123]
       cs = BYRON.coin_selections
-      payments.each do |p|
-        expect{ cs.random(wid, p) }.to raise_error ArgumentError,
-            "argument should be Hash"
-      end
+      expect{ cs.random(wid, p[0]) }.to raise_error ArgumentError,
+            "argument should be Array of single Hashes"
+
+      expect{ cs.random(wid, p[1]) }.to raise_error ArgumentError,
+            "argument should be Array"
+
+      expect{ cs.random(wid, p[2]) }.to raise_error ArgumentError,
+            "argument should be Array"
     end
   end
 
@@ -271,7 +275,7 @@ RSpec.describe CardanoWallet::Byron do
         target_id = create_byron_wallet "icarus"
         target_addr = BYRON.addresses.list(target_id)[0]['id']
 
-        tx_sent = BYRON.transactions.create(id, PASS, {target_addr => 1000000})
+        tx_sent = BYRON.transactions.create(id, PASS, [{target_addr => 1000000}])
         expect(tx_sent.code).to eq 403
         expect(tx_sent).to include "not_enough_money"
       end
@@ -281,7 +285,7 @@ RSpec.describe CardanoWallet::Byron do
         target_id = create_byron_wallet "icarus"
         target_addr = BYRON.addresses.list(target_id)[0]['id']
 
-        fees = BYRON.transactions.payment_fees(id, {target_addr => 1000000})
+        fees = BYRON.transactions.payment_fees(id, [{target_addr => 1000000}])
         expect(fees.code).to eq 403
         expect(fees).to include "not_enough_money"
       end
