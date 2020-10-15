@@ -11,7 +11,7 @@ RSpec.describe CardanoWallet::Utils do
   end
 
   it "format_payments" do
-    payments = CardanoWallet::Utils.format_payments({a1: 1, a2: 2})
+    payments = CardanoWallet::Utils.format_payments([{a1: 1}, {a2: 2}])
     payments_expected =
       [
         {:address => "a1",
@@ -25,7 +25,7 @@ RSpec.describe CardanoWallet::Utils do
       ]
     expect(payments).to eq payments_expected
 
-    payments = CardanoWallet::Utils.format_payments({a1: 1})
+    payments = CardanoWallet::Utils.format_payments([{a1: 1}])
     payments_expected =
       [
         {:address => "a1",
@@ -36,7 +36,7 @@ RSpec.describe CardanoWallet::Utils do
     expect(payments).to eq payments_expected
 
     expect{ CardanoWallet::Utils.format_payments("BadArg") }.to raise_error ArgumentError,
-      "argument should be Hash"
+      "argument should be Array"
   end
 
   # it "test minUtxoValue" do
