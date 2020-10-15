@@ -181,7 +181,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/byronSelectCoins
       #
       # @example
-      #   random(wid, {address1: 123, address2: 456})
+      #   random(wid, [{addr1: 1000000}, {addr2: 1000000}])
       def random(wid, payments)
         payments_formatted = Utils.format_payments(payments)
         self.class.post("/byron-wallets/#{wid}/coin-selections/random",
@@ -217,10 +217,10 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
-      # @param payments [Hash] addres, amount pair
+      # @param payments [Array of Hashes] addres, amount pair
       #
       # @example
-      #   create(wid, passphrase, {addr1: 1000000})
+      #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}])
       def create(wid, passphrase, payments)
         payments_formatted = Utils.format_payments(payments)
         self.class.post("/byron-wallets/#{wid}/transactions",
@@ -234,7 +234,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
-      #   payment_fees(wid, {addr1: 1000000})
+      #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
       def payment_fees(wid, payments)
         payments_formatted = Utils.format_payments(payments)
         self.class.post("/byron-wallets/#{wid}/payment-fees",

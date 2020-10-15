@@ -26,7 +26,7 @@ RSpec.describe CardanoWallet::Shelley do
       amt = 1000000
 
       address = SHELLEY.addresses.list(@target_id)[0]['id']
-      tx_sent = SHELLEY.transactions.create(@wid, PASS, {address => amt})
+      tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}])
       expect(tx_sent['status']).to eq "pending"
       expect(tx_sent.code).to eq 202
 
@@ -41,7 +41,7 @@ RSpec.describe CardanoWallet::Shelley do
       amt = 1000000
       address = SHELLEY.addresses.list(@target_id_withdrawal)[0]['id']
 
-      tx_sent = SHELLEY.transactions.create(@wid, PASS, {address => amt}, 'self')
+      tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}], 'self')
       expect(tx_sent['status']).to eq "pending"
       expect(tx_sent.code).to eq 202
 
@@ -64,7 +64,7 @@ RSpec.describe CardanoWallet::Shelley do
       address = SHELLEY.addresses.list(@target_id_meta)[0]['id']
       tx_sent = SHELLEY.transactions.create(@wid,
                                             PASS,
-                                            {address => amt},
+                                            [{address => amt}],
                                             nil,
                                             metadata
                                            )
@@ -335,24 +335,28 @@ RSpec.describe CardanoWallet::Shelley do
     it "I could trigger random coin selection - if had money" do
       wid = create_shelley_wallet
       addresses = SHELLEY.addresses.list(wid)
-      addr_amount =
-         {addresses[0]['id'] => 123,
-          addresses[1]['id'] => 456
-         }
+      addr_amount = [
+         { addresses[0]['id'] => 123 },
+         { addresses[1]['id'] => 456 }
+        ]
 
       rnd = SHELLEY.coin_selections.random wid, addr_amount
-      expect(rnd.code).to eq 403
       expect(rnd).to include "not_enough_money"
+      expect(rnd.code).to eq 403
     end
 
     it "ArgumentError on bad argument address_amount" do
       wid = create_shelley_wallet
-      payments =[[{addr1: 1, addr2: 2}], "addr:123", 123]
+      p =[[{addr1: 1, addr2: 2}], "addr:123", 123]
       cs = SHELLEY.coin_selections
-      payments.each do |p|
-        expect{ cs.random(wid, p) }.to raise_error ArgumentError,
-            "argument should be Hash"
-      end
+      expect{ cs.random(wid, p[0]) }.to raise_error ArgumentError,
+            "argument should be Array of single Hashes"
+
+      expect{ cs.random(wid, p[1]) }.to raise_error ArgumentError,
+            "argument should be Array"
+
+      expect{ cs.random(wid, p[2]) }.to raise_error ArgumentError,
+            "argument should be Array"
     end
   end
 
@@ -388,8 +392,9 @@ RSpec.describe CardanoWallet::Shelley do
       target_id = create_shelley_wallet
       address = SHELLEY.addresses.list(target_id)[0]['id']
       txs = SHELLEY.transactions
+      amt = [{address => 1000000}]
 
-      tx_sent = txs.create(id, PASS, {address => 1000000})
+      tx_sent = txs.create(id, PASS, amt)
       expect(tx_sent).to include "not_enough_money"
       expect(tx_sent.code).to eq 403
     end
@@ -399,8 +404,9 @@ RSpec.describe CardanoWallet::Shelley do
       target_id = create_shelley_wallet
       address = SHELLEY.addresses.list(target_id)[0]['id']
       txs = SHELLEY.transactions
+      amt = [{address => 1000000}]
 
-      tx_sent = txs.create(id, PASS, {address => 1000000}, 'self')
+      tx_sent = txs.create(id, PASS, amt, 'self')
       expect(tx_sent).to include "not_enough_money"
       expect(tx_sent.code).to eq 403
     end
@@ -409,14 +415,15 @@ RSpec.describe CardanoWallet::Shelley do
       id = create_shelley_wallet
       target_id = create_shelley_wallet
       address = SHELLEY.addresses.list(target_id)[0]['id']
+      amt = [{address => 1000000}]
 
       txs = SHELLEY.transactions
 
-      fees = txs.payment_fees(id, {address => 1000000})
+      fees = txs.payment_fees(id, amt)
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
 
-      fees = txs.payment_fees(id, {address => 1000000}, 'self')
+      fees = txs.payment_fees(id, amt, 'self')
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
 
@@ -427,7 +434,7 @@ RSpec.describe CardanoWallet::Shelley do
                    "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
                                    { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
 
-      fees = txs.payment_fees(id, {address => 1000000}, 'self', metadata)
+      fees = txs.payment_fees(id, amt, 'self', metadata)
       expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end
