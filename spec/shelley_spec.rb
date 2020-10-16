@@ -107,10 +107,9 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I could join Stake Pool - if I knew it's id" do
-      id = create_shelley_wallet
       pools = SHELLEY.stake_pools
 
-      join = pools.join(SPID, id, PASS)
+      join = pools.join(SPID, @wid, PASS)
       expect(join).to include "no_such_pool"
       expect(join.code).to eq 404
     end
@@ -190,6 +189,32 @@ RSpec.describe CardanoWallet::Shelley do
         sps.select{|p| p['metadata']}.size == 0
       end
 
+    end
+
+    it "I can trigger random coin selection" do
+      addresses = SHELLEY.addresses.list(@wid)
+      payments = [
+         { addresses[0]['id'] => 1000000 },
+         { addresses[1]['id'] => 1000000 }
+        ]
+
+      rnd = SHELLEY.coin_selections.random @wid, payments
+      expect(rnd['inputs']).not_to be_empty
+      expect(rnd['outputs']).not_to be_empty
+      expect(rnd.code).to eq 200
+    end
+
+    it "I can trigger random coin selection delegation action" do
+      pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
+      action_join = {action: "join", pool: pid}
+
+      rnd = SHELLEY.coin_selections.random_deleg @wid, action_join
+      expect(rnd['inputs']).not_to be_empty
+      expect(rnd['outputs']).not_to be_empty
+      expect(rnd['certificates']).not_to be_empty
+      expect(rnd['certificates'].to_s).to include "register_reward_account"
+      expect(rnd['certificates'].to_s).to include "join_pool"
+      expect(rnd.code).to eq 200
     end
   end
 
@@ -330,6 +355,21 @@ RSpec.describe CardanoWallet::Shelley do
 
     after(:each) do
       teardown
+    end
+
+    it "I could trigger random coin selection delegation action - if had money" do
+      wid = create_shelley_wallet
+      addresses = SHELLEY.addresses.list(wid)
+      action_join = {action: "join", pool: SPID_BECH32}
+      action_quit = {action: "quit"}
+
+      rnd = SHELLEY.coin_selections.random_deleg wid, action_join
+      expect(rnd).to include "no_such_pool"
+      expect(rnd.code).to eq 403
+
+      rnd = SHELLEY.coin_selections.random_deleg wid, action_quit
+      expect(rnd).to include "not_delegating_to"
+      expect(rnd.code).to eq 403
     end
 
     it "I could trigger random coin selection - if had money" do

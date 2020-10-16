@@ -165,6 +165,19 @@ module CardanoWallet
                         :body => {:payments => payments_formatted}.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
       end
+
+      # Coin selection -> Delegation action
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/selectCoins
+      #
+      # @example
+      #   random(wid, {action: "join", pool: "poolid"})
+      #   random(wid, {action: "quit"})
+      def random_deleg(wid, deleg_action)
+        payments_formatted = Utils.verify_param_is_hash!(deleg_action)
+        self.class.post("/wallets/#{wid}/coin-selections/random",
+                        :body => {:delegation_action => deleg_action}.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Transactions
