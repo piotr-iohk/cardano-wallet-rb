@@ -85,7 +85,6 @@ RSpec.describe CardanoWallet::Shelley do
     end
 
     it "I can estimate fee" do
-      amt = 1000000
       metadata = { "0"=>{ "string"=>"cardano" },
                    "1"=>{ "int"=>14 },
                    "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
@@ -94,15 +93,16 @@ RSpec.describe CardanoWallet::Shelley do
                                    { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
 
       address = SHELLEY.addresses.list(@target_id)[0]['id']
+      amt = [{address => 1000000}]
 
       txs = SHELLEY.transactions
-      fees = txs.payment_fees(@wid, {address => amt})
+      fees = txs.payment_fees(@wid, amt)
       expect(fees.code).to eq 202
 
-      fees = txs.payment_fees(@wid, {address => amt}, 'self')
+      fees = txs.payment_fees(@wid, amt, 'self')
       expect(fees.code).to eq 202
 
-      fees = txs.payment_fees(@wid, {address => amt}, 'self', metadata)
+      fees = txs.payment_fees(@wid, amt, 'self', metadata)
       expect(fees.code).to eq 202
     end
 
