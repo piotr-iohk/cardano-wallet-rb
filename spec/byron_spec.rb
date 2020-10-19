@@ -41,6 +41,7 @@ RSpec.describe CardanoWallet::Byron do
     it "I can send transaction and funds are received, icarus -> shelley" do
       test_byron_tx(@wid_ic, @target_id_ic)
     end
+    
   end
 
   describe CardanoWallet::Byron::Wallets do

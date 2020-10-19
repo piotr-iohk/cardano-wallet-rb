@@ -22,210 +22,235 @@ RSpec.describe CardanoWallet::Shelley do
       teardown
     end
 
-    it "I can send transaction and funds are received" do
-      amt = 1000000
+    describe "Shelley Transactions" do
+      it "I can send transaction and funds are received" do
+        amt = 1000000
 
-      address = SHELLEY.addresses.list(@target_id)[0]['id']
-      tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}])
-      expect(tx_sent['status']).to eq "pending"
-      expect(tx_sent.code).to eq 202
+        address = SHELLEY.addresses.list(@target_id)[0]['id']
+        tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}])
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
 
-      eventually "Funds are on target wallet: #{@target_id}" do
-        available = SHELLEY.wallets.get(@target_id)['balance']['available']['quantity']
-        total = SHELLEY.wallets.get(@target_id)['balance']['total']['quantity']
-        (available == amt) && (total == amt)
+        eventually "Funds are on target wallet: #{@target_id}" do
+          available = SHELLEY.wallets.get(@target_id)['balance']['available']['quantity']
+          total = SHELLEY.wallets.get(@target_id)['balance']['total']['quantity']
+          (available == amt) && (total == amt)
+        end
+      end
+
+      it "I can send transaction using 'withdrawal' flag and funds are received" do
+        amt = 1000000
+        address = SHELLEY.addresses.list(@target_id_withdrawal)[0]['id']
+
+        tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}], 'self')
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "Funds are on target wallet: #{@target_id_withdrawal}" do
+          available = SHELLEY.wallets.get(@target_id_withdrawal)['balance']['available']['quantity']
+          total = SHELLEY.wallets.get(@target_id_withdrawal)['balance']['total']['quantity']
+          (available == amt) && (total == amt)
+        end
+      end
+
+      it "I can send transaction with metadata" do
+        amt = 1000000
+        metadata = { "0"=>{ "string"=>"cardano" },
+                     "1"=>{ "int"=>14 },
+                     "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+                     "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+                     "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                                     { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+
+        address = SHELLEY.addresses.list(@target_id_meta)[0]['id']
+        tx_sent = SHELLEY.transactions.create(@wid,
+                                              PASS,
+                                              [{address => amt}],
+                                              nil,
+                                              metadata
+                                             )
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "Funds are on target wallet: #{@target_id_meta}" do
+          available = SHELLEY.wallets.get(@target_id_meta)['balance']['available']['quantity']
+          total = SHELLEY.wallets.get(@target_id_meta)['balance']['total']['quantity']
+          (available == amt) && (total == amt)
+        end
+
+        eventually "Metadata is present on sent tx: #{tx_sent['id']}" do
+          meta_src = SHELLEY.transactions.get(@wid, tx_sent['id'])['metadata']
+          meta_dst = SHELLEY.transactions.get(@target_id_meta, tx_sent['id'])['metadata']
+          (meta_src == metadata) && (meta_dst == metadata)
+        end
+      end
+
+      it "I can estimate fee" do
+        metadata = { "0"=>{ "string"=>"cardano" },
+                     "1"=>{ "int"=>14 },
+                     "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+                     "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+                     "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                                     { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+
+        address = SHELLEY.addresses.list(@target_id)[0]['id']
+        amt = [{address => 1000000}]
+
+        txs = SHELLEY.transactions
+        fees = txs.payment_fees(@wid, amt)
+        expect(fees.code).to eq 202
+
+        fees = txs.payment_fees(@wid, amt, 'self')
+        expect(fees.code).to eq 202
+
+        fees = txs.payment_fees(@wid, amt, 'self', metadata)
+        expect(fees.code).to eq 202
       end
     end
 
-    it "I can send transaction using 'withdrawal' flag and funds are received" do
-      amt = 1000000
-      address = SHELLEY.addresses.list(@target_id_withdrawal)[0]['id']
+    describe "Stake Pools" do
 
-      tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}], 'self')
-      expect(tx_sent['status']).to eq "pending"
-      expect(tx_sent.code).to eq 202
+      it "I could join Stake Pool - if I knew it's id" do
+        pools = SHELLEY.stake_pools
 
-      eventually "Funds are on target wallet: #{@target_id_withdrawal}" do
-        available = SHELLEY.wallets.get(@target_id_withdrawal)['balance']['available']['quantity']
-        total = SHELLEY.wallets.get(@target_id_withdrawal)['balance']['total']['quantity']
-        (available == amt) && (total == amt)
+        join = pools.join(SPID, @wid, PASS)
+        expect(join).to include "no_such_pool"
+        expect(join.code).to eq 404
+      end
+
+      it "I could join Stake Pool - if I had enough to cover fee" do
+        id = create_shelley_wallet
+        pools = SHELLEY.stake_pools
+        pool_id = pools.list({stake: 1000})[0]['id']
+
+        join = pools.join(pool_id, id, PASS)
+        expect(join).to include "cannot_cover_fee"
+        expect(join.code).to eq 403
+      end
+
+      it "Can list stake pools only when stake is provided" do
+        pools = SHELLEY.stake_pools
+        expect(pools.list({stake: 1000}).code).to eq 200
+
+        expect(pools.list).to include "query_param_missing"
+        expect(pools.list.code).to eq 400
+      end
+
+      it "Can join and quit Stake Pool" do
+
+        #Get current active delegation if there is any
+        #and don't use it when picking pool_id
+        #otherwise the test could fail trying to join pool that wallet already joined
+        pools = SHELLEY.stake_pools
+        deleg = SHELLEY.wallets.get(@wid)['delegation']['active']
+        if deleg['status'] == "delegating"
+          current_pool_id = deleg['target']
+          pool_id = (pools.list({stake: 1000}).map{|p| p['id']} - [current_pool_id]).sample
+        else
+          pool_id = pools.list({stake: 1000}).sample['id']
+        end
+
+        puts "Joining pool: #{pool_id}"
+        join = pools.join(pool_id, @wid, PASS)
+        expect(join).to include "status"
+        expect(join.code).to eq 202
+
+        join_tx_id = join['id']
+        eventually "Checking if join tx id (#{join_tx_id}) is in_ledger" do
+          tx = SHELLEY.transactions.get(@wid, join_tx_id)
+          tx['status'] == "in_ledger"
+        end
+
+        puts "Quitting pool: #{pool_id}"
+        quit = pools.quit(@wid, PASS)
+        expect(quit).to include "status"
+        expect(quit.code).to eq 202
+
+        quit_tx_id = quit['id']
+        eventually "Checking if join tx id (#{quit_tx_id}) is in_ledger" do
+          tx = SHELLEY.transactions.get(@wid, quit_tx_id)
+          tx['status'] == "in_ledger"
+        end
+      end
+
+      it "Pool metadata is updated when settings are updated" do
+        settings = CardanoWallet.new.misc.settings
+        pools = SHELLEY.stake_pools
+
+        s = settings.update({:pool_metadata_source => "direct"})
+        expect(s.code).to eq 204
+
+        eventually "Pools have metadata when 'pool_metadata_source' => 'direct'" do
+          sps = pools.list({stake: 1000})
+          sps.select{|p| p['metadata']}.size > 0
+        end
+
+        s = settings.update({:pool_metadata_source => "none"})
+        expect(s.code).to eq 204
+
+        eventually "Pools have no metadata when 'pool_metadata_source' => 'none'" do
+          sps = pools.list({stake: 1000})
+          sps.select{|p| p['metadata']}.size == 0
+        end
+
       end
     end
 
-    it "I can send transaction with metadata" do
-      amt = 1000000
-      metadata = { "0"=>{ "string"=>"cardano" },
-                   "1"=>{ "int"=>14 },
-                   "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
-                   "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
-                   "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
-                                   { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+    describe "Coin Selection" do
 
-      address = SHELLEY.addresses.list(@target_id_meta)[0]['id']
-      tx_sent = SHELLEY.transactions.create(@wid,
-                                            PASS,
-                                            [{address => amt}],
-                                            nil,
-                                            metadata
-                                           )
-      expect(tx_sent['status']).to eq "pending"
-      expect(tx_sent.code).to eq 202
+      it "I can trigger random coin selection" do
+        addresses = SHELLEY.addresses.list(@wid)
+        payments = [
+           { addresses[0]['id'] => 1000000 },
+           { addresses[1]['id'] => 1000000 }
+          ]
 
-      eventually "Funds are on target wallet: #{@target_id_meta}" do
-        available = SHELLEY.wallets.get(@target_id_meta)['balance']['available']['quantity']
-        total = SHELLEY.wallets.get(@target_id_meta)['balance']['total']['quantity']
-        (available == amt) && (total == amt)
+        rnd = SHELLEY.coin_selections.random @wid, payments
+        expect(rnd['inputs']).not_to be_empty
+        expect(rnd['outputs']).not_to be_empty
+        expect(rnd.code).to eq 200
       end
 
-      eventually "Metadata is present on sent tx: #{tx_sent['id']}" do
-        meta_src = SHELLEY.transactions.get(@wid, tx_sent['id'])['metadata']
-        meta_dst = SHELLEY.transactions.get(@target_id_meta, tx_sent['id'])['metadata']
-        (meta_src == metadata) && (meta_dst == metadata)
-      end
-    end
+      it "I can trigger random coin selection delegation action" do
+        pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
+        action_join = {action: "join", pool: pid}
 
-    it "I can estimate fee" do
-      metadata = { "0"=>{ "string"=>"cardano" },
-                   "1"=>{ "int"=>14 },
-                   "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
-                   "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
-                   "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
-                                   { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
-
-      address = SHELLEY.addresses.list(@target_id)[0]['id']
-      amt = [{address => 1000000}]
-
-      txs = SHELLEY.transactions
-      fees = txs.payment_fees(@wid, amt)
-      expect(fees.code).to eq 202
-
-      fees = txs.payment_fees(@wid, amt, 'self')
-      expect(fees.code).to eq 202
-
-      fees = txs.payment_fees(@wid, amt, 'self', metadata)
-      expect(fees.code).to eq 202
-    end
-
-    it "I could join Stake Pool - if I knew it's id" do
-      pools = SHELLEY.stake_pools
-
-      join = pools.join(SPID, @wid, PASS)
-      expect(join).to include "no_such_pool"
-      expect(join.code).to eq 404
-    end
-
-    it "I could join Stake Pool - if I had enough to cover fee" do
-      id = create_shelley_wallet
-      pools = SHELLEY.stake_pools
-      pool_id = pools.list({stake: 1000})[0]['id']
-
-      join = pools.join(pool_id, id, PASS)
-      expect(join).to include "cannot_cover_fee"
-      expect(join.code).to eq 403
-    end
-
-    it "Can list stake pools only when stake is provided" do
-      pools = SHELLEY.stake_pools
-      expect(pools.list({stake: 1000}).code).to eq 200
-
-      expect(pools.list).to include "query_param_missing"
-      expect(pools.list.code).to eq 400
-    end
-
-    it "Can join and quit Stake Pool" do
-
-      #Get current active delegation if there is any
-      #and don't use it when picking pool_id
-      #otherwise the test could fail trying to join pool that wallet already joined
-      pools = SHELLEY.stake_pools
-      deleg = SHELLEY.wallets.get(@wid)['delegation']['active']
-      if deleg['status'] == "delegating"
-        current_pool_id = deleg['target']
-        pool_id = (pools.list({stake: 1000}).map{|p| p['id']} - [current_pool_id]).sample
-      else
-        pool_id = pools.list({stake: 1000}).sample['id']
+        rnd = SHELLEY.coin_selections.random_deleg @wid, action_join
+        expect(rnd['inputs']).not_to be_empty
+        expect(rnd['outputs']).not_to be_empty
+        expect(rnd['certificates']).not_to be_empty
+        expect(rnd['certificates'].to_s).to include "register_reward_account"
+        expect(rnd['certificates'].to_s).to include "join_pool"
+        expect(rnd.code).to eq 200
       end
 
-      puts "Joining pool: #{pool_id}"
-      join = pools.join(pool_id, @wid, PASS)
-      expect(join).to include "status"
-      expect(join.code).to eq 202
+      it "I could trigger random coin selection delegation action - if I had money" do
+        wid = create_shelley_wallet
+        pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
+        action_join = {action: "join", pool: pid}
 
-      join_tx_id = join['id']
-      eventually "Checking if join tx id (#{join_tx_id}) is in_ledger" do
-        tx = SHELLEY.transactions.get(@wid, join_tx_id)
-        tx['status'] == "in_ledger"
+        rnd = SHELLEY.coin_selections.random_deleg wid, action_join
+        expect(rnd).to include "cannot_cover_fee"
+        expect(rnd.code).to eq 403
       end
 
-      puts "Quitting pool: #{pool_id}"
-      quit = pools.quit(@wid, PASS)
-      expect(quit).to include "status"
-      expect(quit.code).to eq 202
+      it "I could trigger random coin selection delegation action - if I known pool id" do
+        wid = create_shelley_wallet
+        addresses = SHELLEY.addresses.list(wid)
+        action_join = {action: "join", pool: SPID_BECH32}
+        action_quit = {action: "quit"}
 
-      quit_tx_id = quit['id']
-      eventually "Checking if join tx id (#{quit_tx_id}) is in_ledger" do
-        tx = SHELLEY.transactions.get(@wid, quit_tx_id)
-        tx['status'] == "in_ledger"
+        rnd = SHELLEY.coin_selections.random_deleg wid, action_join
+        expect(rnd).to include "no_such_pool"
+        expect(rnd.code).to eq 404
+
+        rnd = SHELLEY.coin_selections.random_deleg wid, action_quit
+        expect(rnd).to include "not_delegating_to"
+        expect(rnd.code).to eq 403
       end
+      
     end
 
-    it "Pool metadata is updated when settings are updated" do
-      settings = CardanoWallet.new.misc.settings
-      pools = SHELLEY.stake_pools
-
-      s = settings.update({:pool_metadata_source => "direct"})
-      expect(s.code).to eq 204
-
-      eventually "Pools have metadata when 'pool_metadata_source' => 'direct'" do
-        sps = pools.list({stake: 1000})
-        sps.select{|p| p['metadata']}.size > 0
-      end
-
-      s = settings.update({:pool_metadata_source => "none"})
-      expect(s.code).to eq 204
-
-      eventually "Pools have no metadata when 'pool_metadata_source' => 'none'" do
-        sps = pools.list({stake: 1000})
-        sps.select{|p| p['metadata']}.size == 0
-      end
-
-    end
-
-    it "I can trigger random coin selection" do
-      addresses = SHELLEY.addresses.list(@wid)
-      payments = [
-         { addresses[0]['id'] => 1000000 },
-         { addresses[1]['id'] => 1000000 }
-        ]
-
-      rnd = SHELLEY.coin_selections.random @wid, payments
-      expect(rnd['inputs']).not_to be_empty
-      expect(rnd['outputs']).not_to be_empty
-      expect(rnd.code).to eq 200
-    end
-
-    it "I can trigger random coin selection delegation action" do
-      pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
-      action_join = {action: "join", pool: pid}
-
-      rnd = SHELLEY.coin_selections.random_deleg @wid, action_join
-      expect(rnd['inputs']).not_to be_empty
-      expect(rnd['outputs']).not_to be_empty
-      expect(rnd['certificates']).not_to be_empty
-      expect(rnd['certificates'].to_s).to include "register_reward_account"
-      expect(rnd['certificates'].to_s).to include "join_pool"
-      expect(rnd.code).to eq 200
-    end
-
-    it "I could trigger random coin selection delegation action - if I had money" do
-      wid = create_shelley_wallet
-      pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
-      action_join = {action: "join", pool: pid}
-
-      rnd = SHELLEY.coin_selections.random_deleg wid, action_join
-      expect(rnd).to include "cannot_cover_fee"
-      expect(rnd.code).to eq 403
-    end
   end
 
   describe CardanoWallet::Shelley::Wallets do
@@ -365,21 +390,6 @@ RSpec.describe CardanoWallet::Shelley do
 
     after(:each) do
       teardown
-    end
-
-    it "I could trigger random coin selection delegation action - if I known pool id" do
-      wid = create_shelley_wallet
-      addresses = SHELLEY.addresses.list(wid)
-      action_join = {action: "join", pool: SPID_BECH32}
-      action_quit = {action: "quit"}
-
-      rnd = SHELLEY.coin_selections.random_deleg wid, action_join
-      expect(rnd).to include "no_such_pool"
-      expect(rnd.code).to eq 404
-
-      rnd = SHELLEY.coin_selections.random_deleg wid, action_quit
-      expect(rnd).to include "not_delegating_to"
-      expect(rnd.code).to eq 403
     end
 
     it "I could trigger random coin selection - if had money" do
