@@ -216,6 +216,16 @@ RSpec.describe CardanoWallet::Shelley do
       expect(rnd['certificates'].to_s).to include "join_pool"
       expect(rnd.code).to eq 200
     end
+
+    it "I could trigger random coin selection delegation action - if I had money" do
+      wid = create_shelley_wallet
+      pid = SHELLEY.stake_pools.list({stake: 1000000}).sample['id']
+      action_join = {action: "join", pool: pid}
+
+      rnd = SHELLEY.coin_selections.random_deleg wid, action_join
+      expect(rnd).to include "cannot_cover_fee"
+      expect(rnd.code).to eq 403
+    end
   end
 
   describe CardanoWallet::Shelley::Wallets do
@@ -357,7 +367,7 @@ RSpec.describe CardanoWallet::Shelley do
       teardown
     end
 
-    it "I could trigger random coin selection delegation action - if had money" do
+    it "I could trigger random coin selection delegation action - if I known pool id" do
       wid = create_shelley_wallet
       addresses = SHELLEY.addresses.list(wid)
       action_join = {action: "join", pool: SPID_BECH32}
@@ -365,7 +375,7 @@ RSpec.describe CardanoWallet::Shelley do
 
       rnd = SHELLEY.coin_selections.random_deleg wid, action_join
       expect(rnd).to include "no_such_pool"
-      expect(rnd.code).to eq 403
+      expect(rnd.code).to eq 404
 
       rnd = SHELLEY.coin_selections.random_deleg wid, action_quit
       expect(rnd).to include "not_delegating_to"
