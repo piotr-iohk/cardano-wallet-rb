@@ -202,7 +202,7 @@ module CardanoWallet
       #   random(wid, {action: "join", pool: "poolid"})
       #   random(wid, {action: "quit"})
       def random_deleg(wid, deleg_action)
-        payments_formatted = Utils.verify_param_is_hash!(deleg_action)
+        Utils.verify_param_is_hash!(deleg_action)
         self.class.post("/wallets/#{wid}/coin-selections/random",
                         :body => {:delegation_action => deleg_action}.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
@@ -287,6 +287,24 @@ module CardanoWallet
     class StakePools < Base
       def initialize opt
         super
+      end
+
+      # Stake pools maintenance actions
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postMaintenanceAction
+      #
+      # @example
+      #   maintenance_action({ "maintenance_action": "gc_stake_pools" })
+      def trigger_maintenance_actions(action = {})
+        Utils.verify_param_is_hash!(action)
+        self.class.post("/stake-pools/maintenance-actions",
+          :body => action.to_json,
+          :headers => { 'Content-Type' => 'application/json' } )
+      end
+
+      # Metdata GC Status
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getMaintenanceActions
+      def view_maintenance_actions
+        self.class.get("/stake-pools/maintenance-actions")
       end
 
       # List all stake pools
