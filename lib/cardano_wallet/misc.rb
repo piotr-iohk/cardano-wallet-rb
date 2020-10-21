@@ -30,6 +30,7 @@ module CardanoWallet
       def settings
         Settings.new @opt
       end
+
     end
 
     # API for Network
@@ -85,6 +86,16 @@ module CardanoWallet
     class Utils < Base
       def initialize opt
         super
+      end
+
+      # @see http://localhost:8000/specifications/api/#operation/signMetadata
+      def sign_metadata(wid, role, index, pass, metadata)
+        payload = { passphrase: pass }
+        payload[:metadata] = metadata if metadata
+
+        self.class.post("/wallets/#{wid}/#{role}/#{index}/signatures",
+                        :body => payload.to_json,
+                        :headers => { 'Content-Type' => 'application/json' } )
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/inspectAddress
