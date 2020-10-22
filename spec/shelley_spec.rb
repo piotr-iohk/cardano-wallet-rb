@@ -199,13 +199,16 @@ RSpec.describe CardanoWallet::Shelley do
     describe "Coin Selection" do
 
       it "I can trigger random coin selection" do
-        addresses = SHELLEY.addresses.list(@wid)
+        wid = create_shelley_wallet
+        addresses = SHELLEY.addresses.list(wid)
         payments = [
            { addresses[0]['id'] => 1000000 },
            { addresses[1]['id'] => 1000000 }
           ]
 
         rnd = SHELLEY.coin_selections.random @wid, payments
+        expect(rnd.to_s).to include "outputs"
+        expect(rnd.to_s).to include "change"
         expect(rnd['inputs']).not_to be_empty
         expect(rnd['outputs']).not_to be_empty
         expect(rnd.code).to eq 200
@@ -216,8 +219,11 @@ RSpec.describe CardanoWallet::Shelley do
         action_join = {action: "join", pool: pid}
 
         rnd = SHELLEY.coin_selections.random_deleg @wid, action_join
+        expect(rnd.to_s).to include "outputs"
+        expect(rnd.to_s).to include "change"
         expect(rnd['inputs']).not_to be_empty
-        expect(rnd['outputs']).not_to be_empty
+        expect(rnd['change']).not_to be_empty
+        expect(rnd['outputs']).to be_empty
         expect(rnd['certificates']).not_to be_empty
         expect(rnd['certificates'].to_s).to include "register_reward_account"
         expect(rnd['certificates'].to_s).to include "join_pool"
@@ -248,7 +254,7 @@ RSpec.describe CardanoWallet::Shelley do
         expect(rnd).to include "not_delegating_to"
         expect(rnd.code).to eq 403
       end
-      
+
     end
 
   end
