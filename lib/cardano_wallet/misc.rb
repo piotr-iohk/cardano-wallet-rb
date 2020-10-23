@@ -93,9 +93,10 @@ module CardanoWallet
         payload = { passphrase: pass }
         payload[:metadata] = metadata if metadata
 
-        self.class.post("/wallets/#{wid}/#{role}/#{index}/signatures",
+        self.class.post("/wallets/#{wid}/signatures/#{role}/#{index}",
                         :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json' } )
+                        :headers => { 'Content-Type' => 'application/json',
+                                      'Accept' => 'application/octet-stream'} )
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/inspectAddress

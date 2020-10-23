@@ -23,6 +23,25 @@ RSpec.describe CardanoWallet::Misc do
         UTILS = CardanoWallet.new.misc.utils
     end
 
+    after(:all) do
+      teardown
+    end
+
+    it "Get signed metadata" do
+      wid = create_shelley_wallet
+      ["utxo_internal", "utxo_external", "mutable_account", "multisig_script"].each do |role|
+        id = [*0..100000].sample
+        res = UTILS.sign_metadata(wid,
+                                  role,
+                                  id,
+                                  "Secure Passphrase",
+                                  { "0"=>{ "string"=>"cardano" } })
+        puts "#{wid}/#{role}/#{id}"
+        expect(res.code).to eq 200
+      end
+
+    end
+
     it "Inspect invalid address" do
       addr = "addr"
       res = UTILS.addresses addr
