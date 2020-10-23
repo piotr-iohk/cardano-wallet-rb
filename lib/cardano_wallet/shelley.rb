@@ -48,6 +48,35 @@ module CardanoWallet
         Migrations.new @opt
       end
 
+      # API for Keys
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Keys
+      def keys
+        Keys.new @opt
+      end
+
+    end
+
+    class Keys < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
+      def sign_metadata(wid, role, index, pass, metadata)
+        payload = { passphrase: pass }
+        payload[:metadata] = metadata if metadata
+
+        self.class.post("/wallets/#{wid}/signatures/#{role}/#{index}",
+                        :body => payload.to_json,
+                        :headers => { 'Content-Type' => 'application/json',
+                                      'Accept' => 'application/octet-stream'} )
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
+      def get_public_key(wid, role, index)
+        self.class.get("/wallets/#{wid}/keys/#{role}/#{index}")
+      end
+
     end
 
     # API for Wallets
