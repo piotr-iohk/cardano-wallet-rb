@@ -71,6 +71,29 @@ RSpec.describe CardanoWallet::Shelley do
         end
       end
 
+      it "Transaction with ttl = 0 would expire and I can forget it" do
+        amt = 1000000
+        ttl_in_s = 0
+
+        address = SHELLEY.addresses.list(@target_id_ttl)[0]['id']
+        tx_sent = SHELLEY.transactions.create(@wid,
+                                              PASS,
+                                              [{address => amt}],
+                                              withdrawal = nil,
+                                              metadata = nil,
+                                              ttl_in_s)
+        puts tx_sent
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "TX `#{tx_sent['id']}' expires on `#{@wid}'" do
+          SHELLEY.transactions.get(@wid, tx_sent['id'])['status'] == 'expired'
+        end
+        
+        res = SHELLEY.transactions.forget(@wid, tx_sent['id'])
+        expect(res.code).to eq 204
+      end
+
       it "I can send transaction using 'withdrawal' flag and funds are received" do
         amt = 1000000
         address = SHELLEY.addresses.list(@target_id_withdrawal)[0]['id']
