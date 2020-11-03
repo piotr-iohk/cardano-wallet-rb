@@ -7,10 +7,19 @@ RSpec.describe CardanoWallet::Shelley do
       @target_id = create_shelley_wallet
       @target_id_withdrawal = create_shelley_wallet
       @target_id_meta = create_shelley_wallet
+      @target_id_ttl = create_shelley_wallet
       wait_for_shelley_wallet_to_sync(@wid)
       wait_for_shelley_wallet_to_sync(@target_id)
       wait_for_shelley_wallet_to_sync(@target_id_withdrawal)
       wait_for_shelley_wallet_to_sync(@target_id_meta)
+      wait_for_shelley_wallet_to_sync(@target_id_ttl)
+
+      @nighly_wallets = [ @wid,
+                          @target_id,
+                          @target_id_withdrawal,
+                          @target_id_meta,
+                          @target_id_ttl
+                        ]
 
       # @wid = "b1fb863243a9ae451bc4e2e662f60ff217b126e2"
       # @target_id_meta = "f6168d58ed1b6e6037d535bc59802cf6c7c67523"
@@ -19,7 +28,9 @@ RSpec.describe CardanoWallet::Shelley do
     after(:all) do
       settings = CardanoWallet.new.misc.settings
       s = settings.update({:pool_metadata_source => "none"})
-      teardown
+      @nighly_wallets.each do |wid|
+        SHELLEY.wallets.delete wid
+      end
     end
 
     describe "Shelley Transactions" do
@@ -36,6 +47,51 @@ RSpec.describe CardanoWallet::Shelley do
           total = SHELLEY.wallets.get(@target_id)['balance']['total']['quantity']
           (available == amt) && (total == amt)
         end
+      end
+
+      it "I can send transaction with ttl and funds are received" do
+        amt = 1000000
+        ttl_in_s = 120
+
+        address = SHELLEY.addresses.list(@target_id_ttl)[0]['id']
+        tx_sent = SHELLEY.transactions.create(@wid,
+                                              PASS,
+                                              [{address => amt}],
+                                              withdrawal = nil,
+                                              metadata = nil,
+                                              ttl_in_s)
+        puts tx_sent
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "Funds are on target wallet: #{@target_id}" do
+          available = SHELLEY.wallets.get(@target_id_ttl)['balance']['available']['quantity']
+          total = SHELLEY.wallets.get(@target_id_ttl)['balance']['total']['quantity']
+          (available == amt) && (total == amt)
+        end
+      end
+
+      it "Transaction with ttl = 0 would expire and I can't forget it (for now)" do
+        amt = 1000000
+        ttl_in_s = 0
+
+        address = SHELLEY.addresses.list(@target_id_ttl)[0]['id']
+        tx_sent = SHELLEY.transactions.create(@wid,
+                                              PASS,
+                                              [{address => amt}],
+                                              withdrawal = nil,
+                                              metadata = nil,
+                                              ttl_in_s)
+        puts tx_sent
+        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "TX `#{tx_sent['id']}' expires on `#{@wid}'" do
+          SHELLEY.transactions.get(@wid, tx_sent['id'])['status'] == 'expired'
+        end
+
+        res = SHELLEY.transactions.forget(@wid, tx_sent['id'])
+        expect(res.code).to eq 403
       end
 
       it "I can send transaction using 'withdrawal' flag and funds are received" do

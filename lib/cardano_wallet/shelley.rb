@@ -239,16 +239,18 @@ module CardanoWallet
       # @param payments [Array of Hashes] addres, amount pair
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
       # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param ttl [Int] transaction's time-to-live in seconds
       #
       # @example
-      #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}], 'self', {"1": "abc"})
-      def create(wid, passphrase, payments, withdrawal = nil, metadata = nil)
+      #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}], 'self', {"1": "abc"}, ttl = 10)
+      def create(wid, passphrase, payments, withdrawal = nil, metadata = nil, ttl = nil)
         payments_formatted = Utils.format_payments(payments)
         payload = { :payments => payments_formatted,
                     :passphrase => passphrase
                   }
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
+        payload[:time_to_live] = { quantity: ttl, unit: "second" } if ttl
 
         self.class.post("/wallets/#{wid}/transactions",
         :body => payload.to_json,
@@ -259,13 +261,14 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
-      #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}], {"1": "abc"})
-      def payment_fees(wid, payments, withdrawal = nil, metadata = nil)
+      #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}], {"1": "abc"}, ttl = 10)
+      def payment_fees(wid, payments, withdrawal = nil, metadata = nil, ttl = nil)
         payments_formatted = Utils.format_payments(payments)
         payload = { :payments => payments_formatted }
 
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
+        payload[:time_to_live] = { quantity: ttl, unit: "second" } if ttl
 
         self.class.post("/wallets/#{wid}/payment-fees",
         :body => payload.to_json,
