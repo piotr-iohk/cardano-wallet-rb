@@ -72,6 +72,167 @@ RSpec.describe CardanoWallet::Misc do
       expect(res.code).to eq 200
     end
 
+    describe "Construct addresses" do
+      it "Enterprise script address - signature" do
+        script = {
+                  "payment": "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a"
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1wp6eswctz5wzrv3ceh3h4y3na2t6d95sjn23dawy0zlzg0q569eke"
+        expect(res.code).to eq 202
+      end
+
+      it "Enterprise script address - any" do
+        script = {
+                  "payment": {
+                      "any": [
+                          "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                          "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                          ]
+                      }
+                  }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1wzt2z3pa7etaxp7jurdg0m8jhsmtp4r2z56pd3a5q3jhxyc2ykp4j"
+        expect(res.code).to eq 202
+      end
+
+      it "Enterprise script address - all" do
+        script = {
+                  "payment": {
+                      "all": [
+                          "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                          "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                          ]
+                      }
+                  }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1wp4h4mtdkxr2x68zx4tk0cgmd9hymjgsuhmzaxkg5tkl3scr8umfh"
+        expect(res.code).to eq 202
+      end
+
+      it "Enterprise script address - some" do
+        script = {
+                  "payment": {
+                      "some": {
+                          "from": [
+                              "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                              "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4",
+                              "script_vkh1qw4l62k4203dllrk3dk3sfjpnh3gufhtrtm4qvtrvn4xjp5x5rt"
+                              ],
+                           "at_least": 2
+                           }
+                   }
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1wq5np0m5x03tax3kcdh6e2cet98qcfs80wtv4cyvl5taclcp983gu"
+        expect(res.code).to eq 202
+      end
+
+      it "Reward account script address - any" do
+        script = {
+                  "stake": {
+                      "any": [
+                          "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                          "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                          ]
+                      }
+                  }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "stake_test17zt2z3pa7etaxp7jurdg0m8jhsmtp4r2z56pd3a5q3jhxyc2vgezc"
+        expect(res.code).to eq 202
+      end
+
+      it "Delegating script address - any" do
+        script = {
+                    "payment": {
+                        "some": {
+                            "from": [
+                                "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                                "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4",
+                                "script_vkh1qw4l62k4203dllrk3dk3sfjpnh3gufhtrtm4qvtrvn4xjp5x5rt"
+                                ],
+                             "at_least": 2
+                             }
+                        },
+                    "stake": {
+                        "any": [
+                            "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                            "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                            ]
+                        }
+                  }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1xq5np0m5x03tax3kcdh6e2cet98qcfs80wtv4cyvl5tacluk59zrmajh6vra9cx6slk090pkkr2x59f5zmrmgpr9wvfsjg2j62"
+        expect(res.code).to eq 202
+      end
+
+      it "Enterprise pub key address" do
+        script = {
+                  "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j"
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1vpqthemrg5kczwfjjnahwt65elhrl95e9hcgufnajtp6wfgdmxm9u"
+        expect(res.code).to eq 202
+      end
+
+      it "Reward account pub key address" do
+        script = {
+                  "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j"
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1vpqthemrg5kczwfjjnahwt65elhrl95e9hcgufnajtp6wfgdmxm9u"
+        expect(res.code).to eq 202
+      end
+
+      it "Delegating address with both pub key credentials" do
+        script = {
+                  "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j",
+                  "stake": "stake_vk16apaenn9ut6s40lcw3l8v68xawlrlq20z2966uzcx8jmv2q9uy7qau558d"
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1qpqthemrg5kczwfjjnahwt65elhrl95e9hcgufnajtp6wff5rh7cflza8t3m5wlaj45sg53nvtwpc73mqk90ghv7vv7ser7yl4"
+        expect(res.code).to eq 202
+      end
+
+      it "Delegating address - payment from script, stake from key" do
+        script = {
+                  "payment": {
+                      "some": {
+                          "from": [
+                              "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                              "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4",
+                              "script_vkh1qw4l62k4203dllrk3dk3sfjpnh3gufhtrtm4qvtrvn4xjp5x5rt"
+                              ],
+                           "at_least": 2
+                           }
+                       },
+                  "stake": "stake_vk16apaenn9ut6s40lcw3l8v68xawlrlq20z2966uzcx8jmv2q9uy7qau558d"
+                 }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1zq5np0m5x03tax3kcdh6e2cet98qcfs80wtv4cyvl5tacle5rh7cflza8t3m5wlaj45sg53nvtwpc73mqk90ghv7vv7su0qjlj"
+        expect(res.code).to eq 202
+      end
+
+      it "Delegating address - payment from key, stake from script" do
+        script = {
+                  "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j",
+                  "stake": {
+                      "some": {
+                          "from": [
+                              "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                              "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4",
+                              "script_vkh1qw4l62k4203dllrk3dk3sfjpnh3gufhtrtm4qvtrvn4xjp5x5rt"
+                              ],
+                           "at_least": 2
+                           }
+                      }
+                   }
+        res = UTILS.post_address(script)
+        expect(res.to_s).to include "addr_test1ypqthemrg5kczwfjjnahwt65elhrl95e9hcgufnajtp6wfffxzlhgvlzh6drdsm04j43jk2wpsnqw7uketsgelghm3lsmpggt5"
+        expect(res.code).to eq 202
+      end
+
+    end
   end
 
   describe CardanoWallet::Misc::Proxy do

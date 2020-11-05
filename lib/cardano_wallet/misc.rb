@@ -95,8 +95,7 @@ module CardanoWallet
 
         self.class.post("/wallets/#{wid}/signatures/#{role}/#{index}",
                         :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json',
-                                      'Accept' => 'application/octet-stream'} )
+                        :headers => { 'Content-Type' => 'application/json' } )
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
@@ -107,6 +106,15 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/inspectAddress
       def addresses(address_id)
         self.class.get("/addresses/#{address_id}")
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postAnyAddress
+      def post_address(payload)
+        CardanoWallet::Utils.verify_param_is_hash!(payload)
+        self.class.post("/addresses",
+                        :body => payload.to_json,
+                        :headers => { 'Content-Type' => 'application/json',
+                                      'Accept' => 'application/json'} )
       end
 
     end
