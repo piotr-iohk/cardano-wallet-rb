@@ -177,10 +177,10 @@ RSpec.describe CardanoWallet::Misc do
 
       it "Reward account pub key address" do
         script = {
-                  "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j"
+                  "stake": "stake_vk16apaenn9ut6s40lcw3l8v68xawlrlq20z2966uzcx8jmv2q9uy7qau558d"
                  }
         res = UTILS.post_address(script)
-        expect(res.to_s).to include "addr_test1vpqthemrg5kczwfjjnahwt65elhrl95e9hcgufnajtp6wfgdmxm9u"
+        expect(res.to_s).to include "stake_test1uq6pmlvyl3wn4ca6807e26gy2gek9hqu0gastzh5tk0xx0gdfvj8f"
         expect(res.code).to eq 202
       end
 
