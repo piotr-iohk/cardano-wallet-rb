@@ -71,7 +71,7 @@ RSpec.describe CardanoWallet::Shelley do
         end
       end
 
-      it "Transaction with ttl = 0 would expire and I can't forget it (for now)" do
+      it "Transaction with ttl = 0 would expire and I can forget it" do
         amt = 1000000
         ttl_in_s = 0
 
@@ -91,7 +91,10 @@ RSpec.describe CardanoWallet::Shelley do
         end
 
         res = SHELLEY.transactions.forget(@wid, tx_sent['id'])
-        expect(res.code).to eq 403
+        expect(res.code).to eq 204
+
+        fres = SHELLEY.transactions.get(@wid, tx_sent['id'])
+        expect(fres.code).to eq 404
       end
 
       it "I can send transaction using 'withdrawal' flag and funds are received" do
