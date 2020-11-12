@@ -597,7 +597,28 @@ RSpec.describe CardanoWallet::Shelley do
     #   end
     #
     # end
+    describe "Stake Pools GC Maintenance" do
+      matrix = [{"direct" => "not_applicable"},
+                {"none" => "not_applicable"},
+                {"https://smash.cardano-testnet.iohkdev.io" => "has_run"}]
+      matrix.each do |tc|
+        it "GC metadata maintenance action on metadata source #{tc}" do
+          settings = CardanoWallet.new.misc.settings
+          pools = SHELLEY.stake_pools
 
+          s = settings.update({:pool_metadata_source => tc.keys.first})
+          expect(s.code).to eq 204
+
+          t = pools.trigger_maintenance_actions({maintenance_action: "gc_stake_pools"})
+          expect(t.code).to eq 200
+
+          eventually "Maintenance action has status = #{tc.values.first}" do
+            r = pools.view_maintenance_actions
+            (r.code == 200) && (r.to_s.include? tc.values.first)
+          end
+        end
+      end
+    end
     it "I could quit stake pool - if I was delegating" do
       id = create_shelley_wallet
 
