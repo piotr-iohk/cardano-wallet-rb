@@ -610,7 +610,7 @@ RSpec.describe CardanoWallet::Shelley do
           expect(s.code).to eq 204
 
           t = pools.trigger_maintenance_actions({maintenance_action: "gc_stake_pools"})
-          expect(t.code).to eq 200
+          expect(t.code).to eq 204
 
           eventually "Maintenance action has status = #{tc.values.first}" do
             r = pools.view_maintenance_actions
