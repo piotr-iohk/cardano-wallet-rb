@@ -23,6 +23,20 @@ RSpec.describe CardanoWallet::Misc do
         UTILS = CardanoWallet.new.misc.utils
     end
 
+    describe "SMASH health" do
+      it "SMASH health - unreachable" do
+        r = UTILS.smash_health({url: "http://onet.pl"})
+        expect(r.to_s).to include "unreachable"
+        expect(r.code).to eq 200
+      end
+
+      it "SMASH health - bad url" do
+        r = UTILS.smash_health({url: "dsds"})
+        expect(r.to_s).to include "bad_request"
+        expect(r.code).to eq 400
+      end
+    end
+
     it "Inspect invalid address" do
       addr = "addr"
       res = UTILS.addresses addr
@@ -247,20 +261,30 @@ RSpec.describe CardanoWallet::Misc do
   describe CardanoWallet::Misc::Settings do
     before(:all) do
         SETTINGS = CardanoWallet.new.misc.settings
+        UTILS = CardanoWallet.new.misc.utils
     end
 
     after(:all) do
       SETTINGS.update({:pool_metadata_source => "none"})
     end
 
-    ["direct", "https://smash.pl", "none"].each do |strategy|
-      it "I can read and update settings to #{strategy}" do
+    matrix = {"direct" => "no_smash_configured",
+              "https://smash.pl" => "unreachable",
+              "none" => "no_smash_configured"}
+
+    matrix.each do |strategy, smash_health_response|
+      it "I can read and update settings to #{strategy} and verify SMASH health = #{smash_health_response}" do
         s = SETTINGS.update({:pool_metadata_source => strategy})
         expect(s.code).to eq 204
 
         g = SETTINGS.get
         expect(g['pool_metadata_source']).to eq strategy
         expect(g.code).to eq 200
+
+        #check smash health
+        r = UTILS.smash_health
+        expect(r.to_s).to include smash_health_response
+        expect(r.code).to eq 200
       end
     end
   end
