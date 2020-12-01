@@ -117,6 +117,16 @@ module CardanoWallet
                                       'Accept' => 'application/json'} )
       end
 
+      # Current SMASH health
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getCurrentSmashHealth
+      #
+      # @example
+      #   smash_health({url: "https://smash.cardano-mainnet.iohk.io/"})
+      def smash_health(q = {})
+        q.empty? ? query = '' : query = CardanoWallet::Utils.to_query(q)
+        self.class.get("/smash/health#{query}")
+      end
+
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Proxy
