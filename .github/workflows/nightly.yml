@@ -3,6 +3,16 @@ name: Nightly
 on:
   schedule:
   - cron:  "0 23 * * *"
+  workflow_dispatch:
+    inputs:
+      nodeTag:
+        description: 'Node tag (docker)'
+        required: true
+        default: '1.24.2'
+      walletTag:
+        description: 'Wallet tag (docker)'
+        required: true
+        default: 'dev-master-shelley'
 
 jobs:
   test:
@@ -12,18 +22,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up cardano-wallet
-      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+      run: |
+        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        docker run --rm inputoutput/cardano-wallet:$WALLET version
+        docker run --rm inputoutput/cardano-node:$NODE version
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+
     - name: Install dependencies
       run: bundle install
+
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
+
     - name: Run all tests
       run: bundle exec rspec .
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NETWORK: testnet
-      WALLET: dev-master-shelley
-      NODE: 1.24.2
+      WALLET: ${{ github.event.inputs.walletTag }}
+      NODE: ${{ github.event.inputs.nodeTag }}

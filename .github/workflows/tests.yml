@@ -21,11 +21,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up cardano-wallet
-      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+      run: |
+        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        docker run --rm inputoutput/cardano-wallet:$WALLET version
+        docker run --rm inputoutput/cardano-node:$NODE version
+        
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+
     - name: Install dependencies
       run: bundle install
+
     - name: Run all tests except nighlty
       run: bundle exec rspec . -t ~nightly
     env:
