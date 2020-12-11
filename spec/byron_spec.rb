@@ -24,6 +24,8 @@ RSpec.describe CardanoWallet::Byron do
       address = SHELLEY.addresses.list(target_wid)[0]['id']
 
       tx_sent = BYRON.transactions.create(source_wid, PASS, [{address => amt}])
+      puts "Byron tx: "
+      puts tx_sent
       expect(tx_sent['status']).to eq "pending"
       expect(tx_sent.code).to eq 202
 
@@ -41,7 +43,7 @@ RSpec.describe CardanoWallet::Byron do
     it "I can send transaction and funds are received, icarus -> shelley" do
       test_byron_tx(@wid_ic, @target_id_ic)
     end
-    
+
   end
 
   describe CardanoWallet::Byron::Wallets do
@@ -224,6 +226,11 @@ RSpec.describe CardanoWallet::Byron do
         ]
 
       rnd = BYRON.coin_selections.random wid, addr_amount
+
+      puts "Byron coin selection: "
+      puts rnd
+      puts "------------"
+
       expect(rnd).to include "not_enough_money"
       expect(rnd.code).to eq 403
     end

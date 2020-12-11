@@ -39,6 +39,11 @@ RSpec.describe CardanoWallet::Shelley do
 
         address = SHELLEY.addresses.list(@target_id)[0]['id']
         tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}])
+
+        puts "Shelley tx: "
+        puts tx_sent
+        puts "------------"
+
         expect(tx_sent['status']).to eq "pending"
         expect(tx_sent.code).to eq 202
 
@@ -60,7 +65,10 @@ RSpec.describe CardanoWallet::Shelley do
                                               withdrawal = nil,
                                               metadata = nil,
                                               ttl_in_s)
+        puts "Shelley tx: "
         puts tx_sent
+        puts "------------"
+
         expect(tx_sent['status']).to eq "pending"
         expect(tx_sent.code).to eq 202
 
@@ -82,7 +90,12 @@ RSpec.describe CardanoWallet::Shelley do
                                               withdrawal = nil,
                                               metadata = nil,
                                               ttl_in_s)
+
+
+        puts "Shelley tx: "
         puts tx_sent
+        puts "------------"
+
         expect(tx_sent['status']).to eq "pending"
         expect(tx_sent.code).to eq 202
 
@@ -102,6 +115,11 @@ RSpec.describe CardanoWallet::Shelley do
         address = SHELLEY.addresses.list(@target_id_withdrawal)[0]['id']
 
         tx_sent = SHELLEY.transactions.create(@wid, PASS, [{address => amt}], 'self')
+
+        puts "Shelley tx: "
+        puts tx_sent
+        puts "------------"
+
         expect(tx_sent['status']).to eq "pending"
         expect(tx_sent.code).to eq 202
 
@@ -128,6 +146,11 @@ RSpec.describe CardanoWallet::Shelley do
                                               nil,
                                               metadata
                                              )
+
+        puts "Shelley tx: "
+        puts tx_sent
+        puts "------------"
+
         expect(tx_sent['status']).to eq "pending"
         expect(tx_sent.code).to eq 202
 
@@ -211,6 +234,11 @@ RSpec.describe CardanoWallet::Shelley do
 
         puts "Joining pool: #{pool_id}"
         join = pools.join(pool_id, @wid, PASS)
+
+        puts "Shelley tx: "
+        puts join
+        puts "------------"
+
         expect(join).to include "status"
         expect(join.code).to eq 202
 
@@ -222,6 +250,11 @@ RSpec.describe CardanoWallet::Shelley do
 
         puts "Quitting pool: #{pool_id}"
         quit = pools.quit(@wid, PASS)
+
+        puts "Shelley tx: "
+        puts quit
+        puts "------------"
+
         expect(quit).to include "status"
         expect(quit.code).to eq 202
 
@@ -266,6 +299,11 @@ RSpec.describe CardanoWallet::Shelley do
           ]
 
         rnd = SHELLEY.coin_selections.random @wid, payments
+
+        puts "Shelley coin selection: "
+        puts rnd
+        puts "------------"
+
         expect(rnd.to_s).to include "outputs"
         expect(rnd.to_s).to include "change"
         expect(rnd['inputs']).not_to be_empty
@@ -278,6 +316,11 @@ RSpec.describe CardanoWallet::Shelley do
         action_join = {action: "join", pool: pid}
 
         rnd = SHELLEY.coin_selections.random_deleg @wid, action_join
+
+        puts "Shelley coin selection: "
+        puts rnd
+        puts "------------"
+        
         expect(rnd.to_s).to include "outputs"
         expect(rnd.to_s).to include "change"
         expect(rnd['inputs']).not_to be_empty
