@@ -21,11 +21,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up cardano-wallet
+
+    - uses: actions/cache@v2
+      with:
+        path: /data
+        key: ${{ runner.os }}-data-${{ hashFiles('**/lock') }}
+        restore-keys: |
+          ${{ runner.os }}-data-
+
+    - name: Set up cardano-wallet and cardano-node MANUAL
+      if: ${{ github.event.inputs.walletTag != '' && github.event.inputs.nodeTag != ''}}
+      env:
+        WALLET: ${{ github.event.inputs.walletTag }}
+        NODE: ${{ github.event.inputs.nodeTag }}
       run: |
+        echo "Wallet: $WALLET"
+        echo "Node: $NODE"
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
+        ls /data
+
+    - name: Set up cardano-wallet and cardano-node NIGHTLY
+      if: ${{ github.event.inputs.walletTag == '' && github.event.inputs.nodeTag == ''}}
+      run: |
+        echo "Wallet: $WALLET"
+        echo "Node: $NODE"
+        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        docker run --rm inputoutput/cardano-wallet:$WALLET version
+        docker run --rm inputoutput/cardano-node:$NODE version
+        ls /data
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -42,5 +67,5 @@ jobs:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NETWORK: testnet
-      WALLET: ${{ github.event.inputs.walletTag }}
-      NODE: ${{ github.event.inputs.nodeTag }}
+      WALLET: dev-master-shelley
+      NODE: 1.24.2

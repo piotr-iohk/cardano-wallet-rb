@@ -20,12 +20,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up cardano-wallet
+    - name: Set up cardano-wallet and cardano-node
       run: |
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
-        
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
 
