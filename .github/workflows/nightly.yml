@@ -22,12 +22,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: actions/cache@v2
+    - name: Cache node db
+      id: cache
+      uses: actions/cache@v2
       with:
-        path: /data
-        key: ${{ runner.os }}-data-${{ hashFiles('**/lock') }}
+        path: ~/node-db-nightly-docker
+        key: ${{ runner.os }}-node-db-nightly-docker-${{ hashFiles('~/node-db-nightly-docker/protocolMagicId') }}
         restore-keys: |
-          ${{ runner.os }}-data-
+          ${{ runner.os }}-node-db-nightly-docker-
 
     - name: Set up cardano-wallet and cardano-node MANUAL
       if: ${{ github.event.inputs.walletTag != '' && github.event.inputs.nodeTag != ''}}
@@ -40,7 +42,7 @@ jobs:
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
-        ls /data
+        ls ~/node-db-nightly-docker
 
     - name: Set up cardano-wallet and cardano-node NIGHTLY
       if: ${{ github.event.inputs.walletTag == '' && github.event.inputs.nodeTag == ''}}
@@ -50,7 +52,7 @@ jobs:
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
-        ls /data
+        ls ~/node-db-nightly-docker
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
