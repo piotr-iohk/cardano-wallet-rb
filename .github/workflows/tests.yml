@@ -14,11 +14,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Cache node db
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: ~/node-db-nightly-docker
+        key: ${{ runner.os }}-node-db-tests-docker-${{ hashFiles('**/protocolMagicId') }}
+
     - name: Set up cardano-wallet and cardano-node
       run: |
+        echo "Wallet: $WALLET"
+        echo "Node: $NODE"
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
+        ls ~/node-db-nightly-docker
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -27,7 +38,10 @@ jobs:
       run: bundle install
 
     - name: Run all tests except nighlty
-      run: bundle exec rspec . -t ~nightly
+      run: rspec . -t ~nightly
+
+    - name: Stop docker-compose
+      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml down
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

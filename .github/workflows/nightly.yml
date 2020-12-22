@@ -27,9 +27,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/node-db-nightly-docker
-        key: ${{ runner.os }}-node-db-nightly-docker-${{ hashFiles('~/node-db-nightly-docker/protocolMagicId') }}
-        restore-keys: |
-          ${{ runner.os }}-node-db-nightly-docker-
+        key: ${{ runner.os }}-node-db-nightly-docker-tests-${{ hashFiles('**/protocolMagicId') }}
 
     - name: Set up cardano-wallet and cardano-node MANUAL
       if: ${{ github.event.inputs.walletTag != '' && github.event.inputs.nodeTag != ''}}
@@ -65,6 +63,9 @@ jobs:
 
     - name: Run all tests
       run: bundle exec rspec .
+
+    - name: Stop docker-compose
+      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml down
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
