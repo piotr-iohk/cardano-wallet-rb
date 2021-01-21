@@ -47,6 +47,8 @@ RSpec.describe CardanoWallet::Misc do
     it "Inspect Shelley payment address" do
       addr = "addr1qqlgm2dh3vpv07cjfcyuu6vhaqhf8998qcx6s8ucpkly6f8l0dw5r75vk42mv3ykq8vyjeaanvpytg79xqzymqy5acmqej0mk7"
       res = UTILS.addresses addr
+      expect(res.to_s).to include "Shelley"
+
       expect(res['address_style']).to eq "Shelley"
       expect(res['stake_reference']).to eq "by value"
       expect(res['stake_key_hash']).to eq "ff7b5d41fa8cb555b6449601d84967bd9b0245a3c530044d8094ee36"
@@ -58,6 +60,8 @@ RSpec.describe CardanoWallet::Misc do
     it "Inspect Shelley stake address" do
       addr = "stake_test1uzws33ghf8kugc8ea8p7h8mr7dcsl6ggw7tfy479y9t0d4qp48dkq"
       res = UTILS.addresses addr
+      expect(res.to_s).to include "Shelley"
+
       expect(res['address_style']).to eq "Shelley"
       expect(res['stake_reference']).to eq "by value"
       expect(res['stake_key_hash']).to eq "9d08c51749edc460f9e9c3eb9f63f3710fe90877969257c52156f6d4"
@@ -68,6 +72,8 @@ RSpec.describe CardanoWallet::Misc do
     it "Inspect Byron Random address" do
       addr = "37btjrVyb4KEzz6YprjHfqz3DS4JvoDpAf3QWLABzQ7uzMEk7g3PD2AwL1SbYWekneuRFkyTipbyKMZyEMed5LroZtQAvA2LqcWmJuwaqt6oJLbssS"
       res = UTILS.addresses addr
+      expect(res.to_s).to include "Byron"
+
       expect(res['address_style']).to eq "Byron"
       expect(res['stake_reference']).to eq "none"
       expect(res['address_root']).to eq "c23a0f86c7bc977f0dee4721c9850467047a0e6acd928a991b5cbba8"
@@ -79,6 +85,8 @@ RSpec.describe CardanoWallet::Misc do
     it "Inspect Byron Icarus address" do
       addr = "2cWKMJemoBajQcoTotf4xYba7fV7Ztx7AvbnzvaQY6PbezPWM6DtJD6Df2bVejBCpykmt"
       res = UTILS.addresses addr
+      expect(res.to_s).to include "Icarus"
+
       expect(res['address_style']).to eq "Icarus"
       expect(res['stake_reference']).to eq "none"
       expect(res['address_root']).to eq "88940c753ee50d556ecaefadd0d2fee9fabacf4366a7d4a8cdfa2b64"

@@ -44,7 +44,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts tx_sent
         puts "------------"
 
-        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.to_s).to include "pending"
         expect(tx_sent.code).to eq 202
 
         eventually "Funds are on target wallet: #{@target_id}" do
@@ -69,7 +69,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts tx_sent
         puts "------------"
 
-        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.to_s).to include "pending"
         expect(tx_sent.code).to eq 202
 
         eventually "Funds are on target wallet: #{@target_id}" do
@@ -96,7 +96,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts tx_sent
         puts "------------"
 
-        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.to_s).to include "pending"
         expect(tx_sent.code).to eq 202
 
         eventually "TX `#{tx_sent['id']}' expires on `#{@wid}'" do
@@ -120,7 +120,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts tx_sent
         puts "------------"
 
-        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.to_s).to include "pending"
         expect(tx_sent.code).to eq 202
 
         eventually "Funds are on target wallet: #{@target_id_withdrawal}" do
@@ -151,7 +151,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts tx_sent
         puts "------------"
 
-        expect(tx_sent['status']).to eq "pending"
+        expect(tx_sent.to_s).to include "pending"
         expect(tx_sent.code).to eq 202
 
         eventually "Funds are on target wallet: #{@target_id_meta}" do
@@ -320,7 +320,7 @@ RSpec.describe CardanoWallet::Shelley do
         puts "Shelley coin selection: "
         puts rnd
         puts "------------"
-        
+
         expect(rnd.to_s).to include "outputs"
         expect(rnd.to_s).to include "change"
         expect(rnd['inputs']).not_to be_empty
