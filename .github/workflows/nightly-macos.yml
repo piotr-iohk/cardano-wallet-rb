@@ -1,4 +1,4 @@
-name: Nightly Linux
+name: Nightly MacOS
 
 on:
   schedule:
@@ -7,8 +7,7 @@ on:
 
 jobs:
   test:
-
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -22,13 +21,12 @@ jobs:
 
     - name: Set up cardano-wallet and cardano-node
       run: |
-        wget $LATEST_LINUX_BIN
+        wget $LATEST_MACOS_BIN
         tar -xvf binary-dist
         cp -r cardano-wallet-*/* ./
 
         screen -dmS NODE ./cardano-node run --config ./spec/testnet/*-config.json --topology ./spec/testnet/*-topology.json --database-path $NODE_DB --socket-path ./node.socket
         screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB
-        screen -ls
 
         echo "./cardano-wallet version"
         ./cardano-wallet version
@@ -51,6 +49,6 @@ jobs:
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      LATEST_LINUX_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-linux64/latest/download-by-type/file/binary-dist
+      LATEST_MACOS_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-macos64/latest/download-by-type/file/binary-dist
       NODE_DB: ~/node-db-nightly-docker
       WALLET_DB: ~/wallet-db
