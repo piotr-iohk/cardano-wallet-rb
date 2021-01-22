@@ -1,0 +1,53 @@
+name: Nightly Linux
+
+on:
+  schedule:
+  - cron:  "0 23 * * *"
+  workflow_dispatch:
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache node db
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.NODE_DB }}
+        key: ${{ runner.os }}-node-db-nightly-docker-tests-${{ hashFiles('**/protocolMagicId') }}
+
+    - name: Set up cardano-wallet and cardano-node
+      run: |
+        wget $LATEST_LINUX_BIN
+        tar -xvf binary-dist
+        cp -r cardano-wallet-*/* ./
+
+        screen -dmS NODE ./cardano-node run --config ./spec/testnet/*-config.json --topology ./spec/testnet/*-topology.json --database-path $NODE_DB --socket-path ./node.socket
+        screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB
+        screen -ls
+
+        ./cardano-wallet version
+        ./cardano-node version
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Wait until node is synced
+      run: bundle exec rake wait_until_node_synced
+
+    - name: Run all tests
+      run: bundle exec rspec .
+
+    env:
+      CI: true
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      LATEST_LINUX_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-linux64/latest/download-by-type/file/binary-dist
+      NODE_DB: ~/node-db-nightly-docker
+      WALLET_DB: ~/wallet-db
