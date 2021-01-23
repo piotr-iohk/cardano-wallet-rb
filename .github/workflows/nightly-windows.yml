@@ -1,0 +1,63 @@
+name: Nightly Windows
+
+on:
+  schedule:
+  - cron:  "0 23 * * *"
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache node db
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.NODE_DB }}
+        key: ${{ runner.os }}-node-db-nightly-docker-tests-${{ hashFiles('**/protocolMagicId') }}
+
+    - name: Prepare Windows
+      run: |
+        choco install wget
+        choco install unzip
+
+    - name: Set up cardano-wallet and cardano-node
+      run: |
+        wget ${env:LATEST_WIN_BIN}
+        unzip binary-dist
+        dir
+
+        echo "cardano-wallet.exe version"
+        "cardano-wallet.exe version" | cmd
+
+        echo "cardano-node.exe version"
+        "cardano-node.exe version" | cmd
+
+        "cardano-node.exe run --config spec\testnet\testnet-config.json --topology spec\testnet\testnet-topology.json --database-path ${env:NODE_DB} --socket-path \\.\pipe\cardano-node-testnet" | cmd
+        "cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database ${env:WALLET_DB}" | cmd
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Wait until node is synced
+      run: bundle exec rake wait_until_node_synced
+
+    - name: Run all tests
+      run: bundle exec rspec .
+
+    env:
+      CI: true
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      LATEST_WIN_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-win64/latest/download-by-type/file/binary-dist
+      NODE_DB: c:\node-db-nightly-docker
+      WALLET_DB: c:\wallet-db
