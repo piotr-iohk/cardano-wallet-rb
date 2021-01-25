@@ -1,4 +1,5 @@
 
+
 <a href="https://badge.fury.io/rb/cardano_wallet">
   <img src="https://badge.fury.io/rb/cardano_wallet.svg" alt="Gem Version">
 </a>
@@ -11,13 +12,21 @@
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
   <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
 </a>
-<a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ANightly">
-  <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly/badge.svg" />
-</a>
+
 
 # cardano-wallet-rb
 
 Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST [API](https://input-output-hk.github.io/cardano-wallet/api/edge/).
+
+## Nightly tests
+
+|Platform|Status  |
+|--|--|
+|Docker  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-docker.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Docker/badge.svg" /></a> |
+|Linux  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-linux.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Linux/badge.svg" /></a> |
+|MacOS  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-macos.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20MacOS/badge.svg" /></a> |
+|Windows  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-windows.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Windows/badge.svg" /></a> |
+
 
 ## Installation
 
