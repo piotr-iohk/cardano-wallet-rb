@@ -10,7 +10,7 @@
   "Protocol": "Cardano",
   "RequiresNetworkMagic": "RequiresMagic",
   "ShelleyGenesisFile": "testnet-shelley-genesis.json",
-  "ShelleyGenesisHash": "f114a6c61c9293bb6677b2f4007a2eb1802532eafb979d37cbdc9d70e24790f1",
+  "ShelleyGenesisHash": "849a1764f152e1b09c89c0dfdbcbdd38d711d1fec2db5dfa0f87cf2737a0eaf4",
   "TraceBlockFetchClient": false,
   "TraceBlockFetchDecisions": false,
   "TraceBlockFetchProtocol": false,

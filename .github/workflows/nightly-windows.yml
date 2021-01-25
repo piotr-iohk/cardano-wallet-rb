@@ -1,12 +1,6 @@
 name: Nightly Windows
 
 on:
-  schedule:
-  - cron:  "0 23 * * *"
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -41,10 +35,10 @@ jobs:
 
     - name: Start cardano-wallet and cardano-node
       run: |
-        START /B cardano-node.exe run --config spec\testnet\testnet-config.json --topology spec\testnet\testnet-topology.json --database-path %NODE_DB% --socket-path \\.\pipe\cardano-node-testnet
-        START /B cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database %WALLET_DB%
+        START /B cardano-node.exe run --config spec\testnet\testnet-config.json --topology spec\testnet\testnet-topology.json --database-path spec\testnet\node-db --socket-path \\.\pipe\cardano-node-testnet
+        START /B cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database spec\testnet\wallet-db
       shell: cmd
-      
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
 
@@ -61,5 +55,5 @@ jobs:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       LATEST_WIN_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-win64/latest/download-by-type/file/binary-dist
-      NODE_DB: c:\node-db-nightly-docker
-      WALLET_DB: c:\wallet-db
+      NODE_DB: d:\node-db-nightly-docker
+      WALLET_DB: d:\wallet-db
