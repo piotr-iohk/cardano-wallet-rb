@@ -39,6 +39,29 @@ module CardanoWallet
       def migrations
         Migrations.new @opt
       end
+
+      # API for Assets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Assets
+      def assets
+        Assets.new @opt
+      end
+    end
+
+    class Assets < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAssets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAsset
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAssetDefault
+      def get(wid, policy_id = nil, asset_name = nil)
+        ep = "/byron-wallets/#{wid}/assets"
+        ep += "/#{policy_id}" if policy_id
+        ep += "/#{asset_name}" if asset_name
+        self.class.get(ep)
+      end
+
     end
 
     # Byron wallets

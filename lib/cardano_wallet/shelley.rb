@@ -68,18 +68,12 @@ module CardanoWallet
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
-      def list(wid)
-        self.class.get("/wallets/#{wid}/assets")
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
-      def get(wid, policy_id, asset_name = nil)
-        if asset_name
-          ep = "/wallets/#{wid}/assets/#{policy_id}/#{asset_name}"
-        else
-          ep = "/wallets/#{wid}/assets/#{policy_id}"
-        end
+      def get(wid, policy_id = nil, asset_name = nil)
+        ep = "/wallets/#{wid}/assets"
+        ep += "/#{policy_id}" if policy_id
+        ep += "/#{asset_name}" if asset_name
         self.class.get(ep)
       end
 
