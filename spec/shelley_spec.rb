@@ -732,6 +732,24 @@ RSpec.describe CardanoWallet::Shelley do
       end
     end
 
+    it "Create account public key - extended = true" do
+      wid = create_shelley_wallet
+      ["0H", "1H", "2147483647H", "44H"].each do |index|
+        res = SHELLEY.keys.create_acc_public_key(wid, index, PASS, extended = true)
+        expect(res).to include "acc"
+        expect(res.code).to eq 202
+      end
+    end
+
+    it "Create account public key - extended = false" do
+      wid = create_shelley_wallet
+      ["0H", "1H", "2147483647H", "44H"].each do |index|
+        res = SHELLEY.keys.create_acc_public_key(wid, index, PASS, extended = false)
+        expect(res).to include "acc"
+        expect(res.code).to eq 202
+      end
+    end
+
   end
 
 end

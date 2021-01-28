@@ -77,6 +77,15 @@ module CardanoWallet
         self.class.get("/wallets/#{wid}/keys/#{role}/#{index}")
       end
 
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKey
+      def create_acc_public_key(wid, index, pass, extended)
+        payload = { passphrase: pass, extended: extended }
+        self.class.post("/wallets/#{wid}/keys/#{index}",
+                        :body => payload.to_json,
+                        :headers => { 'Content-Type' => 'application/json' }
+                        )
+      end
+
     end
 
     # API for Wallets
