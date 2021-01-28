@@ -39,6 +39,29 @@ module CardanoWallet
       def migrations
         Migrations.new @opt
       end
+
+      # API for Assets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Assets
+      def assets
+        Assets.new @opt
+      end
+    end
+
+    class Assets < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAssets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAsset
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAssetDefault
+      def get(wid, policy_id = nil, asset_name = nil)
+        ep = "/byron-wallets/#{wid}/assets"
+        ep += "/#{policy_id}" if policy_id
+        ep += "/#{asset_name}" if asset_name
+        self.class.get(ep)
+      end
+
     end
 
     # Byron wallets
@@ -221,8 +244,14 @@ module CardanoWallet
       #
       # @example
       #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}])
+      #   create(wid, passphrase, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
+
       def create(wid, passphrase, payments)
-        payments_formatted = Utils.format_payments(payments)
+        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
+          payments_formatted = payments
+        else
+          payments_formatted = Utils.format_payments(payments)
+        end
         self.class.post("/byron-wallets/#{wid}/transactions",
         :body => { :payments => payments_formatted,
                    :passphrase => passphrase
@@ -235,8 +264,13 @@ module CardanoWallet
       #
       # @example
       #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
+      #   payment_fees(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def payment_fees(wid, payments)
-        payments_formatted = Utils.format_payments(payments)
+        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
+          payments_formatted = payments
+        else
+          payments_formatted = Utils.format_payments(payments)
+        end
         self.class.post("/byron-wallets/#{wid}/payment-fees",
         :body => { :payments => payments_formatted }.to_json,
         :headers => { 'Content-Type' => 'application/json' } )

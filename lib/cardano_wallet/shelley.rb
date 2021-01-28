@@ -54,6 +54,29 @@ module CardanoWallet
         Keys.new @opt
       end
 
+      # API for Assets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Assets
+      def assets
+        Assets.new @opt
+      end
+
+    end
+
+    class Assets < Base
+      def initialize opt
+        super
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
+      def get(wid, policy_id = nil, asset_name = nil)
+        ep = "/wallets/#{wid}/assets"
+        ep += "/#{policy_id}" if policy_id
+        ep += "/#{asset_name}" if asset_name
+        self.class.get(ep)
+      end
+
     end
 
     class Keys < Base
@@ -236,15 +259,20 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
-      # @param payments [Array of Hashes] addres, amount pair
+      # @param payments [Array of Hashes] address / amount list or full payments payload with assets
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
       # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       # @param ttl [Int] transaction's time-to-live in seconds
       #
       # @example
       #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}], 'self', {"1": "abc"}, ttl = 10)
+      #   create(wid, passphrase, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ], 'self', {"1": "abc"}, ttl = 10)
       def create(wid, passphrase, payments, withdrawal = nil, metadata = nil, ttl = nil)
-        payments_formatted = Utils.format_payments(payments)
+        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
+          payments_formatted = payments
+        else
+          payments_formatted = Utils.format_payments(payments)
+        end
         payload = { :payments => payments_formatted,
                     :passphrase => passphrase
                   }
@@ -262,8 +290,14 @@ module CardanoWallet
       #
       # @example
       #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}], {"1": "abc"}, ttl = 10)
+      #   payment_fees(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ], {"1": "abc"}, ttl = 10)
       def payment_fees(wid, payments, withdrawal = nil, metadata = nil, ttl = nil)
-        payments_formatted = Utils.format_payments(payments)
+        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
+          payments_formatted = payments
+        else
+          payments_formatted = Utils.format_payments(payments)
+        end
+
         payload = { :payments => payments_formatted }
 
         payload[:withdrawal] = withdrawal if withdrawal
