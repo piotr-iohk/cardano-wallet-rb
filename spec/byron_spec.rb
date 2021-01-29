@@ -316,7 +316,7 @@ RSpec.describe CardanoWallet::Byron do
     it "I could calculate migration cost" do
       id = create_byron_wallet "icarus"
       cost = BYRON.migrations.cost(id)
-      expect(cost.code).to eq 403
+      expect(cost.code).to eq 501
     end
 
     it "I could migrate all my funds" do
@@ -324,7 +324,7 @@ RSpec.describe CardanoWallet::Byron do
       target_wal_id = create_byron_wallet "icarus"
       addresses = BYRON.addresses.list(target_wal_id).map{ |a| a['id'] }
       migr = BYRON.migrations.migrate(id, PASS, addresses)
-      expect(migr.code).to eq 403
+      expect(migr.code).to eq 501
     end
   end
 end

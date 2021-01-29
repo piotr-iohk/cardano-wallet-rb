@@ -206,7 +206,7 @@ RSpec.describe CardanoWallet::Shelley do
         pool_id = pools.list({stake: 1000})[0]['id']
 
         join = pools.join(pool_id, id, PASS)
-        expect(join).to include "cannot_cover_fee"
+        expect(join).to include "not_enough_money"
         expect(join.code).to eq 403
       end
 
@@ -338,7 +338,7 @@ RSpec.describe CardanoWallet::Shelley do
         action_join = {action: "join", pool: pid}
 
         rnd = SHELLEY.coin_selections.random_deleg wid, action_join
-        expect(rnd).to include "cannot_cover_fee"
+        expect(rnd).to include "not_enough_money"
         expect(rnd.code).to eq 403
       end
 
@@ -676,7 +676,7 @@ RSpec.describe CardanoWallet::Shelley do
 
       pools = SHELLEY.stake_pools
       fees = pools.delegation_fees(id)
-      expect(fees).to include "cannot_cover_fee"
+      expect(fees).to include "not_enough_money"
       expect(fees.code).to eq 403
     end
   end
@@ -689,8 +689,8 @@ RSpec.describe CardanoWallet::Shelley do
     it "I could calculate migration cost" do
       id = create_shelley_wallet
       cost = SHELLEY.migrations.cost(id)
-      expect(cost).to include "nothing_to_migrate"
-      expect(cost.code).to eq 403
+      expect(cost).to include "not_implemented"
+      expect(cost.code).to eq 501
     end
 
     it "I could migrate all my funds" do
@@ -698,8 +698,8 @@ RSpec.describe CardanoWallet::Shelley do
       target_id = create_shelley_wallet
       addrs = SHELLEY.addresses.list(target_id).map{ |a| a['id'] }
       migr = SHELLEY.migrations.migrate(id, PASS, addrs)
-      expect(migr).to include "nothing_to_migrate"
-      expect(migr.code).to eq 403
+      expect(migr).to include "not_implemented"
+      expect(migr.code).to eq 501
     end
   end
 
