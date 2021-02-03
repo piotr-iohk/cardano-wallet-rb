@@ -205,8 +205,14 @@ module CardanoWallet
       #
       # @example
       #   random(wid, [{addr1: 1000000}, {addr2: 1000000}])
+      #   random(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def random(wid, payments)
-        payments_formatted = Utils.format_payments(payments)
+        Utils.verify_param_is_array!(payments)
+        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
+          payments_formatted = payments
+        else
+          payments_formatted = Utils.format_payments(payments)
+        end
         self.class.post("/byron-wallets/#{wid}/coin-selections/random",
                         :body => {:payments => payments_formatted}.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
@@ -247,6 +253,7 @@ module CardanoWallet
       #   create(wid, passphrase, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
 
       def create(wid, passphrase, payments)
+        Utils.verify_param_is_array!(payments)
         if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
           payments_formatted = payments
         else
@@ -266,6 +273,7 @@ module CardanoWallet
       #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
       #   payment_fees(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def payment_fees(wid, payments)
+        Utils.verify_param_is_array!(payments)
         if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
           payments_formatted = payments
         else
