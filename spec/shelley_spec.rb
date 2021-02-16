@@ -274,6 +274,15 @@ RSpec.describe CardanoWallet::Shelley do
         expect(join.code).to eq 404
       end
 
+      it "I could check delegation fees - if I could cover fee" do
+        id = create_shelley_wallet
+
+        pools = SHELLEY.stake_pools
+        fees = pools.delegation_fees(id)
+        expect(fees).to include "not_enough_money"
+        expect(fees.code).to eq 403
+      end
+
       it "I could join Stake Pool - if I had enough to cover fee" do
         id = create_shelley_wallet
         pools = SHELLEY.stake_pools
@@ -745,14 +754,6 @@ RSpec.describe CardanoWallet::Shelley do
       expect(quit.code).to eq 403
     end
 
-    it "I could check delegation fees - if I could cover fee" do
-      id = create_shelley_wallet
-
-      pools = SHELLEY.stake_pools
-      fees = pools.delegation_fees(id)
-      expect(fees).to include "not_enough_money"
-      expect(fees.code).to eq 403
-    end
   end
 
   describe CardanoWallet::Shelley::Migrations do
