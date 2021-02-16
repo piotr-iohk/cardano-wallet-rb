@@ -1,15 +1,20 @@
 RSpec.describe CardanoWallet::Byron do
 
   describe "Nightly Byron tests", :nightly => true do
+
     before(:all) do
       @wid_rnd = create_fixture_byron_wallet "random"
       @wid_ic = create_fixture_byron_wallet "icarus"
       @target_id_rnd = create_shelley_wallet
       @target_id_ic = create_shelley_wallet
+      @target_id_rnd_assets = create_shelley_wallet
+      @target_id_ic_assets = create_shelley_wallet
       wait_for_byron_wallet_to_sync(@wid_rnd)
       wait_for_byron_wallet_to_sync(@wid_ic)
       wait_for_shelley_wallet_to_sync(@target_id_rnd)
+      wait_for_shelley_wallet_to_sync(@target_id_rnd_assets)
       wait_for_shelley_wallet_to_sync(@target_id_ic)
+      wait_for_shelley_wallet_to_sync(@target_id_ic_assets)
 
       # @wid_rnd = "94c0af1034914f4455b7eb795ebea74392deafe9"
       # @wid_ic = "a468e96ab85ad2043e48cf2e5f3437b4356769f4"
@@ -37,12 +42,102 @@ RSpec.describe CardanoWallet::Byron do
       end
     end
 
+    def test_byron_assets_tx(source_id, target_id)
+      asset_quantity = 1
+      address = SHELLEY.addresses.list(target_id)[1]['id']
+      payload = [{"address" => address,
+                  "amount" => { "quantity"=> 0, "unit"=> "lovelace" },
+                  "assets" => [ { "policy_id"=> ASSETS[0]["policy_id"],
+                                  "asset_name"=> ASSETS[0]["asset_name"],
+                                  "quantity"=> asset_quantity
+                                },
+                                { "policy_id"=> ASSETS[1]["policy_id"],
+                                  "asset_name"=> ASSETS[1]["asset_name"],
+                                  "quantity"=> asset_quantity
+                                }
+                              ]
+                  }
+                 ]
+
+      tx_sent = BYRON.transactions.create(source_id, PASS, payload)
+
+      puts "Byron random tx: "
+      puts tx_sent
+      puts "------------"
+
+      expect(tx_sent.to_s).to include "pending"
+      expect(tx_sent.code).to eq 202
+
+      eventually "Assets are on target wallet: #{target_id}" do
+        first = ASSETS[0]["policy_id"] + ASSETS[0]["asset_name"]
+        second = ASSETS[1]["policy_id"] + ASSETS[1]["asset_name"]
+        get_wallet = SHELLEY.wallets.get(target_id)
+        total = Hash.new
+        total[first] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[0]["policy_id"] && a['asset_name'] == ASSETS[0]["asset_name"]}.first["quantity"]
+        total[second] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[1]["policy_id"] && a['asset_name'] == ASSETS[1]["asset_name"]}.first["quantity"]
+
+        (total[first] == asset_quantity) && (total[second] == asset_quantity)
+      end
+    end
+
     it "I can send transaction and funds are received, random -> shelley" do
       test_byron_tx(@wid_rnd, @target_id_rnd)
     end
 
     it "I can send transaction and funds are received, icarus -> shelley" do
       test_byron_tx(@wid_ic, @target_id_ic)
+    end
+
+    describe "Native Assets" do
+      it "I can list assets -> random" do
+        assets = BYRON.assets.get @wid_rnd
+        expect(assets.to_s).to include ASSETS[0]["policy_id"]
+        expect(assets.to_s).to include ASSETS[0]["asset_name"]
+        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
+        expect(assets.to_s).to include ASSETS[1]["policy_id"]
+        expect(assets.to_s).to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can list assets -> icarus" do
+        assets = BYRON.assets.get @wid_ic
+        expect(assets.to_s).to include ASSETS[0]["policy_id"]
+        expect(assets.to_s).to include ASSETS[0]["asset_name"]
+        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
+        expect(assets.to_s).to include ASSETS[1]["policy_id"]
+        expect(assets.to_s).to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can get native assets by policy_id -> random" do
+        assets = BYRON.assets.get(@wid_rnd , policy_id = ASSETS[0]["policy_id"])
+        expect(assets.to_s).to include ASSETS[0]["policy_id"]
+        expect(assets.to_s).to include ASSETS[0]["asset_name"]
+        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
+        expect(assets.to_s).not_to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).not_to include ASSETS[1]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can get native assets by policy_id and asset_name -> random" do
+        assets = BYRON.assets.get(@wid_rnd, policy_id = ASSETS[1]["policy_id"], asset_name = ASSETS[1]["asset_name"])
+        expect(assets.to_s).to include ASSETS[1]["policy_id"]
+        expect(assets.to_s).to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
+        expect(assets.to_s).not_to include ASSETS[0]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can send native assets tx and they are received (random -> shelley)" do
+        test_byron_assets_tx(@wid_rnd, @target_id_rnd_assets)
+      end
+
+      it "I can send native assets tx and they are received (icarus -> shelley)" do
+        test_byron_assets_tx(@wid_ic, @target_id_ic_assets)
+      end
+
     end
 
   end
