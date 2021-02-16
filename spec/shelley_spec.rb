@@ -5,24 +5,27 @@ RSpec.describe CardanoWallet::Shelley do
     before(:all) do
       @wid = create_fixture_shelley_wallet
       @target_id = create_shelley_wallet
+      @target_id_assets = create_shelley_wallet
       @target_id_withdrawal = create_shelley_wallet
       @target_id_meta = create_shelley_wallet
       @target_id_ttl = create_shelley_wallet
       wait_for_shelley_wallet_to_sync(@wid)
       wait_for_shelley_wallet_to_sync(@target_id)
+      wait_for_shelley_wallet_to_sync(@target_id_assets)
       wait_for_shelley_wallet_to_sync(@target_id_withdrawal)
       wait_for_shelley_wallet_to_sync(@target_id_meta)
       wait_for_shelley_wallet_to_sync(@target_id_ttl)
 
       @nighly_wallets = [ @wid,
                           @target_id,
+                          @target_id_assets,
                           @target_id_withdrawal,
                           @target_id_meta,
                           @target_id_ttl
                         ]
 
       # @wid = "b1fb863243a9ae451bc4e2e662f60ff217b126e2"
-      # @target_id_meta = "f6168d58ed1b6e6037d535bc59802cf6c7c67523"
+      # @target_id_assets = "c1c7023ac9422724f29ad828a83632b806b55447"
     end
 
     after(:all) do
@@ -31,6 +34,77 @@ RSpec.describe CardanoWallet::Shelley do
       @nighly_wallets.each do |wid|
         SHELLEY.wallets.delete wid
       end
+    end
+
+    describe "Native Assets" do
+      it "I can list native assets" do
+        assets = SHELLEY.assets.get @wid
+        expect(assets.to_s).to include ASSETS[0]["policy_id"]
+        expect(assets.to_s).to include ASSETS[0]["asset_name"]
+        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
+        expect(assets.to_s).to include ASSETS[1]["policy_id"]
+        expect(assets.to_s).to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can get native assets by policy_id" do
+        assets = SHELLEY.assets.get(@wid, policy_id = ASSETS[0]["policy_id"])
+        expect(assets.to_s).to include ASSETS[0]["policy_id"]
+        expect(assets.to_s).to include ASSETS[0]["asset_name"]
+        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
+        expect(assets.to_s).not_to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).not_to include ASSETS[1]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can get native assets by policy_id and asset_name" do
+        assets = SHELLEY.assets.get(@wid, policy_id = ASSETS[1]["policy_id"], asset_name = ASSETS[1]["asset_name"])
+        expect(assets.to_s).to include ASSETS[1]["policy_id"]
+        expect(assets.to_s).to include ASSETS[1]["asset_name"]
+        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
+        expect(assets.to_s).not_to include ASSETS[0]["metadata"]["name"]
+        expect(assets.code).to eq 200
+      end
+
+      it "I can send native assets tx and they are received" do
+        asset_quantity = 1
+        address = SHELLEY.addresses.list(@target_id_assets)[1]['id']
+        payload = [{"address" => address,
+                    "amount" => { "quantity"=> 0, "unit"=> "lovelace" },
+                    "assets" => [ { "policy_id"=> ASSETS[0]["policy_id"],
+                                    "asset_name"=> ASSETS[0]["asset_name"],
+                                    "quantity"=> asset_quantity
+                                  },
+                                  { "policy_id"=> ASSETS[1]["policy_id"],
+                                    "asset_name"=> ASSETS[1]["asset_name"],
+                                    "quantity"=> asset_quantity
+                                  }
+                                ]
+                    }
+                   ]
+
+        tx_sent = SHELLEY.transactions.create(@wid, PASS, payload)
+
+        puts "Shelley tx: "
+        puts tx_sent
+        puts "------------"
+
+        expect(tx_sent.to_s).to include "pending"
+        expect(tx_sent.code).to eq 202
+
+        eventually "Assets are on target wallet: #{@target_id_assets}" do
+          first = ASSETS[0]["policy_id"] + ASSETS[0]["asset_name"]
+          second = ASSETS[1]["policy_id"] + ASSETS[1]["asset_name"]
+          get_wallet = SHELLEY.wallets.get(@target_id_assets)
+          total = Hash.new
+          total[first] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[0]["policy_id"] && a['asset_name'] == ASSETS[0]["asset_name"]}.first["quantity"]
+          total[second] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[1]["policy_id"] && a['asset_name'] == ASSETS[1]["asset_name"]}.first["quantity"]
+
+          (total[first] == asset_quantity) && (total[second] == asset_quantity)
+        end
+      end
+
     end
 
     describe "Shelley Transactions" do
