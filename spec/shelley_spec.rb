@@ -25,7 +25,7 @@ RSpec.describe CardanoWallet::Shelley do
                         ]
 
       # @wid = "b1fb863243a9ae451bc4e2e662f60ff217b126e2"
-      # @target_id_assets = "c1c7023ac9422724f29ad828a83632b806b55447"
+      # @target_id_assets = "1c45611db52f07d88981db067d60f895ac34f349"
     end
 
     after(:all) do
@@ -50,20 +50,21 @@ RSpec.describe CardanoWallet::Shelley do
 
       it "I can get native assets by policy_id" do
         assets = SHELLEY.assets.get(@wid, policy_id = ASSETS[0]["policy_id"])
-        expect(assets.to_s).to include ASSETS[0]["policy_id"]
-        expect(assets.to_s).to include ASSETS[0]["asset_name"]
-        expect(assets.to_s).to include ASSETS[0]["metadata"]["name"]
-        expect(assets.to_s).not_to include ASSETS[1]["asset_name"]
-        expect(assets.to_s).not_to include ASSETS[1]["metadata"]["name"]
+        expect(assets["policy_id"]).to eq ASSETS[0]["policy_id"]
+        expect(assets["asset_name"]).to eq ASSETS[0]["asset_name"]
+        expect(assets["metadata"]).to eq ASSETS[0]["metadata"]
+        expect(assets["asset_name"]).not_to eq ASSETS[1]["asset_name"]
+        expect(assets["metadata"]).not_to eq ASSETS[1]["metadata"]
         expect(assets.code).to eq 200
       end
 
       it "I can get native assets by policy_id and asset_name" do
         assets = SHELLEY.assets.get(@wid, policy_id = ASSETS[1]["policy_id"], asset_name = ASSETS[1]["asset_name"])
-        expect(assets.to_s).to include ASSETS[1]["policy_id"]
-        expect(assets.to_s).to include ASSETS[1]["asset_name"]
-        expect(assets.to_s).to include ASSETS[1]["metadata"]["name"]
-        expect(assets.to_s).not_to include ASSETS[0]["metadata"]["name"]
+        expect(assets["policy_id"]).to eq ASSETS[1]["policy_id"]
+        expect(assets["asset_name"]).to eq ASSETS[1]["asset_name"]
+        expect(assets["metadata"]).to eq ASSETS[1]["metadata"]
+        expect(assets["asset_name"]).not_to eq ASSETS[0]["asset_name"]
+        expect(assets["metadata"]).not_to eq ASSETS[0]["metadata"]["name"]
         expect(assets.code).to eq 200
       end
 
@@ -96,12 +97,23 @@ RSpec.describe CardanoWallet::Shelley do
         eventually "Assets are on target wallet: #{@target_id_assets}" do
           first = ASSETS[0]["policy_id"] + ASSETS[0]["asset_name"]
           second = ASSETS[1]["policy_id"] + ASSETS[1]["asset_name"]
-          get_wallet = SHELLEY.wallets.get(@target_id_assets)
+          total_assets = SHELLEY.wallets.get(@target_id_assets)['assets']['total']
+          available_assets = SHELLEY.wallets.get(@target_id_assets)['assets']['available']
           total = Hash.new
-          total[first] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[0]["policy_id"] && a['asset_name'] == ASSETS[0]["asset_name"]}.first["quantity"]
-          total[second] = get_wallet['assets']['total'].select {|a| a['policy_id'] == ASSETS[1]["policy_id"] && a['asset_name'] == ASSETS[1]["asset_name"]}.first["quantity"]
+          available = Hash.new
 
-          (total[first] == asset_quantity) && (total[second] == asset_quantity)
+          unless total_assets.empty?
+            total[first] = total_assets.select {|a| a['policy_id'] == ASSETS[0]["policy_id"] && a['asset_name'] == ASSETS[0]["asset_name"]}.first["quantity"]
+            total[second] = total_assets.select {|a| a['policy_id'] == ASSETS[1]["policy_id"] && a['asset_name'] == ASSETS[1]["asset_name"]}.first["quantity"]
+          end
+
+          unless available_assets.empty?
+            available[first] = available_assets.select {|a| a['policy_id'] == ASSETS[0]["policy_id"] && a['asset_name'] == ASSETS[0]["asset_name"]}.first["quantity"]
+            available[second] = available_assets.select {|a| a['policy_id'] == ASSETS[1]["policy_id"] && a['asset_name'] == ASSETS[1]["asset_name"]}.first["quantity"]
+          end
+
+          (total[first] == asset_quantity) && (total[second] == asset_quantity) &&
+          (available[first] == asset_quantity) && (available[second] == asset_quantity)
         end
       end
 
