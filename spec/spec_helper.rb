@@ -40,12 +40,24 @@ TIMEOUT = 120
 ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff169f1",
              "asset_name" => "",
              "fingerprint" => "asset1656gm7zkherdvxkn52mhaxkkw343qtkqgv0h8c",
-             "metadata" => {"name" => "SadCoin"}
+             "metadata" => {"name" => "SadCoin",
+                            "description" => "Coin with no asset name",
+                            "url" => "https://sad.io",
+                            "acronym" => "SAD",
+                            "logo" => "QWxtb3N0IGEgbG9nbw==",
+                            "unit" => {"name" => "saddies", "decimals" => 10}
+                            }
            },
            { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff169f1",
              "asset_name" => "6861707079636f696e",
              "fingerprint" => "asset19mwamgpre24at3z34v2e5achszlhhqght9djqp",
-             "metadata" => {"name" => "HappyCoin"}
+             "metadata" => {"name" => "HappyCoin",
+                            "description" => "Coin with asset name",
+                            "url" => "https://happy.io",
+                            "acronym" => "HAPP",
+                            "logo" => "QWxtb3N0IGEgbG9nbw==",
+                            "unit" => {"name" => "happies", "decimals" => 19}
+                            }
             },
          ]
 
