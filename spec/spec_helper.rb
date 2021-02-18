@@ -88,6 +88,12 @@ def wait_for_shelley_wallet_to_sync(wid)
   end
 end
 
+def wait_for_all_shelley_wallets(wids)
+  wids.each do |w|
+    wait_for_shelley_wallet_to_sync(w)
+  end
+end
+
 def create_byron_wallet_with(mnem, style = "random", name = "Wallet from mnemonic_sentence")
   BYRON.wallets.create({style: style,
                         name: name,
@@ -131,6 +137,12 @@ def wait_for_byron_wallet_to_sync(wid)
   while BYRON.wallets.get(wid)['state']['status'] == "syncing" do
     puts "  Syncing... #{BYRON.wallets.get(wid)['state']['progress']['quantity']}%"
     sleep 5
+  end
+end
+
+def wait_for_all_byron_wallets(wids)
+  wids.each do |w|
+    wait_for_byron_wallet_to_sync(w)
   end
 end
 
