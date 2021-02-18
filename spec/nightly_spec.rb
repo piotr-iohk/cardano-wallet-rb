@@ -232,12 +232,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
         it "I can send transaction with metadata" do
           amt = 1000000
-          metadata = { "0"=>{ "string"=>"cardano" },
-                       "1"=>{ "int"=>14 },
-                       "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
-                       "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
-                       "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
-                                       { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+          metadata = METADATA
 
           address = SHELLEY.addresses.list(@target_id_meta)[0]['id']
           tx_sent = SHELLEY.transactions.create(@wid,
@@ -268,12 +263,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         end
 
         it "I can estimate fee" do
-          metadata = { "0"=>{ "string"=>"cardano" },
-                       "1"=>{ "int"=>14 },
-                       "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
-                       "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
-                       "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
-                                       { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+          metadata = METADATA
 
           address = SHELLEY.addresses.list(@target_id)[0]['id']
           amt = [{address => 1000000}]
@@ -403,12 +393,21 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         it "I can trigger random coin selection" do
           wid = create_shelley_wallet
           addresses = SHELLEY.addresses.list(wid)
-          payments = [
-             { addresses[0]['id'] => 1000000 },
-             { addresses[1]['id'] => 1000000 }
-            ]
+          payload = [{"address" => addresses[0]['id'],
+                      "amount" => { "quantity"=> 2000000, "unit"=> "lovelace" },
+                      "assets" => [ { "policy_id"=> ASSETS[0]["policy_id"],
+                                      "asset_name"=> ASSETS[0]["asset_name"],
+                                      "quantity"=> 1
+                                    },
+                                    { "policy_id"=> ASSETS[1]["policy_id"],
+                                      "asset_name"=> ASSETS[1]["asset_name"],
+                                      "quantity"=> 1
+                                    }
+                                  ]
+                      }
+                     ]
 
-          rnd = SHELLEY.coin_selections.random @wid, payments
+          rnd = SHELLEY.coin_selections.random(@wid, payload, withdrawal = "self", m = METADATA)
 
           puts "Shelley coin selection: "
           puts rnd
@@ -416,6 +415,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
           expect(rnd.to_s).to include "outputs"
           expect(rnd.to_s).to include "change"
+          expect(rnd.to_s).to include "metadata"
           expect(rnd['inputs']).not_to be_empty
           expect(rnd['outputs']).not_to be_empty
           expect(rnd.code).to eq 200

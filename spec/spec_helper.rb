@@ -36,6 +36,14 @@ SHELLEY = CardanoWallet.new.shelley
 # timeout in seconds for custom verifications
 TIMEOUT = 120
 
+#exemplary metadata
+METADATA = { "0"=>{ "string"=>"cardano" },
+             "1"=>{ "int"=>14 },
+             "2"=>{ "bytes"=>"2512a00e9653fe49a44a5886202e24d77eeb998f" },
+             "3"=>{ "list"=>[ { "int"=>14 }, { "int"=>42 }, { "string"=>"1337" } ] },
+             "4"=>{ "map"=>[ { "k"=>{ "string"=>"key" }, "v"=>{ "string"=>"value" } },
+                             { "k"=>{ "int"=>14 }, "v"=>{ "int"=>42 } } ] } }
+
 # Testnet assets with metadata from mock server http://metadata-server-mock.herokuapp.com/
 ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff169f1",
              "asset_name" => "",
