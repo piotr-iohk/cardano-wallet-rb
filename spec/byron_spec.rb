@@ -1,52 +1,5 @@
 RSpec.describe CardanoWallet::Byron do
 
-  describe "Nightly Byron tests", :nightly => true do
-    before(:all) do
-      @wid_rnd = create_fixture_byron_wallet "random"
-      @wid_ic = create_fixture_byron_wallet "icarus"
-      @target_id_rnd = create_shelley_wallet
-      @target_id_ic = create_shelley_wallet
-      wait_for_byron_wallet_to_sync(@wid_rnd)
-      wait_for_byron_wallet_to_sync(@wid_ic)
-      wait_for_shelley_wallet_to_sync(@target_id_rnd)
-      wait_for_shelley_wallet_to_sync(@target_id_ic)
-
-      # @wid_rnd = "94c0af1034914f4455b7eb795ebea74392deafe9"
-      # @wid_ic = "a468e96ab85ad2043e48cf2e5f3437b4356769f4"
-    end
-
-    after(:all) do
-      teardown
-    end
-
-    def test_byron_tx(source_wid, target_wid)
-      amt = 1000000
-      address = SHELLEY.addresses.list(target_wid)[0]['id']
-
-      tx_sent = BYRON.transactions.create(source_wid, PASS, [{address => amt}])
-      puts "Byron tx: "
-      puts tx_sent
-      puts "------------"
-      expect(tx_sent.to_s).to include "pending"
-      expect(tx_sent.code).to eq 202
-
-      eventually "Funds are on target wallet: #{target_wid}" do
-        available = SHELLEY.wallets.get(target_wid)['balance']['available']['quantity']
-        total = SHELLEY.wallets.get(target_wid)['balance']['total']['quantity']
-        (available == amt) && (total == amt)
-      end
-    end
-
-    it "I can send transaction and funds are received, random -> shelley" do
-      test_byron_tx(@wid_rnd, @target_id_rnd)
-    end
-
-    it "I can send transaction and funds are received, icarus -> shelley" do
-      test_byron_tx(@wid_ic, @target_id_ic)
-    end
-
-  end
-
   describe CardanoWallet::Byron::Wallets do
 
     after(:each) do

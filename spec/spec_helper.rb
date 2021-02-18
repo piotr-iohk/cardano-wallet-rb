@@ -36,10 +36,35 @@ SHELLEY = CardanoWallet.new.shelley
 # timeout in seconds for custom verifications
 TIMEOUT = 120
 
-def create_shelley_wallet
-  SHELLEY.wallets.create({name: "Wallet from mnemonic_sentence",
+# Testnet assets with metadata from mock server http://metadata-server-mock.herokuapp.com/
+ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff169f1",
+             "asset_name" => "",
+             "fingerprint" => "asset1656gm7zkherdvxkn52mhaxkkw343qtkqgv0h8c",
+             "metadata" => {"name" => "SadCoin",
+                            "description" => "Coin with no asset name",
+                            "url" => "https://sad.io",
+                            "acronym" => "SAD",
+                            "logo" => "QWxtb3N0IGEgbG9nbw==",
+                            "unit" => {"name" => "saddies", "decimals" => 10}
+                            }
+           },
+           { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff169f1",
+             "asset_name" => "6861707079636f696e",
+             "fingerprint" => "asset19mwamgpre24at3z34v2e5achszlhhqght9djqp",
+             "metadata" => {"name" => "HappyCoin",
+                            "description" => "Coin with asset name",
+                            "url" => "https://happy.io",
+                            "acronym" => "HAPP",
+                            "logo" => "QWxtb3N0IGEgbG9nbw==",
+                            "unit" => {"name" => "happies", "decimals" => 19}
+                            }
+            },
+         ]
+
+def create_shelley_wallet(name = "Wallet from mnemonic_sentence")
+  SHELLEY.wallets.create({name: name,
                           passphrase: PASS,
-                          mnemonic_sentence: mnemonic_sentence("15")
+                          mnemonic_sentence: mnemonic_sentence("24")
                          })['id']
 end
 
@@ -47,7 +72,7 @@ end
 def create_fixture_shelley_wallet
   # Wallet with funds on shelley testnet:
   # id: b1fb863243a9ae451bc4e2e662f60ff217b126e2
-  # addr: addr1qq9grthf479qmyygzrenk6yqqhtvf3aq2xy5jfscm334qsvs47mevx68ut5g3jt5gxntcaygv3szmhzyytdjfat9758schw95w
+  # addr: addr_test1qq9grthf479qmyygzrenk6yqqhtvf3aq2xy5jfscm334qsvs47mevx68ut5g3jt5gxntcaygv3szmhzyytdjfat9758s2h6z2v
   mnemonics = %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd]
   SHELLEY.wallets.create({name: "Fixture wallet with funds",
                           passphrase: PASS,
@@ -63,18 +88,24 @@ def wait_for_shelley_wallet_to_sync(wid)
   end
 end
 
-def create_byron_wallet_with(mnem, style = "random")
+def wait_for_all_shelley_wallets(wids)
+  wids.each do |w|
+    wait_for_shelley_wallet_to_sync(w)
+  end
+end
+
+def create_byron_wallet_with(mnem, style = "random", name = "Wallet from mnemonic_sentence")
   BYRON.wallets.create({style: style,
-                        name: "Wallet from mnemonic_sentence",
+                        name: name,
                         passphrase: PASS,
                         mnemonic_sentence: mnem
                        })['id']
 end
 
-def create_byron_wallet(style = "random")
+def create_byron_wallet(style = "random", name = "Wallet from mnemonic_sentence")
   style == "random" ? mnem = mnemonic_sentence("12") : mnem = mnemonic_sentence("15")
   BYRON.wallets.create({style: style,
-                        name: "Wallet from mnemonic_sentence",
+                        name: name,
                         passphrase: PASS,
                         mnemonic_sentence: mnem
                        })['id']
@@ -106,6 +137,12 @@ def wait_for_byron_wallet_to_sync(wid)
   while BYRON.wallets.get(wid)['state']['status'] == "syncing" do
     puts "  Syncing... #{BYRON.wallets.get(wid)['state']['progress']['quantity']}%"
     sleep 5
+  end
+end
+
+def wait_for_all_byron_wallets(wids)
+  wids.each do |w|
+    wait_for_byron_wallet_to_sync(w)
   end
 end
 
