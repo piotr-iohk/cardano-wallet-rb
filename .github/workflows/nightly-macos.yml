@@ -30,6 +30,8 @@ jobs:
         screen -dmS NODE ./cardano-node run --config ./spec/testnet/*-config.json --topology ./spec/testnet/*-topology.json --database-path $NODE_DB --socket-path ./node.socket
         screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB --token-metadata-server $TOKEN_METADATA
 
+    - name: Display versions
+      run: |
         echo "./cardano-wallet version"
         ./cardano-wallet version
 

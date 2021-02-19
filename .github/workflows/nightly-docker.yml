@@ -40,8 +40,6 @@ jobs:
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
-        docker run --rm inputoutput/cardano-wallet:$WALLET version
-        docker run --rm inputoutput/cardano-node:$NODE version
         ls ~/node-db-nightly-docker
 
     - name: Set up cardano-wallet and cardano-node NIGHTLY
@@ -50,9 +48,12 @@ jobs:
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
         NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        ls ~/node-db-nightly-docker
+
+    - name: Display versions
+      run: |
         docker run --rm inputoutput/cardano-wallet:$WALLET version
         docker run --rm inputoutput/cardano-node:$NODE version
-        ls ~/node-db-nightly-docker
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1

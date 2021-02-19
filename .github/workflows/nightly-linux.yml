@@ -32,6 +32,8 @@ jobs:
         screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB --token-metadata-server $TOKEN_METADATA
         screen -ls
 
+    - name: Display versions
+      run: |
         echo "./cardano-wallet version"
         ./cardano-wallet version
 

@@ -30,11 +30,6 @@ jobs:
         wget ${env:LATEST_WIN_BIN}
         unzip binary-dist
         dir
-        echo "cardano-wallet.exe version"
-        "cardano-wallet.exe version" | cmd
-
-        echo "cardano-node.exe version"
-        "cardano-node.exe version" | cmd
 
     - name: Start cardano-wallet and cardano-node
       run: |
@@ -44,6 +39,14 @@ jobs:
         nssm start cardano-node
         nssm start cardano-wallet
       shell: cmd
+
+    - name: Display versions
+      run: |
+        echo "cardano-wallet.exe version"
+        "cardano-wallet.exe version" | cmd
+
+        echo "cardano-node.exe version"
+        "cardano-node.exe version" | cmd
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -64,6 +67,7 @@ jobs:
         nssm remove cardano-node
         nssm remove cardano-wallet
       shell: cmd
+      
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
