@@ -36,7 +36,7 @@ jobs:
     - name: Start cardano-wallet and cardano-node
       run: |
         START /B cardano-node.exe run --config spec\testnet\testnet-config.json --topology spec\testnet\testnet-topology.json --database-path spec\testnet\node-db --socket-path \\.\pipe\cardano-node-testnet
-        START /B cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database spec\testnet\wallet-db
+        START /B cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database spec\testnet\wallet-db --token-metadata-server %TOKEN_METADATA%
       shell: cmd
 
     - name: Set up Ruby
@@ -57,3 +57,4 @@ jobs:
       LATEST_WIN_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-win64/latest/download-by-type/file/binary-dist
       NODE_DB: d:\node-db-nightly-docker
       WALLET_DB: d:\wallet-db
+      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/

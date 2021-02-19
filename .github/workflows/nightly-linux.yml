@@ -27,7 +27,7 @@ jobs:
         cp -r cardano-wallet-*/* ./
 
         screen -dmS NODE ./cardano-node run --config ./spec/testnet/*-config.json --topology ./spec/testnet/*-topology.json --database-path $NODE_DB --socket-path ./node.socket
-        screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB
+        screen -dmS WALLET ./cardano-wallet serve --node-socket ./node.socket --testnet ./spec/testnet/*-byron-genesis.json --database $WALLET_DB --token-metadata-server $TOKEN_METADATA
         screen -ls
 
         echo "./cardano-wallet version"
@@ -54,3 +54,4 @@ jobs:
       LATEST_LINUX_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-linux64/latest/download-by-type/file/binary-dist
       NODE_DB: ~/node-db-nightly-docker
       WALLET_DB: ~/wallet-db
+      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
