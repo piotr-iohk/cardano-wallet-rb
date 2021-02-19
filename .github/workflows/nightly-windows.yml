@@ -17,12 +17,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.NODE_DB }}
-        key: ${{ runner.os }}-node-db-nightly-docker-tests-${{ hashFiles('**/protocolMagicId') }}
+        key: ${{ runner.os }}-node-db-nightly-tests-${{ hashFiles('**/protocolMagicId') }}
 
     - name: Prepare Windows
       run: |
         choco install wget
         choco install unzip
+        choco install nssm
 
     - name: Get cardano-wallet and cardano-node
       run: |
@@ -37,8 +38,11 @@ jobs:
 
     - name: Start cardano-wallet and cardano-node
       run: |
-        START /B cardano-node.exe run --config spec\testnet\testnet-config.json --topology spec\testnet\testnet-topology.json --database-path spec\testnet\node-db --socket-path \\.\pipe\cardano-node-testnet
-        START /B cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet spec\testnet\testnet-byron-genesis.json --database spec\testnet\wallet-db --token-metadata-server %TOKEN_METADATA%
+        echo %cd%
+        nssm install cardano-node %cd%/cardano-node.exe run --config %cd%/spec\testnet\testnet-config.json --topology %cd%/spec\testnet\testnet-topology.json --database-path %NODE_DB% --socket-path \\.\pipe\cardano-node-testnet
+        nssm install cardano-wallet %cd%/cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet %cd%/spec\testnet\testnet-byron-genesis.json --database %WALLET_DB% --token-metadata-server %TOKEN_METADATA%
+        nssm start cardano-node
+        nssm start cardano-wallet
       shell: cmd
 
     - name: Set up Ruby
@@ -53,6 +57,13 @@ jobs:
     - name: Run all tests
       run: bundle exec rspec .
 
+    - name: Cleanup
+      run: |
+        nssm stop cardano-node
+        nssm stop cardano-wallet
+        nssm remove cardano-node
+        nssm remove cardano-wallet
+      shell: cmd
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
