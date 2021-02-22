@@ -22,6 +22,26 @@ task :wait_until_node_synced do
     end
   rescue
     retry if (current_time <= timeout_treshold)
-    puts "Could not connect to wallet within #{timeout} seconds..."
+    raise("Could not connect to wallet within #{timeout} seconds...")
   end
+
+  puts ">> Cardano-node and cardano-wallet are synced! <<"
+end
+
+task :win_setup_nssm_services do
+  desc "Set up and start cardano-node and cardano-wallet nssm services"
+  cd = Dir.pwd
+  install_node = %Q{ nssm install cardano-node #{cd}/cardano-node.exe run --config #{cd}/spec/testnet/testnet-config.json --topology #{cd}/spec/testnet/testnet-topology.json --database-path #{ENV['NODE_DB']} --socket-path \\\\.\\pipe\\cardano-node-testnet }
+  install_wallet = %Q{ nssm install cardano-wallet #{cd}/cardano-wallet.exe serve --node-socket \\\\.\\pipe\\cardano-node-testnet --testnet #{cd}/spec/testnet/testnet-byron-genesis.json --database #{ENV['WALLET_DB']} --token-metadata-server #{ENV['TOKEN_METADATA']} }
+  start_node = "nssm start cardano-node"
+  start_wallet = "nssm start cardano-wallet"
+  puts install_node
+  puts install_wallet
+  puts start_node
+  puts start_wallet
+
+  `#{install_node}`
+  `#{install_wallet}`
+  `#{start_node}`
+  `#{start_wallet}`
 end

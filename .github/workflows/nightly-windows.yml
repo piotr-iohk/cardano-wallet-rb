@@ -31,16 +31,16 @@ jobs:
         unzip binary-dist
         dir
 
-    - name: Start cardano-wallet and cardano-node
-      run: |
-        echo %cd%
-        nssm install cardano-node %cd%/cardano-node.exe run --config %cd%/spec\testnet\testnet-config.json --topology %cd%/spec\testnet\testnet-topology.json --database-path %NODE_DB% --socket-path \\.\pipe\cardano-node-testnet
-        nssm install cardano-wallet %cd%/cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet %cd%/spec\testnet\testnet-byron-genesis.json --database %WALLET_DB% --token-metadata-server %TOKEN_METADATA%
-        nssm start cardano-node
-        nssm start cardano-wallet
-        echo "Started cardano-node and cardano-wallet"
-      continue-on-error: true
-      shell: cmd
+    # - name: Start cardano-wallet and cardano-node
+    #   run: |
+    #     echo %cd%
+    #     nssm install cardano-node %cd%/cardano-node.exe run --config %cd%/spec\testnet\testnet-config.json --topology %cd%/spec\testnet\testnet-topology.json --database-path %NODE_DB% --socket-path \\.\pipe\cardano-node-testnet
+    #     nssm install cardano-wallet %cd%/cardano-wallet.exe serve --node-socket \\.\pipe\cardano-node-testnet --testnet %cd%/spec\testnet\testnet-byron-genesis.json --database %WALLET_DB% --token-metadata-server %TOKEN_METADATA%
+    #     nssm start cardano-node
+    #     nssm start cardano-wallet
+    #     echo "Started cardano-node and cardano-wallet"
+    #   continue-on-error: true
+    #   shell: cmd
 
     - name: Display versions
       run: |
@@ -55,6 +55,9 @@ jobs:
 
     - name: Install dependencies
       run: bundle install
+
+    - name: Start cardano-wallet and cardano-node
+      run: bundle exec rake win_setup_nssm_services
 
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
