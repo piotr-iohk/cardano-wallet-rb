@@ -28,7 +28,7 @@ task :wait_until_node_synced do
   puts ">> Cardano-node and cardano-wallet are synced! <<"
 end
 
-task :win_setup_nssm_services do
+task :win_setup_node_and_wallet do
   desc "Set up and start cardano-node and cardano-wallet nssm services"
   cd = Dir.pwd
 
@@ -58,4 +58,42 @@ task :win_setup_nssm_services do
   `#{install_wallet}`
   `#{start_node}`
   `#{start_wallet}`
+end
+
+task :win_remove_nssm_services do
+  desc "Stop and remove cardano-node and cardano-wallet nssm services"
+  `nssm stop cardano-node`
+  `nssm stop cardano-wallet`
+  `nssm remove cardano-node`
+  `nssm remove cardano-wallet`
+end
+
+task :unix_setup_node_and_wallet do
+  desc "Set up and start cardano-node and cardano-wallet using screen tool"
+  cd = Dir.pwd
+  start_node = "#{cd}/cardano-node run --config #{cd}/spec/testnet/*-config.json --topology #{cd}/spec/testnet/*-topology.json --database-path #{ENV['NODE_DB']} --socket-path #{cd}/node.socket"
+  start_wallet = "#{cd}/cardano-wallet serve --node-socket #{cd}/node.socket --testnet #{cd}/spec/testnet/*-byron-genesis.json --database #{ENV['WALLET_DB']} --token-metadata-server #{ENV['TOKEN_METADATA']}"
+
+  `screen -dmS #{start_node}`
+  `screen -dmS #{start_wallet}`
+  `screen -ls`
+end
+
+def wget(url)
+  require 'httparty'
+  file = Dir.pwd + "/spec/testnet/" + File.basename(url)
+  resp = HTTParty.get(url)
+  open(file, "wb") do |file|
+    file.write(resp.body)
+  end
+  puts "#{url} -> #{resp.code}"
+end
+
+task :wget_configs, [:env] do |task, args|
+  base_url = "https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1"
+  env = args[:env]
+  wget("#{base_url}/#{env}-config.json")
+  wget("#{base_url}/#{env}-byron-genesis.json")
+  wget("#{base_url}/#{env}-shelley-genesis.json")
+  wget("#{base_url}/#{env}-topology.json")
 end
