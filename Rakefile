@@ -74,6 +74,9 @@ task :unix_setup_node_and_wallet do
   start_node = "#{cd}/cardano-node run --config #{cd}/spec/testnet/*-config.json --topology #{cd}/spec/testnet/*-topology.json --database-path #{ENV['NODE_DB']} --socket-path #{cd}/node.socket"
   start_wallet = "#{cd}/cardano-wallet serve --node-socket #{cd}/node.socket --testnet #{cd}/spec/testnet/*-byron-genesis.json --database #{ENV['WALLET_DB']} --token-metadata-server #{ENV['TOKEN_METADATA']}"
 
+  puts start_node
+  puts start_wallet
+
   `screen -dmS #{start_node}`
   `screen -dmS #{start_wallet}`
   `screen -ls`
