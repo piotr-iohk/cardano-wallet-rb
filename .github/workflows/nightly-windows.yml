@@ -44,10 +44,7 @@ jobs:
 
     - name: Display versions
       run: |
-        echo "cardano-wallet.exe version"
         "cardano-wallet.exe version" | cmd
-
-        echo "cardano-node.exe version"
         "cardano-node.exe version" | cmd
 
     - name: Set up Ruby

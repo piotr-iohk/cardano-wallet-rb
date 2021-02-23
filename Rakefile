@@ -31,10 +31,24 @@ end
 task :win_setup_nssm_services do
   desc "Set up and start cardano-node and cardano-wallet nssm services"
   cd = Dir.pwd
-  install_node = %Q{ nssm install cardano-node #{cd}/cardano-node.exe run --config #{cd}/spec/testnet/testnet-config.json --topology #{cd}/spec/testnet/testnet-topology.json --database-path #{ENV['NODE_DB']} --socket-path \\\\.\\pipe\\cardano-node-testnet }
-  install_wallet = %Q{ nssm install cardano-wallet #{cd}/cardano-wallet.exe serve --node-socket \\\\.\\pipe\\cardano-node-testnet --testnet #{cd}/spec/testnet/testnet-byron-genesis.json --database #{ENV['WALLET_DB']} --token-metadata-server #{ENV['TOKEN_METADATA']} }
+
+  # create cardano-node.bat file
+  node_cmd = "#{cd}/cardano-node.exe run --config #{cd}/spec/testnet/testnet-config.json --topology #{cd}/spec/testnet/testnet-topology.json --database-path #{ENV['NODE_DB']} --socket-path \\\\.\\pipe\\cardano-node-testnet"
+  File.open("cardano-node.bat", "w") do |f|
+    f.write(node_cmd)
+  end
+
+  # create cardano-wallet.bat file
+  wallet_cmd = "#{cd}/cardano-wallet.exe serve --node-socket \\\\.\\pipe\\cardano-node-testnet --testnet #{cd}/spec/testnet/testnet-byron-genesis.json --database #{ENV['WALLET_DB']} --token-metadata-server #{ENV['TOKEN_METADATA']}"
+  File.open("cardano-wallet.bat", "w") do |f|
+    f.write(wallet_cmd)
+  end
+
+  install_node = "nssm install cardano-node #{cd}/cardano-node.bat"
+  install_wallet = "nssm install cardano-wallet #{cd}/cardano-wallet.bat"
   start_node = "nssm start cardano-node"
   start_wallet = "nssm start cardano-wallet"
+
   puts install_node
   puts install_wallet
   puts start_node
