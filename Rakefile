@@ -54,10 +54,10 @@ task :win_setup_node_and_wallet do
   puts start_node
   puts start_wallet
 
-  `#{install_node}`
-  `#{install_wallet}`
-  `#{start_node}`
-  `#{start_wallet}`
+  puts `#{install_node}`
+  puts `#{install_wallet}`
+  puts `#{start_node}`
+  puts `#{start_wallet}`
 end
 
 task :win_remove_nssm_services do
@@ -77,9 +77,9 @@ task :unix_setup_node_and_wallet do
   puts start_node
   puts start_wallet
 
-  `screen -dmS #{start_node}`
-  `screen -dmS #{start_wallet}`
-  `screen -ls`
+  puts `screen -dmS NODE #{start_node}`
+  puts `screen -dmS WALLET #{start_wallet}`
+  puts `screen -ls`
 end
 
 def wget(url)

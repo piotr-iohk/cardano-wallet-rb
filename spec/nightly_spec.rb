@@ -437,7 +437,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
           expect(rnd['change']).not_to be_empty
           expect(rnd['outputs']).to be_empty
           expect(rnd['certificates']).not_to be_empty
-          expect(rnd['certificates'].to_s).to include "register_reward_account"
+          # expect(rnd['certificates'].to_s).to include "register_reward_account"
           expect(rnd['certificates'].to_s).to include "join_pool"
           expect(rnd.code).to eq 200
         end
