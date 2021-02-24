@@ -50,8 +50,6 @@ jobs:
       run: bundle exec rspec .
 
     env:
-      CI: true
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       LATEST_MACOS_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-macos64/latest/download-by-type/file/binary-dist
       NODE_DB: ~/node-db-nightly-macos-tests
       WALLET_DB: ~/wallet-db
