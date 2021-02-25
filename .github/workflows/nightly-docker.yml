@@ -48,7 +48,7 @@ jobs:
       run: |
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
-        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose up --detach
         ls ~/node-db-nightly-docker
 
     - name: Set up cardano-wallet and cardano-node NIGHTLY
@@ -56,7 +56,7 @@ jobs:
       run: |
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
-        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
+        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose up --detach
         ls ~/node-db-nightly-docker
 
     - name: Display versions
@@ -71,7 +71,7 @@ jobs:
       run: bundle exec rspec .
 
     - name: Stop docker-compose
-      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml down
+      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose down
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
