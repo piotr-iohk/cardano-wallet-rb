@@ -9,6 +9,10 @@ def wget(url, file = nil)
   puts "#{url} -> #{resp.code}"
 end
 
+def mkdir(path)
+  Dir.mkdir(path) unless File.exists?(path)
+end
+
 def is_win?
   RUBY_PLATFORM =~ /cygwin|mswin|mingw|bccwin|wince|emx/
 end
@@ -33,4 +37,8 @@ def get_latest_binary_url
   end
 
   "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-#{os}64/latest/download-by-type/file/binary-dist"
+end
+
+def get_latest_configs_base_url
+  "https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1"
 end

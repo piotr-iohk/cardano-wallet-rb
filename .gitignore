@@ -6,6 +6,10 @@
 /pkg/
 /spec/reports/
 /tmp/
+/configs/
+/node_db/
+/wallet_db/
+/binaries/
 
 Gemfile.lock
 
