@@ -32,10 +32,7 @@ jobs:
         choco install nssm
 
     - name: Get cardano-wallet and cardano-node
-      run: |
-        wget ${env:LATEST_WIN_BIN}
-        unzip binary-dist
-        dir
+      run: bundle exec rake get_latest_bins
 
     - name: Display versions
       run: |
@@ -45,7 +42,7 @@ jobs:
     - name: Start cardano-wallet and cardano-node
       run: |
         bundle exec rake wget_configs["testnet"]
-        bundle exec rake win_setup_node_and_wallet
+        bundle exec rake start_node_and_wallet
 
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
@@ -54,7 +51,6 @@ jobs:
       run: bundle exec rspec .
 
     env:
-      LATEST_WIN_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-win64/latest/download-by-type/file/binary-dist
       NODE_DB: d:\node-db-nightly-win-tests
       WALLET_DB: d:\wallet-db
       TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
