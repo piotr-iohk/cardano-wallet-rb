@@ -9,7 +9,7 @@ def wget(url, file = nil)
   puts "#{url} -> #{resp.code}"
 end
 
-def mkdir(path)
+def mk_dir(path)
   Dir.mkdir(path) unless File.exists?(path)
 end
 

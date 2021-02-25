@@ -75,6 +75,19 @@ task :start_node_and_wallet do
   end
 end
 
+task :stop_node_and_wallet do
+  puts "\n  >> Set up and start cardano-node and cardano-wallet"
+
+  if is_win?
+    puts `nssm stop cardano-wallet`
+    puts `nssm stop cardano-node`
+  else
+    puts `screen -XS WALLET`
+    puts `screen -XS NODE`
+  end
+
+end
+
 task :get_latest_bins do
   puts "\n  >> Get latest node and wallet binaries from Hydra"
 
@@ -107,7 +120,7 @@ task :get_latest_configs, [:env] do |task, args|
   base_url = get_latest_configs_base_url
   env = args[:env]
   path = Dir.pwd + "/configs"
-  mkdir(path)
+  mk_dir(path)
   wget("#{base_url}/#{env}-config.json", "#{path}/#{env}-config.json")
   wget("#{base_url}/#{env}-byron-genesis.json", "#{path}/#{env}-byron-genesis.json")
   wget("#{base_url}/#{env}-shelley-genesis.json", "#{path}/#{env}-shelley-genesis.json")
@@ -124,4 +137,5 @@ task :run_on, [:env] do |task, args|
   Rake::Task[:start_node_and_wallet].invoke
   Rake::Task[:wait_until_node_synced].invoke
   Rake::Task[:spec].invoke
+  Rake::Task[:stop_node_and_wallet].invoke
 end
