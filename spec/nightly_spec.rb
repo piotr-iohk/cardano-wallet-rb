@@ -8,6 +8,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
       @target_id_withdrawal = create_shelley_wallet
       @target_id_meta = create_shelley_wallet
       @target_id_ttl = create_shelley_wallet
+      @target_id_pools = create_shelley_wallet
 
       #byron tests
       @wid_rnd = create_fixture_byron_wallet "random"
@@ -28,7 +29,8 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
                                     @target_id_rnd,
                                     @target_id_ic,
                                     @target_id_rnd_assets,
-                                    @target_id_ic_assets
+                                    @target_id_ic_assets,
+                                    @target_id_pools
                                   ]
       wait_for_all_byron_wallets(@nighly_byron_wallets)
       wait_for_all_shelley_wallets(@nightly_shelley_wallets)
@@ -180,6 +182,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         end
 
         it "Transaction with ttl = 0 would expire and I can forget it" do
+          pending "ADP-608 - Error handling in case when TTL is set before the slot picked up by the node to broadcast the transaction"
           amt = 1000000
           ttl_in_s = 0
 
@@ -319,20 +322,33 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
         it "Can join and quit Stake Pool" do
 
-          #Get current active delegation if there is any
-          #and don't use it when picking pool_id
-          #otherwise the test could fail trying to join pool that wallet already joined
-          pools = SHELLEY.stake_pools
-          deleg = SHELLEY.wallets.get(@wid)['delegation']['active']
-          if deleg['status'] == "delegating"
-            current_pool_id = deleg['target']
-            pool_id = (pools.list({stake: 1000}).map{|p| p['id']} - [current_pool_id]).sample
-          else
-            pool_id = pools.list({stake: 1000}).sample['id']
+          # Get funds on the wallet
+          address = SHELLEY.addresses.list(@target_id_pools)[0]['id']
+          amt = 10000000
+          tx_sent = SHELLEY.transactions.create(@wid,
+                                                PASS,
+                                                [{address => amt}])
+
+          puts "Shelley tx: "
+          puts tx_sent
+          puts "------------"
+
+          expect(tx_sent.to_s).to include "pending"
+          expect(tx_sent.code).to eq 202
+
+          eventually "Funds are on target wallet: #{@target_id_pools}" do
+            available = SHELLEY.wallets.get(@target_id_pools)['balance']['available']['quantity']
+            total = SHELLEY.wallets.get(@target_id_pools)['balance']['total']['quantity']
+            (available == amt) && (total == amt)
           end
 
+          #Pick up pool id to join
+          pools = SHELLEY.stake_pools
+          pool_id = pools.list({stake: 1000}).sample['id']
+
+          #Join pool
           puts "Joining pool: #{pool_id}"
-          join = pools.join(pool_id, @wid, PASS)
+          join = pools.join(pool_id, @target_id_pools, PASS)
 
           puts "Shelley tx: "
           puts join
@@ -343,12 +359,13 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
           join_tx_id = join['id']
           eventually "Checking if join tx id (#{join_tx_id}) is in_ledger" do
-            tx = SHELLEY.transactions.get(@wid, join_tx_id)
+            tx = SHELLEY.transactions.get(@target_id_pools, join_tx_id)
             tx['status'] == "in_ledger"
           end
 
+          # Quit pool
           puts "Quitting pool: #{pool_id}"
-          quit = pools.quit(@wid, PASS)
+          quit = pools.quit(@target_id_pools, PASS)
 
           puts "Shelley tx: "
           puts quit
