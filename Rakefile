@@ -60,14 +60,6 @@ task :win_setup_node_and_wallet do
   puts `#{start_wallet}`
 end
 
-task :win_remove_nssm_services do
-  desc "Stop and remove cardano-node and cardano-wallet nssm services"
-  `nssm stop cardano-node`
-  `nssm stop cardano-wallet`
-  `nssm remove cardano-node`
-  `nssm remove cardano-wallet`
-end
-
 task :unix_setup_node_and_wallet do
   desc "Set up and start cardano-node and cardano-wallet using screen tool"
   cd = Dir.pwd

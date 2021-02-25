@@ -53,9 +53,6 @@ jobs:
     - name: Run all tests
       run: bundle exec rspec .
 
-    - name: Cleanup
-      run: bundle exec rake win_remove_nssm_services
-
     env:
       LATEST_WIN_BIN: https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-win64/latest/download-by-type/file/binary-dist
       NODE_DB: d:\node-db-nightly-win-tests
