@@ -51,7 +51,7 @@ ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff
              "metadata" => {"name" => "SadCoin",
                             "description" => "Coin with no asset name",
                             "url" => "https://sad.io",
-                            "acronym" => "SAD",
+                            "ticker" => "SAD",
                             "logo" => "QWxtb3N0IGEgbG9nbw==",
                             "unit" => {"name" => "saddies", "decimals" => 10}
                             }
@@ -62,13 +62,23 @@ ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff
              "metadata" => {"name" => "HappyCoin",
                             "description" => "Coin with asset name",
                             "url" => "https://happy.io",
-                            "acronym" => "HAPP",
+                            "ticker" => "HAPP",
                             "logo" => "QWxtb3N0IGEgbG9nbw==",
                             "unit" => {"name" => "happies", "decimals" => 19}
                             }
             },
          ]
 
+FIXTURE_WALLETS = { :linux => {:shelley => %w[shiver unknown lottery calm renew west any ecology merge slab sort color hybrid pact crowd],
+                               :icarus => %w[security defense food inhale voyage tomorrow guess galaxy junior guilt vendor soon escape design pretty],
+                               :byron => %w[purchase carbon forest frog robot actual used news broken start plunge family] },
+                    :macos => {:shelley => %w[trade provide climb pond mirror rare sibling effort awkward talk since common runway reflect olive],
+                               :icarus => %w[above carpet build enhance submit film dinosaur rely eagle wrestle security under forest hard congress],
+                               :byron => %w[magnet junior birth glance curious involve ecology blossom ski hybrid beyond enjoy] },
+                    :windows => {:shelley => %w[choose garbage job nominee journey fee large detail canoe party ethics guard coil ask protect],
+                                 :icarus => %w[loyal crazy will talent nature sign hair piece neglect patient venue connect bean spray giggle],
+                                 :byron => %w[purchase control gaze gospel know caution grid truck arrest reunion dress smile] },
+                  }
 def create_shelley_wallet(name = "Wallet from mnemonic_sentence")
   SHELLEY.wallets.create({name: name,
                           passphrase: PASS,

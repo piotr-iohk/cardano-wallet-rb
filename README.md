@@ -1,4 +1,5 @@
 
+
 <a href="https://badge.fury.io/rb/cardano_wallet">
   <img src="https://badge.fury.io/rb/cardano_wallet.svg" alt="Gem Version">
 </a>
@@ -11,27 +12,33 @@
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
   <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
 </a>
-<a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ANightly">
-  <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly/badge.svg" />
-</a>
+
 
 # cardano-wallet-rb
 
 Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST [API](https://input-output-hk.github.io/cardano-wallet/api/edge/).
 
+## Nightly tests
+
+Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/input-output-hk/cardano-wallet) against public testnet.
+
+|Platform|Status  |
+|--|--|
+|Docker  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-docker.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Docker/badge.svg" /></a> |
+|Linux  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-linux.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Linux/badge.svg" /></a> |
+|MacOS  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-macos.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20MacOS/badge.svg" /></a> |
+|Windows  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-windows.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Windows/badge.svg" /></a> |
+
+
 ## Installation
 
-Add this line to your application's Gemfile:
+In Gemfile:
 
 ```ruby
 gem 'cardano_wallet'
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
+Or:
 
     $ gem install cardano_wallet
 
@@ -43,22 +50,6 @@ For `cardano-wallet` REST Api see: https://input-output-hk.github.io/cardano-wal
 
 ## Usage
 
-### Initialize
-
-```ruby
-# default options
-CW = CardanoWallet.new
-
-# custom options
-CW1 = CardanoWallet.new({port: 8091})
-CW2 = CardanoWallet.new({port: 443,
-                        protocol: "https",
-                        cacert: "/root/ca.cert",
-                        pem: "/root/client.pem"})
-CW3 = CardanoWallet.new({url: "http://localhost:8090/v2"})
-```
-
-### Exercise
 ```ruby
 CW = CardanoWallet.new
 

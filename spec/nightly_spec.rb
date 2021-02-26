@@ -3,19 +3,20 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
     before(:all) do
       #shelley tests
       @wid = create_fixture_shelley_wallet
-      @target_id = create_shelley_wallet
-      @target_id_assets = create_shelley_wallet
-      @target_id_withdrawal = create_shelley_wallet
-      @target_id_meta = create_shelley_wallet
-      @target_id_ttl = create_shelley_wallet
+      @target_id = create_shelley_wallet("Target tx wallet")
+      @target_id_assets = create_shelley_wallet("Target asset tx wallet")
+      @target_id_withdrawal = create_shelley_wallet("Target tx withdrawal wallet")
+      @target_id_meta = create_shelley_wallet("Target tx metadata wallet")
+      @target_id_ttl = create_shelley_wallet("Target tx ttl wallet")
+      @target_id_pools = create_shelley_wallet("Target tx pool join/quit wallet")
 
       #byron tests
       @wid_rnd = create_fixture_byron_wallet "random"
       @wid_ic = create_fixture_byron_wallet "icarus"
-      @target_id_rnd = create_shelley_wallet
-      @target_id_ic = create_shelley_wallet
-      @target_id_rnd_assets = create_shelley_wallet
-      @target_id_ic_assets = create_shelley_wallet
+      @target_id_rnd = create_shelley_wallet("Target tx wallet")
+      @target_id_ic = create_shelley_wallet("Target tx wallet")
+      @target_id_rnd_assets = create_shelley_wallet("Target asset tx wallet")
+      @target_id_ic_assets = create_shelley_wallet("Target asset tx wallet")
 
       @nighly_byron_wallets = [ @wid_rnd, @wid_ic ]
       @nightly_shelley_wallets = [
@@ -28,14 +29,15 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
                                     @target_id_rnd,
                                     @target_id_ic,
                                     @target_id_rnd_assets,
-                                    @target_id_ic_assets
+                                    @target_id_ic_assets,
+                                    @target_id_pools
                                   ]
       wait_for_all_byron_wallets(@nighly_byron_wallets)
       wait_for_all_shelley_wallets(@nightly_shelley_wallets)
 
 
       # @wid = "b1fb863243a9ae451bc4e2e662f60ff217b126e2"
-      # @target_id_assets = "1c45611db52f07d88981db067d60f895ac34f349"
+      # @target_id_pools = "4eff7771b9975e0731e2c5eb9695fece9067ee92"
     end
 
     after(:all) do
@@ -45,7 +47,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         BYRON.wallets.delete wid
       end
       @nightly_shelley_wallets.each do |wid|
-        BYRON.wallets.delete wid
+        SHELLEY.wallets.delete wid
       end
     end
 
@@ -180,6 +182,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         end
 
         it "Transaction with ttl = 0 would expire and I can forget it" do
+          # pending "ADP-608 - Error handling in case when TTL is set before the slot picked up by the node to broadcast the transaction"
           amt = 1000000
           ttl_in_s = 0
 
@@ -319,20 +322,33 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
         it "Can join and quit Stake Pool" do
 
-          #Get current active delegation if there is any
-          #and don't use it when picking pool_id
-          #otherwise the test could fail trying to join pool that wallet already joined
-          pools = SHELLEY.stake_pools
-          deleg = SHELLEY.wallets.get(@wid)['delegation']['active']
-          if deleg['status'] == "delegating"
-            current_pool_id = deleg['target']
-            pool_id = (pools.list({stake: 1000}).map{|p| p['id']} - [current_pool_id]).sample
-          else
-            pool_id = pools.list({stake: 1000}).sample['id']
+          # Get funds on the wallet
+          address = SHELLEY.addresses.list(@target_id_pools)[0]['id']
+          amt = 10000000
+          tx_sent = SHELLEY.transactions.create(@wid,
+                                                PASS,
+                                                [{address => amt}])
+
+          puts "Shelley tx: "
+          puts tx_sent
+          puts "------------"
+
+          expect(tx_sent.to_s).to include "pending"
+          expect(tx_sent.code).to eq 202
+
+          eventually "Funds are on target wallet: #{@target_id_pools}" do
+            available = SHELLEY.wallets.get(@target_id_pools)['balance']['available']['quantity']
+            total = SHELLEY.wallets.get(@target_id_pools)['balance']['total']['quantity']
+            (available == amt) && (total == amt)
           end
 
+          #Pick up pool id to join
+          pools = SHELLEY.stake_pools
+          pool_id = pools.list({stake: 1000}).sample['id']
+
+          #Join pool
           puts "Joining pool: #{pool_id}"
-          join = pools.join(pool_id, @wid, PASS)
+          join = pools.join(pool_id, @target_id_pools, PASS)
 
           puts "Shelley tx: "
           puts join
@@ -343,12 +359,13 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
           join_tx_id = join['id']
           eventually "Checking if join tx id (#{join_tx_id}) is in_ledger" do
-            tx = SHELLEY.transactions.get(@wid, join_tx_id)
+            tx = SHELLEY.transactions.get(@target_id_pools, join_tx_id)
             tx['status'] == "in_ledger"
           end
 
+          # Quit pool
           puts "Quitting pool: #{pool_id}"
-          quit = pools.quit(@wid, PASS)
+          quit = pools.quit(@target_id_pools, PASS)
 
           puts "Shelley tx: "
           puts quit
@@ -358,8 +375,8 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
           expect(quit.code).to eq 202
 
           quit_tx_id = quit['id']
-          eventually "Checking if join tx id (#{quit_tx_id}) is in_ledger" do
-            tx = SHELLEY.transactions.get(@wid, quit_tx_id)
+          eventually "Checking if quit tx id (#{quit_tx_id}) is in_ledger" do
+            tx = SHELLEY.transactions.get(@target_id_pools, quit_tx_id)
             tx['status'] == "in_ledger"
           end
         end
@@ -437,7 +454,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
           expect(rnd['change']).not_to be_empty
           expect(rnd['outputs']).to be_empty
           expect(rnd['certificates']).not_to be_empty
-          expect(rnd['certificates'].to_s).to include "register_reward_account"
+          # expect(rnd['certificates'].to_s).to include "register_reward_account"
           expect(rnd['certificates'].to_s).to include "join_pool"
           expect(rnd.code).to eq 200
         end

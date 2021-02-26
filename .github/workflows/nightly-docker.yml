@@ -1,8 +1,10 @@
-name: Nightly
+name: Nightly Docker
 
 on:
   schedule:
   - cron:  "0 23 * * *"
+  # pull_request:
+  #   branches: [ master ]
   workflow_dispatch:
     inputs:
       nodeTag:
@@ -22,6 +24,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Get recent configs
+      run: bundle exec rake get_latest_configs["testnet"]
+
     - name: Cache node db
       id: cache
       uses: actions/cache@v2
@@ -37,9 +48,7 @@ jobs:
       run: |
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
-        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
-        docker run --rm inputoutput/cardano-wallet:$WALLET version
-        docker run --rm inputoutput/cardano-node:$NODE version
+        NODE_CONFIG_PATH=`pwd`/configs docker-compose up --detach
         ls ~/node-db-nightly-docker
 
     - name: Set up cardano-wallet and cardano-node NIGHTLY
@@ -47,16 +56,13 @@ jobs:
       run: |
         echo "Wallet: $WALLET"
         echo "Node: $NODE"
-        NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml up --detach
-        docker run --rm inputoutput/cardano-wallet:$WALLET version
-        docker run --rm inputoutput/cardano-node:$NODE version
+        NODE_CONFIG_PATH=`pwd`/configs docker-compose up --detach
         ls ~/node-db-nightly-docker
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-
-    - name: Install dependencies
-      run: bundle install
+    - name: Display versions
+      run: |
+        docker run --rm inputoutput/cardano-wallet:$WALLET version
+        docker run --rm inputoutput/cardano-node:$NODE version
 
     - name: Wait until node is synced
       run: bundle exec rake wait_until_node_synced
@@ -65,10 +71,11 @@ jobs:
       run: bundle exec rspec .
 
     - name: Stop docker-compose
-      run: NODE_CONFIG_PATH=`pwd`/spec/testnet docker-compose -f docker-compose-shelley.yml down
+      run: NODE_CONFIG_PATH=`pwd`/configs docker-compose down
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
       NETWORK: testnet
       WALLET: dev-master-shelley
       NODE: 1.25.1
