@@ -182,7 +182,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         end
 
         it "Transaction with ttl = 0 would expire and I can forget it" do
-          pending "ADP-608 - Error handling in case when TTL is set before the slot picked up by the node to broadcast the transaction"
+          # pending "ADP-608 - Error handling in case when TTL is set before the slot picked up by the node to broadcast the transaction"
           amt = 1000000
           ttl_in_s = 0
 

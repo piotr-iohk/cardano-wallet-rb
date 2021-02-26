@@ -51,7 +51,7 @@ ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff
              "metadata" => {"name" => "SadCoin",
                             "description" => "Coin with no asset name",
                             "url" => "https://sad.io",
-                            "acronym" => "SAD",
+                            "ticker" => "SAD",
                             "logo" => "QWxtb3N0IGEgbG9nbw==",
                             "unit" => {"name" => "saddies", "decimals" => 10}
                             }
@@ -62,7 +62,7 @@ ASSETS = [ { "policy_id" => "789ef8ae89617f34c07f7f6a12e4d65146f958c0bc15a97b4ff
              "metadata" => {"name" => "HappyCoin",
                             "description" => "Coin with asset name",
                             "url" => "https://happy.io",
-                            "acronym" => "HAPP",
+                            "ticker" => "HAPP",
                             "logo" => "QWxtb3N0IGEgbG9nbw==",
                             "unit" => {"name" => "happies", "decimals" => 19}
                             }
