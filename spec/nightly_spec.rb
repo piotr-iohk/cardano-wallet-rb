@@ -3,20 +3,20 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
     before(:all) do
       #shelley tests
       @wid = create_fixture_shelley_wallet
-      @target_id = create_shelley_wallet
-      @target_id_assets = create_shelley_wallet
-      @target_id_withdrawal = create_shelley_wallet
-      @target_id_meta = create_shelley_wallet
-      @target_id_ttl = create_shelley_wallet
-      @target_id_pools = create_shelley_wallet
+      @target_id = create_shelley_wallet("Target tx wallet")
+      @target_id_assets = create_shelley_wallet("Target asset tx wallet")
+      @target_id_withdrawal = create_shelley_wallet("Target tx withdrawal wallet")
+      @target_id_meta = create_shelley_wallet("Target tx metadata wallet")
+      @target_id_ttl = create_shelley_wallet("Target tx ttl wallet")
+      @target_id_pools = create_shelley_wallet("Target tx pool join/quit wallet")
 
       #byron tests
       @wid_rnd = create_fixture_byron_wallet "random"
       @wid_ic = create_fixture_byron_wallet "icarus"
-      @target_id_rnd = create_shelley_wallet
-      @target_id_ic = create_shelley_wallet
-      @target_id_rnd_assets = create_shelley_wallet
-      @target_id_ic_assets = create_shelley_wallet
+      @target_id_rnd = create_shelley_wallet("Target tx wallet")
+      @target_id_ic = create_shelley_wallet("Target tx wallet")
+      @target_id_rnd_assets = create_shelley_wallet("Target asset tx wallet")
+      @target_id_ic_assets = create_shelley_wallet("Target asset tx wallet")
 
       @nighly_byron_wallets = [ @wid_rnd, @wid_ic ]
       @nightly_shelley_wallets = [
@@ -37,7 +37,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
 
 
       # @wid = "b1fb863243a9ae451bc4e2e662f60ff217b126e2"
-      # @target_id_assets = "1c45611db52f07d88981db067d60f895ac34f349"
+      # @target_id_pools = "4eff7771b9975e0731e2c5eb9695fece9067ee92"
     end
 
     after(:all) do
@@ -47,7 +47,7 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
         BYRON.wallets.delete wid
       end
       @nightly_shelley_wallets.each do |wid|
-        BYRON.wallets.delete wid
+        SHELLEY.wallets.delete wid
       end
     end
 
@@ -375,8 +375,8 @@ RSpec.describe "Cardano Wallet Nightly tests", :nightly => true do
           expect(quit.code).to eq 202
 
           quit_tx_id = quit['id']
-          eventually "Checking if join tx id (#{quit_tx_id}) is in_ledger" do
-            tx = SHELLEY.transactions.get(@wid, quit_tx_id)
+          eventually "Checking if quit tx id (#{quit_tx_id}) is in_ledger" do
+            tx = SHELLEY.transactions.get(@target_id_pools, quit_tx_id)
             tx['status'] == "in_ledger"
           end
         end

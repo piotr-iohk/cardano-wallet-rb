@@ -76,7 +76,7 @@ task :start_node_and_wallet do
 end
 
 task :stop_node_and_wallet do
-  puts "\n  >> Set up and start cardano-node and cardano-wallet"
+  puts "\n  >> Stop cardano-node and cardano-wallet"
 
   if is_win?
     puts `nssm stop cardano-wallet`
@@ -92,6 +92,7 @@ task :get_latest_bins do
   puts "\n  >> Get latest node and wallet binaries from Hydra"
 
   wget(get_latest_binary_url)
+  
   if is_win?
     puts `unzip binary-dist`
     puts `dir`
@@ -102,7 +103,6 @@ task :get_latest_bins do
     puts "cardano-wallet version:"
     puts `cardano-wallet.exe version`
   else
-
     puts `tar -xvf binary-dist`
     puts `cp -r cardano-wallet-*/* ./`
 
