@@ -20,6 +20,8 @@ Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-
 
 ## Nightly tests
 
+Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/input-output-hk/cardano-wallet) against public testnet.
+
 |Platform|Status  |
 |--|--|
 |Docker  | <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions/workflows/nightly-docker.yml?query=workflow%3ANightly"><img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Nightly%20Docker/badge.svg" /></a> |
@@ -30,17 +32,13 @@ Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-
 
 ## Installation
 
-Add this line to your application's Gemfile:
+In Gemfile:
 
 ```ruby
 gem 'cardano_wallet'
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
+Or:
 
     $ gem install cardano_wallet
 
@@ -52,22 +50,6 @@ For `cardano-wallet` REST Api see: https://input-output-hk.github.io/cardano-wal
 
 ## Usage
 
-### Initialize
-
-```ruby
-# default options
-CW = CardanoWallet.new
-
-# custom options
-CW1 = CardanoWallet.new({port: 8091})
-CW2 = CardanoWallet.new({port: 443,
-                        protocol: "https",
-                        cacert: "/root/ca.cert",
-                        pem: "/root/client.pem"})
-CW3 = CardanoWallet.new({url: "http://localhost:8090/v2"})
-```
-
-### Exercise
 ```ruby
 CW = CardanoWallet.new
 
