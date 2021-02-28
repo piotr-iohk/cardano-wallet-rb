@@ -92,7 +92,7 @@ task :get_latest_bins do
   puts "\n  >> Get latest node and wallet binaries from Hydra"
 
   wget(get_latest_binary_url)
-  
+
   if is_win?
     puts `unzip binary-dist`
     puts `dir`
