@@ -4,30 +4,6 @@ RSpec.describe CardanoWallet do
   end
 
   describe CardanoWallet::Base do
-      # it "Can init with default params" do
-      #   n = CardanoWallet.new.misc.network.information
-      #   expect(n.code).to eq 200
-      # end
-      #
-      # it "Can init with port" do
-      #   n = CardanoWallet.new({port: 8090}).misc.network.information
-      #   expect(n.code).to eq 200
-      # end
-      #
-      # it "Can init with url" do
-      #   n = CardanoWallet.new({url: "http://localhost:8090/v2"}).misc.network.information
-      #   expect(n.code).to eq 200
-      # end
-      #
-      # it "Can set protocol" do
-      #   n = CardanoWallet.new({protocol: "http", port: 8090}).misc.network.information
-      #   expect(n.code).to eq 200
-      # end
-      #
-      # it "Can set timeout" do
-      #   n = CardanoWallet.new({timeout: 120, port: 8090}).misc.network.information
-      #   expect(n.code).to eq 200
-      # end
 
       it "Can set certs to fly with Daedalus" do
         options = { protocol: "https",

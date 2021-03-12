@@ -1,4 +1,9 @@
-require "simplecov"
+require 'simplecov'
+require 'bundler/setup'
+require 'cardano_wallet'
+require 'bip_mnemonic'
+require "rspec/expectations"
+
 SimpleCov.start do
   add_filter %r{^/spec/}
 end
@@ -20,5 +25,70 @@ RSpec.configure do |config|
   end
 end
 
-require "bundler/setup"
-require "cardano_wallet"
+RSpec::Matchers.define :have_http do |code|
+    match do |response|
+      response.code == code
+    end
+    failure_message do |response|
+      %Q{
+          The response did not return expected HTTP code!
+          Expected code = #{code}
+          Actual code = #{response.code}
+          Actual response:
+
+          #{response}
+        }
+    end
+  end
+
+CW = CardanoWallet.new
+BYRON = CW.byron
+SHELLEY = CW.shelley
+
+def create_shelley_wallet(name = "Wallet from mnemonic_sentence")
+  SHELLEY.wallets.create({name: name,
+                          passphrase: "Secure Passphrase",
+                          mnemonic_sentence: mnemonic_sentence(24)
+                         })['id']
+end
+
+def create_byron_wallet(style = "random", name = "Wallet from mnemonic_sentence")
+  style == "random" ? mnem = mnemonic_sentence(12) : mnem = mnemonic_sentence(15)
+  BYRON.wallets.create({style: style,
+                        name: name,
+                        passphrase: "Secure Passphrase",
+                        mnemonic_sentence: mnem
+                       })['id']
+end
+
+def mnemonic_sentence(word_count = 15)
+  case word_count
+  when 9
+    bits = 96
+  when 12
+    bits = 128
+  when 15
+    bits = 164
+  when 18
+    bits = 196
+  when 21
+    bits = 224
+  when 24
+    bits = 256
+  else
+    raise "Non-supported no of words #{word_count}!"
+  end
+  BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
+end
+
+def teardown
+  wb = BYRON.wallets
+  wb.list.each do |w|
+    wb.delete w['id']
+  end
+
+  ws = SHELLEY.wallets
+  ws.list.each do |w|
+    ws.delete w['id']
+  end
+end

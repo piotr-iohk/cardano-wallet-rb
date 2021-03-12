@@ -15,13 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Cache node db
-      id: cache
-      uses: actions/cache@v2
-      with:
-        path: ~/node-db-nightly-docker
-        key: ${{ runner.os }}-node-db-tests-docker-${{ hashFiles('**/protocolMagicId') }}
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
 
@@ -29,7 +22,7 @@ jobs:
       run: bundle install
 
     - name: Get recent configs
-      run: bundle exec rake get_latest_configs["testnet"]
+      run: bundle exec rake get_latest_configs[testnet]
 
     - name: Set up cardano-wallet and cardano-node
       run: |
@@ -41,14 +34,13 @@ jobs:
         ls ~/node-db-nightly-docker
 
     - name: Run all tests except nighlty
-      run: rspec . -t ~nightly
+      run: rake spec
 
     - name: Stop docker-compose
       run: NODE_CONFIG_PATH=`pwd`/configs docker-compose down
     env:
       CI: true
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
       NETWORK: testnet
       WALLET: dev-master-shelley
       NODE: 1.25.1
