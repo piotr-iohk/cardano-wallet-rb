@@ -1,17 +1,15 @@
+# frozen_string_literal: true
+
 module CardanoWallet
   # Init API for Shelley
   module Shelley
-
     def self.new(opt)
       Init.new opt
     end
 
+    ##
+    # Base class for Shelley API
     class Init < Base
-
-      def initialize opt
-        super
-      end
-
       # Call API for Wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
       def wallets
@@ -59,14 +57,11 @@ module CardanoWallet
       def assets
         Assets.new @opt
       end
-
     end
 
+    ##
+    # Base class for Shelley Assets API
     class Assets < Base
-      def initialize opt
-        super
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
@@ -76,23 +71,20 @@ module CardanoWallet
         ep += "/#{asset_name}" if asset_name
         self.class.get(ep)
       end
-
     end
 
+    ##
+    # Base class for Shelley Keys API
     class Keys < Base
-      def initialize opt
-        super
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
       def sign_metadata(wid, role, index, pass, metadata)
         payload = { passphrase: pass }
         payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/signatures/#{role}/#{index}",
-                        :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json',
-                                      'Accept' => 'application/octet-stream'} )
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json',
+                                   'Accept' => 'application/octet-stream' })
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
@@ -104,24 +96,18 @@ module CardanoWallet
       def create_acc_public_key(wid, index, pass, extended)
         payload = { passphrase: pass, extended: extended }
         self.class.post("/wallets/#{wid}/keys/#{index}",
-                        :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json' }
-                        )
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
-
     end
 
     # API for Wallets
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
     class Wallets < Base
-      def initialize opt
-        super
-      end
-
       # List all wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listWallets
       def list
-        self.class.get("/wallets")
+        self.class.get('/wallets')
       end
 
       # Get wallet details
@@ -136,19 +122,18 @@ module CardanoWallet
       # @example Create wallet from mnemonic sentence
       #   create({name: "Wallet from mnemonic_sentence",
       #           passphrase: "Secure Passphrase",
-      #           mnemonic_sentence: %w[story egg fun dismiss gasp mad spoon human cloud become garbage panel rhythm knee help],
+      #           mnemonic_sentence: %w[story egg fun ... ],
       #          })
       # @example Create wallet from pub key
       #   create({name: "Wallet from pub key",
-      #           account_public_key: "b47546e661b6c1791452d003d375756dde6cac2250093ce4630f16b9b9c0ac87411337bda4d5bc0216462480b809824ffb48f17e08d95ab9f1b91d391e48e66b",
+      #           account_public_key: "b47546e...",
       #           address_pool_gap: 20,
       #          })
       def create(params)
         Utils.verify_param_is_hash!(params)
-        self.class.post( "/wallets",
-                         :body => params.to_json,
-                         :headers => { 'Content-Type' => 'application/json' }
-                        )
+        self.class.post('/wallets',
+                        body: params.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Delete wallet
@@ -165,9 +150,8 @@ module CardanoWallet
       def update_metadata(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/wallets/#{wid}",
-                       :body => params.to_json,
-                       :headers => { 'Content-Type' => 'application/json' }
-                      )
+                       body: params.to_json,
+                       headers: { 'Content-Type' => 'application/json' })
       end
 
       # See wallet's utxo distribution
@@ -184,57 +168,50 @@ module CardanoWallet
       def update_passphrase(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/wallets/#{wid}/passphrase",
-                       :body => params.to_json,
-                       :headers => { 'Content-Type' => 'application/json' }
-                      )
+                       body: params.to_json,
+                       headers: { 'Content-Type' => 'application/json' })
       end
     end
 
     # API for Addresses
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Addresses
     class Addresses < Base
-      def initialize opt
-        super
-      end
-
       # List addresses
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAddresses
       #
       # @example
       #   list(wid, {state: "used"})
-      def list(wid, q = {})
-        q.empty? ? query = '' : query = Utils.to_query(q)
-        self.class.get("/wallets/#{wid}/addresses#{query}")
+      def list(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/addresses#{query_formatted}")
       end
     end
 
     # API for CoinSelections
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
     class CoinSelections < Base
-      def initialize opt
-        super
-      end
-
       # Show random coin selection for particular payment
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/selectCoins
       #
       # @example
       #   random(wid, [{addr1: 1000000}, {addr2: 1000000}])
-      #   random(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
+      #   random(wid, [{ "address": "addr1..",
+      #                  "amount": { "quantity": 42000000, "unit": "lovelace" },
+      #                  "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def random(wid, payments, withdrawal = nil, metadata = nil)
         Utils.verify_param_is_array!(payments)
-        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
-          payments_formatted = payments
-        else
-          payments_formatted = Utils.format_payments(payments)
-        end
-        payload = { :payments => payments_formatted }
+        payments_formatted = if payments.any? { |p| p.key?(:address) || p.key?('address') }
+                               payments
+                             else
+                               Utils.format_payments(payments)
+                             end
+        payload = { payments: payments_formatted }
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/coin-selections/random",
-                        :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json' })
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Coin selection -> Delegation action
@@ -246,18 +223,14 @@ module CardanoWallet
       def random_deleg(wid, deleg_action)
         Utils.verify_param_is_hash!(deleg_action)
         self.class.post("/wallets/#{wid}/coin-selections/random",
-                        :body => {:delegation_action => deleg_action}.to_json,
-                        :headers => { 'Content-Type' => 'application/json' })
+                        body: { delegation_action: deleg_action }.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
     end
 
     # API for Transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
     class Transactions < Base
-      def initialize opt
-        super
-      end
-
       # Get tx by id
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getTransaction
       def get(wid, tx_id)
@@ -269,9 +242,9 @@ module CardanoWallet
       #
       # @example
       #   list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
-      def list(wid, q = {})
-        q.empty? ? query = '' : query = Utils.to_query(q)
-        self.class.get("/wallets/#{wid}/transactions#{query}")
+      def list(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/transactions#{query_formatted}")
       end
 
       # Create a transaction from the wallet
@@ -285,24 +258,26 @@ module CardanoWallet
       #
       # @example
       #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}], 'self', {"1": "abc"}, ttl = 10)
-      #   create(wid, passphrase, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ], 'self', {"1": "abc"}, ttl = 10)
+      #   create(wid, passphrase, [{ "address": "addr1..",
+      #                              "amount": { "quantity": 42000000, "unit": "lovelace" },
+      #                              "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ],
+      #                              'self', {"1": "abc"}, ttl = 10)
       def create(wid, passphrase, payments, withdrawal = nil, metadata = nil, ttl = nil)
         Utils.verify_param_is_array!(payments)
-        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
-          payments_formatted = payments
-        else
-          payments_formatted = Utils.format_payments(payments)
-        end
-        payload = { :payments => payments_formatted,
-                    :passphrase => passphrase
-                  }
+        payments_formatted = if payments.any? { |p| p.key?(:address) || p.key?('address') }
+                               payments
+                             else
+                               Utils.format_payments(payments)
+                             end
+        payload = { payments: payments_formatted,
+                    passphrase: passphrase }
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
-        payload[:time_to_live] = { quantity: ttl, unit: "second" } if ttl
+        payload[:time_to_live] = { quantity: ttl, unit: 'second' } if ttl
 
         self.class.post("/wallets/#{wid}/transactions",
-        :body => payload.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Estimate fees for transaction
@@ -310,24 +285,27 @@ module CardanoWallet
       #
       # @example
       #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}], {"1": "abc"}, ttl = 10)
-      #   payment_fees(wid, [{ "address": "addr1..", "amount": { "quantity": 42000000, "unit": "lovelace" }, "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ], {"1": "abc"}, ttl = 10)
+      #   payment_fees(wid, [{ "address": "addr1..",
+      #                        "amount": { "quantity": 42000000, "unit": "lovelace" },
+      #                        "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ],
+      #                        {"1": "abc"}, ttl = 10)
       def payment_fees(wid, payments, withdrawal = nil, metadata = nil, ttl = nil)
         Utils.verify_param_is_array!(payments)
-        if payments.any?{|p| p.has_key?("address".to_sym) || p.has_key?("address")}
-          payments_formatted = payments
-        else
-          payments_formatted = Utils.format_payments(payments)
-        end
+        payments_formatted = if payments.any? { |p| p.key?(:address) || p.key?('address') }
+                               payments
+                             else
+                               Utils.format_payments(payments)
+                             end
 
-        payload = { :payments => payments_formatted }
+        payload = { payments: payments_formatted }
 
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
-        payload[:time_to_live] = { quantity: ttl, unit: "second" } if ttl
+        payload[:time_to_live] = { quantity: ttl, unit: 'second' } if ttl
 
         self.class.post("/wallets/#{wid}/payment-fees",
-        :body => payload.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Forget a transaction
@@ -340,10 +318,6 @@ module CardanoWallet
     # API for StakePools
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
     class StakePools < Base
-      def initialize opt
-        super
-      end
-
       # Stake pools maintenance actions
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postMaintenanceAction
       #
@@ -351,21 +325,21 @@ module CardanoWallet
       #   maintenance_action({ "maintenance_action": "gc_stake_pools" })
       def trigger_maintenance_actions(action = {})
         Utils.verify_param_is_hash!(action)
-        self.class.post("/stake-pools/maintenance-actions",
-          :body => action.to_json,
-          :headers => { 'Content-Type' => 'application/json' } )
+        self.class.post('/stake-pools/maintenance-actions',
+                        body: action.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Metdata GC Status
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getMaintenanceActions
       def view_maintenance_actions
-        self.class.get("/stake-pools/maintenance-actions")
+        self.class.get('/stake-pools/maintenance-actions')
       end
 
       # List all stake pools
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listStakePools
       def list(stake = {})
-        stake.empty? ? query = '' : query = Utils.to_query(stake)
+        query = stake.empty? ? '' : Utils.to_query(stake)
         self.class.get("/stake-pools#{query}")
       end
 
@@ -373,16 +347,16 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/joinStakePool
       def join(sp_id, wid, passphrase)
         self.class.put("/stake-pools/#{sp_id}/wallets/#{wid}",
-        :body => { :passphrase => passphrase }.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+                       body: { passphrase: passphrase }.to_json,
+                       headers: { 'Content-Type' => 'application/json' })
       end
 
       # Quit stape pool
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/quitStakePool
       def quit(wid, passphrase)
         self.class.delete("#{@api}/stake-pools/*/wallets/#{wid}",
-        :body => { :passphrase => passphrase }.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+                          body: { passphrase: passphrase }.to_json,
+                          headers: { 'Content-Type' => 'application/json' })
       end
 
       # Estimate delegation fees
@@ -395,10 +369,6 @@ module CardanoWallet
     # Shelley migrations
     # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
     class Migrations < Base
-      def initialize opt
-        super
-      end
-
       # Calculate migration cost
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getShelleyWalletMigrationInfo
       def cost(wid)
@@ -412,12 +382,10 @@ module CardanoWallet
       # @param [Array] array of addresses
       def migrate(wid, passphrase, addresses)
         self.class.post("/wallets/#{wid}/migrations",
-        :body => { :addresses => addresses,
-                   :passphrase => passphrase
-                 }.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+                        body: { addresses: addresses,
+                                passphrase: passphrase }.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
-
     end
   end
 end

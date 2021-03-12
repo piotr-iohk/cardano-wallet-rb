@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
 module CardanoWallet
+  ##
+  # Base class for all APIs
   class Base
     include HTTParty
 
     attr_accessor :opt
 
     def initialize(opt = {})
-      raise ArgumentError, "argument should be Hash" unless opt.is_a?(Hash)
+      raise ArgumentError, 'argument should be Hash' unless opt.is_a?(Hash)
 
       opt[:protocol] ||= 'http'
       opt[:host] ||= 'localhost'
@@ -15,15 +19,13 @@ module CardanoWallet
       opt[:pem] ||= ''
       opt[:timeout] ||= -1
       self.class.base_uri opt[:url]
-      unless(opt[:timeout] == -1)
-        self.class.default_timeout(opt[:timeout].to_i)
-      end
+      self.class.default_timeout(opt[:timeout].to_i) unless opt[:timeout] == -1
 
       unless opt[:cacert].empty?
         ENV['SSL_CERT_FILE'] = opt[:cacert]
-        self.class.ssl_ca_file(File.read ENV['SSL_CERT_FILE'])
+        self.class.ssl_ca_file(File.read(ENV['SSL_CERT_FILE']))
       end
-      self.class.pem(File.read opt[:pem]) unless opt[:pem].empty?
+      self.class.pem(File.read(opt[:pem])) unless opt[:pem].empty?
 
       @opt = opt
     end

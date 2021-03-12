@@ -1,15 +1,16 @@
-module CardanoWallet
-  module Misc
+# frozen_string_literal: true
 
+module CardanoWallet
+  ##
+  # misc
+  module Misc
     def self.new(opt)
       Init.new opt
     end
 
+    ##
+    # Base Class for Misc API
     class Init < Base
-      def initialize opt
-        super
-      end
-
       # Call API for Network
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Network
       def network
@@ -30,72 +31,57 @@ module CardanoWallet
       def settings
         Settings.new @opt
       end
-
     end
 
     # API for Network
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Settings
     class Settings < Base
-      def initialize opt
-        super
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSettings
       def get
-        self.class.get("/settings")
+        self.class.get('/settings')
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putSettings
       def update(params)
         CardanoWallet::Utils.verify_param_is_hash!(params)
-        self.class.put("/settings",
-                       :body => {"settings" => params}.to_json,
-                       :headers => { 'Content-Type' => 'application/json' }
-                      )
+        self.class.put('/settings',
+                       body: { 'settings' => params }.to_json,
+                       headers: { 'Content-Type' => 'application/json' })
       end
     end
 
     # API for Network
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Network
     class Network < Base
-      def initialize opt
-        super
-      end
-
       # Get network information
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkInformation
       def information
-        self.class.get("/network/information")
+        self.class.get('/network/information')
       end
 
       # Check network clock
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkClock
       def clock
-        self.class.get("/network/clock")
+        self.class.get('/network/clock')
       end
 
       # Check network parameters
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkParameters
       def parameters
-        self.class.get("/network/parameters")
+        self.class.get('/network/parameters')
       end
-
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Utils
     class Utils < Base
-      def initialize opt
-        super
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
       def sign_metadata(wid, role, index, pass, metadata)
         payload = { passphrase: pass }
         payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/signatures/#{role}/#{index}",
-                        :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json' } )
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
@@ -111,10 +97,10 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postAnyAddress
       def post_address(payload)
         CardanoWallet::Utils.verify_param_is_hash!(payload)
-        self.class.post("/addresses",
-                        :body => payload.to_json,
-                        :headers => { 'Content-Type' => 'application/json',
-                                      'Accept' => 'application/json'} )
+        self.class.post('/addresses',
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json',
+                                   'Accept' => 'application/json' })
       end
 
       # Current SMASH health
@@ -122,26 +108,21 @@ module CardanoWallet
       #
       # @example
       #   smash_health({url: "https://smash.cardano-mainnet.iohk.io/"})
-      def smash_health(q = {})
-        q.empty? ? query = '' : query = CardanoWallet::Utils.to_query(q)
-        self.class.get("/smash/health#{query}")
+      def smash_health(query = {})
+        query_formatted = query.empty? ? '' : CardanoWallet::Utils.to_query(query)
+        self.class.get("/smash/health#{query_formatted}")
       end
-
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Proxy
     class Proxy < Base
-      def initialize opt
-        super
-      end
-
       # Submit a transaction that was created and signed outside of cardano-wallet.
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postExternalTransaction
       # @param binary_blob [String] Signed transaction message binary blob.
       def submit_external_transaction(binary_blob)
-        self.class.post("/proxy/transactions",
-                        :body => binary_blob,
-                        :headers => { 'Content-Type' => 'application/octet-stream' })
+        self.class.post('/proxy/transactions',
+                        body: binary_blob,
+                        headers: { 'Content-Type' => 'application/octet-stream' })
       end
     end
   end
