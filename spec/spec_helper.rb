@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'simplecov'
 require 'bundler/setup'
 require 'cardano_wallet'
 require 'bip_mnemonic'
-require "rspec/expectations"
+require 'rspec/expectations'
 
 SimpleCov.start do
   add_filter %r{^/spec/}
@@ -15,7 +17,7 @@ end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
+  config.example_status_persistence_file_path = '.rspec_status'
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
@@ -26,39 +28,37 @@ RSpec.configure do |config|
 end
 
 RSpec::Matchers.define :have_http do |code|
-    match do |response|
-      response.code == code
-    end
-    failure_message do |response|
-      %Q{
+  match do |response|
+    response.code == code
+  end
+  failure_message do |response|
+    %(
           The response did not return expected HTTP code!
           Expected code = #{code}
           Actual code = #{response.code}
           Actual response:
 
           #{response}
-        }
-    end
+        )
   end
+end
 
 CW = CardanoWallet.new
 BYRON = CW.byron
 SHELLEY = CW.shelley
 
-def create_shelley_wallet(name = "Wallet from mnemonic_sentence")
-  SHELLEY.wallets.create({name: name,
-                          passphrase: "Secure Passphrase",
-                          mnemonic_sentence: mnemonic_sentence(24)
-                         })['id']
+def create_shelley_wallet(name = 'Wallet from mnemonic_sentence')
+  SHELLEY.wallets.create({ name: name,
+                           passphrase: 'Secure Passphrase',
+                           mnemonic_sentence: mnemonic_sentence(24) })['id']
 end
 
-def create_byron_wallet(style = "random", name = "Wallet from mnemonic_sentence")
-  style == "random" ? mnem = mnemonic_sentence(12) : mnem = mnemonic_sentence(15)
-  BYRON.wallets.create({style: style,
-                        name: name,
-                        passphrase: "Secure Passphrase",
-                        mnemonic_sentence: mnem
-                       })['id']
+def create_byron_wallet(style = 'random', name = 'Wallet from mnemonic_sentence')
+  mnem = style == 'random' ? mnemonic_sentence(12) : mnemonic_sentence(15)
+  BYRON.wallets.create({ style: style,
+                         name: name,
+                         passphrase: 'Secure Passphrase',
+                         mnemonic_sentence: mnem })['id']
 end
 
 def mnemonic_sentence(word_count = 15)
