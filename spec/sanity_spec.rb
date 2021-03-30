@@ -5,6 +5,16 @@ RSpec.describe 'Sanity suite' do
     teardown
   end
 
+  it 'Can set custom headers like X-Max-Safe-Integer' do
+    custom_headers = { 'X-Max-Safe-Integer' => '0' }
+    n = CardanoWallet.new({ headers: custom_headers }).misc.network.information
+    expect(n.code).to eq 200
+    expect(n['node_tip']['absolute_slot_number']).to satisfy('be string') do |q|
+      q.instance_of?(String)
+    end
+    expect(n.request.options[:headers]).to eq custom_headers
+  end
+
   it 'Can init with default params' do
     n = CardanoWallet.new.misc.network.information
     expect(n.code).to eq 200

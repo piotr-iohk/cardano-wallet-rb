@@ -18,7 +18,9 @@ module CardanoWallet
       opt[:cacert] ||= ''
       opt[:pem] ||= ''
       opt[:timeout] ||= -1
+      opt[:headers] ||= {}
       self.class.base_uri opt[:url]
+      self.class.headers opt[:headers]
       self.class.default_timeout(opt[:timeout].to_i) unless opt[:timeout] == -1
 
       unless opt[:cacert].empty?
