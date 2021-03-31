@@ -53,7 +53,7 @@ module CardanoWallet
       # Delete wallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteSharedWallet
       def delete(wid)
-        self.class.delete("/wallets/#{wid}")
+        self.class.delete("/shared-wallets/#{wid}")
       end
     end
   end

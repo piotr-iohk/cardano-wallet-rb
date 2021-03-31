@@ -35,6 +35,11 @@ module CardanoWallet
       Shelley.new @opt
     end
 
+    # Init API for Shared wallets
+    def shared
+      Shared.new @opt
+    end
+
     # Init API for Byron
     def byron
       Byron.new @opt
