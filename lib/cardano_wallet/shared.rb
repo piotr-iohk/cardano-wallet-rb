@@ -60,7 +60,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInPayment
       def update_payment_script(wid, cosigner, acc_pub_key)
         self.class.patch("/shared-wallets/#{wid}/payment-script-template",
-                         body: { cosigner: cosigner, account_public_key: acc_pub_key }.to_json,
+                         body: { cosigner => acc_pub_key }.to_json,
                          headers: { 'Content-Type' => 'application/json' })
       end
 
@@ -68,7 +68,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInDelegation
       def update_delegation_script(wid, cosigner, acc_pub_key)
         self.class.patch("/shared-wallets/#{wid}/delegation-script-template",
-                         body: { cosigner: cosigner, account_public_key: acc_pub_key }.to_json,
+                         body: { cosigner => acc_pub_key }.to_json,
                          headers: { 'Content-Type' => 'application/json' })
       end
     end
