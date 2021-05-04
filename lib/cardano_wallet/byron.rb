@@ -276,10 +276,12 @@ module CardanoWallet
     # Byron migrations
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
     class Migrations < Base
-      # Calculate migration cost
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWalletMigrationInfo
-      def cost(wid)
-        self.class.get("/byron-wallets/#{wid}/migrations")
+      # Get migration plan
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createByronWalletMigrationPlan
+      def plan(wid, addresses)
+        self.class.post("/byron-wallets/#{wid}/migrations/plan",
+                        body: { addresses: addresses }.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Migrate all funds from Byron wallet.

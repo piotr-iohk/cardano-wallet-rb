@@ -369,10 +369,12 @@ module CardanoWallet
     # Shelley migrations
     # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
     class Migrations < Base
-      # Calculate migration cost
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getShelleyWalletMigrationInfo
-      def cost(wid)
-        self.class.get("/wallets/#{wid}/migrations")
+      # Get migration plan
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createShelleyWalletMigrationPlan
+      def plan(wid, addresses)
+        self.class.post("/wallets/#{wid}/migrations/plan",
+                        body: { addresses: addresses }.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
       end
 
       # Migrate all funds from Shelley wallet.
