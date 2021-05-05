@@ -15,6 +15,31 @@ module CardanoWallet
       def wallets
         Wallets.new @opt
       end
+
+      # Call API for Shared Keys
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
+      def keys
+        Keys.new @opt
+      end
+    end
+
+    # API for Keys
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
+    class Keys < Base
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getSharedWalletKey
+      # https://localhost:8090/v2/shared-wallets/{walletId}/keys/{role}/{index}?hash=false
+      def get_public_key(wid, role, index, h = {})
+        hash_query = h.empty? ? '' : Utils.to_query(h)
+        self.class.get("/shared-wallets/#{wid}/keys/#{role}/#{index}#{hash_query}")
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKeyShared
+      def create_acc_public_key(wid, index, pass, extended)
+        payload = { passphrase: pass, extended: extended }
+        self.class.post("/shared-wallets/#{wid}/keys/#{index}",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Wallets
