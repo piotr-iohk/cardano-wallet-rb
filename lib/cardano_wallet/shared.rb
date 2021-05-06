@@ -28,8 +28,8 @@ module CardanoWallet
     class Keys < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getSharedWalletKey
       # https://localhost:8090/v2/shared-wallets/{walletId}/keys/{role}/{index}?hash=false
-      def get_public_key(wid, role, index, h = {})
-        hash_query = h.empty? ? '' : Utils.to_query(h)
+      def get_public_key(wid, role, index, hash = {})
+        hash_query = hash.empty? ? '' : Utils.to_query(hash)
         self.class.get("/shared-wallets/#{wid}/keys/#{role}/#{index}#{hash_query}")
       end
 
