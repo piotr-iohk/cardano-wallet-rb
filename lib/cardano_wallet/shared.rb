@@ -34,8 +34,8 @@ module CardanoWallet
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKeyShared
-      def create_acc_public_key(wid, index, pass, extended)
-        payload = { passphrase: pass, extended: extended }
+      def create_acc_public_key(wid, index, pass, format)
+        payload = { passphrase: pass, format: format }
         self.class.post("/shared-wallets/#{wid}/keys/#{index}",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
