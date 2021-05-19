@@ -21,6 +21,21 @@ module CardanoWallet
       def keys
         Keys.new @opt
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
+      def addresses
+        Addresses.new @opt
+      end
+    end
+
+    # API for Addresses
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
+    class Addresses < Base
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedAddresses
+      def list(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/shared-wallets/#{wid}/addresses#{query_formatted}")
+      end
     end
 
     # API for Keys
@@ -46,10 +61,10 @@ module CardanoWallet
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
     class Wallets < Base
       # List all wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listWallets
-      # def list
-      #   self.class.get('/shared-wallets')
-      # end
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedWallets
+      def list
+        self.class.get('/shared-wallets')
+      end
 
       # Get wallet details
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedWallet
