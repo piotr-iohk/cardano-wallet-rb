@@ -6,9 +6,6 @@
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/releases">
   <img src="https://img.shields.io/github/release/piotr-iohk/cardano-wallet-rb.svg" />
 </a>
-<a href="https://codecov.io/gh/piotr-iohk/cardano-wallet-rb">
-  <img src="https://codecov.io/gh/piotr-iohk/cardano-wallet-rb/branch/master/graph/badge.svg?token=OmUMUeyR21" />
-</a>
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
   <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
 </a>
