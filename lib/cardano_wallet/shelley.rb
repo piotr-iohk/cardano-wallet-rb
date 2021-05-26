@@ -99,6 +99,12 @@ module CardanoWallet
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAccountKey
+      def get_acc_public_key(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/keys#{query_formatted}")
+      end
     end
 
     # API for Wallets
