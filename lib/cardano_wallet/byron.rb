@@ -117,6 +117,11 @@ module CardanoWallet
         self.class.get("/byron-wallets/#{wid}/statistics/utxos")
       end
 
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWalletUtxoSnapshot
+      def utxo_snapshot(wid)
+        self.class.get("/byron-wallets/#{wid}/utxo")
+      end
+
       # Update Byron wallet's passphrase.
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWalletPassphrase
       #

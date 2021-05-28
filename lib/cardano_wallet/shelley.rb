@@ -166,6 +166,11 @@ module CardanoWallet
         self.class.get("/wallets/#{wid}/statistics/utxos")
       end
 
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
+      def utxo_snapshot(wid)
+        self.class.get("/wallets/#{wid}/utxo")
+      end
+
       # Update wallet's passphrase
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putWalletPassphrase
       #
