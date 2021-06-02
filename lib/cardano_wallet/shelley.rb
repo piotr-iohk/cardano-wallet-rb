@@ -62,6 +62,25 @@ module CardanoWallet
     ##
     # Base class for Shelley Assets API
     class Assets < Base
+
+      def mint(wid, monetary_policy_index, asset_name, pass, operation)
+        # {
+        #   "mint": [ [ #{destination}, { "quantity": 5, "unit": "assets" } ] ]
+        # }
+        payload = {
+                    mint_burn: {
+                        monetary_policy_index: monetary_policy_index,
+                        token_name: asset_name,
+                        operation: operation
+                    },
+                    passphrase: pass
+                   }
+
+        self.class.post("/wallets/#{wid}/mint",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
