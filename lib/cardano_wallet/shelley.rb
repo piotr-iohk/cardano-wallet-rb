@@ -93,8 +93,9 @@ module CardanoWallet
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKey
-      def create_acc_public_key(wid, index, pass, format)
-        payload = { passphrase: pass, format: format }
+      def create_acc_public_key(wid, index, payload)
+        # payload = { passphrase: pass, format: format, purpose: purpose }
+        Utils.verify_param_is_hash!(payload)
         self.class.post("/wallets/#{wid}/keys/#{index}",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
