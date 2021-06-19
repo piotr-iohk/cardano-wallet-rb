@@ -62,20 +62,26 @@ module CardanoWallet
     ##
     # Base class for Shelley Assets API
     class Assets < Base
-      def mint(wid, monetary_policy_index, asset_name, pass, operation)
-        # {
-        #   "mint": [ [ #{destination}, { "quantity": 5, "unit": "assets" } ] ]
-        # }
+      def mint(wid, monetary_policy_index, asset_name, pass, operations, metadata = nil, ttl = nil)
+        #[ {
+        #   "mint": { "receiving_address": #{destination}, { "quantity": 5, "unit": "assets" } }
+        #  },
+        #  {
+        #   "burn": { "quantity": 5, "unit": "assets" }
+        #  } ]
         payload = {
           mint_burn: {
             monetary_policy_index: monetary_policy_index,
-            token_name: asset_name,
-            operation: operation
+            asset_name: asset_name,
+            operations: operations
           },
           passphrase: pass
         }
 
-        self.class.post("/wallets/#{wid}/mint",
+        payload[:metadata] = metadata if metadata
+        payload[:time_to_live] = { quantity: ttl, unit: 'second' } if ttl
+
+        self.class.post("/wallets/#{wid}/assets",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
