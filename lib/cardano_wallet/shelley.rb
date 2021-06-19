@@ -62,6 +62,30 @@ module CardanoWallet
     ##
     # Base class for Shelley Assets API
     class Assets < Base
+      def mint(wid, monetary_policy_index, asset_name, pass, operations, metadata = nil, ttl = nil)
+        #[ {
+        #   "mint": { "receiving_address": #{destination}, { "quantity": 5, "unit": "assets" } }
+        #  },
+        #  {
+        #   "burn": { "quantity": 5, "unit": "assets" }
+        #  } ]
+        payload = {
+          mint_burn: {
+            monetary_policy_index: monetary_policy_index,
+            asset_name: asset_name,
+            operations: operations
+          },
+          passphrase: pass
+        }
+
+        payload[:metadata] = metadata if metadata
+        payload[:time_to_live] = { quantity: ttl, unit: 'second' } if ttl
+
+        self.class.post("/wallets/#{wid}/assets",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
