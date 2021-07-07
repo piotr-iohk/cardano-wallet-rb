@@ -260,9 +260,8 @@ module CardanoWallet
     class Transactions < Base
 
       # Construct transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionConstruct
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructTransaction
       # @param wid [String] source wallet id
-      # @param passphrase [String] source wallet's passphrase
       # @param payments [Array of Hashes] full payments payload with assets
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
       # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
@@ -279,6 +278,22 @@ module CardanoWallet
         payload[:validity_interval] = validity_interval if validity_interval
 
         self.class.post("/wallets/#{wid}/transactions-construct",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
+      # Sign transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signTransaction
+      # @param wid [String] source wallet id
+      # @param passphrase [String] wallet's passphrase
+      # @param passphrase [String] CBOR transaction data
+      def sign(wid, passphrase, transaction)
+        payload = {
+          "passphrase" => passphrase,
+          "transaction" => transaction
+        }
+
+        self.class.post("/wallets/#{wid}/transactions-sign",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
