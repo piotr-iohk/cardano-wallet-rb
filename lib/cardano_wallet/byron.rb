@@ -210,6 +210,42 @@ module CardanoWallet
     # Byron transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
     class Transactions < Base
+
+      # Construct transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructByronTransaction
+      # @param wid [String] source wallet id
+      # @param payments [Array of Hashes] full payments payload with assets
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param mint [Array of Hashes] mint object
+      # @param validity_interval [Hash] validity_interval object
+      def construct(wid, payments = nil, metadata = nil, mint = nil, validity_interval = nil)
+        payload = {}
+        payload[:payments] = payments if payments
+        payload[:metadata] = metadata if metadata
+        payload[:mint] = mint if mint
+        payload[:validity_interval] = validity_interval if validity_interval
+
+        self.class.post("/byron-wallets/#{wid}/transactions-construct",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
+      # Sign transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signByronTransaction
+      # @param wid [String] source wallet id
+      # @param passphrase [String] wallet's passphrase
+      # @param passphrase [String] CBOR transaction data
+      def sign(wid, passphrase, transaction)
+        payload = {
+          "passphrase" => passphrase,
+          "transaction" => transaction
+        }
+
+        self.class.post("/byron-wallets/#{wid}/transactions-sign",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
       # Get tx by id
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronTransaction
       def get(wid, tx_id)
