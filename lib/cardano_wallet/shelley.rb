@@ -62,6 +62,7 @@ module CardanoWallet
     ##
     # Base class for Shelley Assets API
     class Assets < Base
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/mintBurnAssets
       def mint(wid, mint_burn, pass, metadata = nil, ttl = nil)
         payload = {
           mint_burn: mint_burn,
