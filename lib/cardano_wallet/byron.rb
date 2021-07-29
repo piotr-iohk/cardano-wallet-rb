@@ -210,7 +210,6 @@ module CardanoWallet
     # Byron transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
     class Transactions < Base
-
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructByronTransaction
       # @param wid [String] source wallet id
@@ -237,8 +236,8 @@ module CardanoWallet
       # @param passphrase [String] CBOR transaction data
       def sign(wid, passphrase, transaction)
         payload = {
-          "passphrase" => passphrase,
-          "transaction" => transaction
+          'passphrase' => passphrase,
+          'transaction' => transaction
         }
 
         self.class.post("/byron-wallets/#{wid}/transactions-sign",

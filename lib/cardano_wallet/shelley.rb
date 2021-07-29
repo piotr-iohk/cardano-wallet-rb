@@ -258,7 +258,6 @@ module CardanoWallet
     # API for Transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
     class Transactions < Base
-
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructTransaction
       # @param wid [String] source wallet id
@@ -268,7 +267,13 @@ module CardanoWallet
       # @param mint [Array of Hashes] mint object
       # @param delegations [Array of Hashes] delegations object
       # @param validity_interval [Hash] validity_interval object
-      def construct(wid, payments = nil, withdrawal = nil, metadata = nil, delegations = nil, mint = nil, validity_interval = nil)
+      def construct(wid,
+                    payments = nil,
+                    withdrawal = nil,
+                    metadata = nil,
+                    delegations = nil,
+                    mint = nil,
+                    validity_interval = nil)
         payload = {}
         payload[:payments] = payments if payments
         payload[:withdrawal] = withdrawal if withdrawal
@@ -289,8 +294,8 @@ module CardanoWallet
       # @param passphrase [String] CBOR transaction data
       def sign(wid, passphrase, transaction)
         payload = {
-          "passphrase" => passphrase,
-          "transaction" => transaction
+          'passphrase' => passphrase,
+          'transaction' => transaction
         }
 
         self.class.post("/wallets/#{wid}/transactions-sign",
