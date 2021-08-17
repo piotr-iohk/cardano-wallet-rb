@@ -31,6 +31,7 @@ task :get_latest_configs, [:env] do |_, args|
   mk_dir(path)
   wget("#{base_url}/#{env}-config.json", "#{path}/#{env}-config.json")
   wget("#{base_url}/#{env}-byron-genesis.json", "#{path}/#{env}-byron-genesis.json")
+  wget("#{base_url}/#{env}-alonzo-genesis.json", "#{path}/#{env}-alonzo-genesis.json")
   wget("#{base_url}/#{env}-shelley-genesis.json", "#{path}/#{env}-shelley-genesis.json")
   wget("#{base_url}/#{env}-topology.json", "#{path}/#{env}-topology.json")
 end
