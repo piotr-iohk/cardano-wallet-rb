@@ -258,6 +258,16 @@ module CardanoWallet
     # API for Transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
     class Transactions < Base
+      # Balance transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/balanceTransaction
+      # @param wid [String] source wallet id
+      # @param payload [Hash] payload object
+      def balance(wid, payload)
+        self.class.post("/wallets/#{wid}/transactions-balance",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructTransaction
       # @param wid [String] source wallet id
