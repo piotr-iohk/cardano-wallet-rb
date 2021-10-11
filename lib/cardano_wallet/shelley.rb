@@ -314,7 +314,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] wallet's passphrase
-      # @param passphrase [String] CBOR transaction data
+      # @param transaction [String] CBOR transaction data
       def sign(wid, passphrase, transaction)
         payload = {
           'passphrase' => passphrase,
@@ -322,6 +322,17 @@ module CardanoWallet
         }
 
         self.class.post("/wallets/#{wid}/transactions-sign",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
+      # Submit transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/submitTransaction
+      # @param wid [String] source wallet id
+      # @param transaction [String] CBOR transaction data
+      def submit(wid, transaction)
+        payload = { 'transaction' => transaction }
+        self.class.post("/wallets/#{wid}/transactions-submit",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
