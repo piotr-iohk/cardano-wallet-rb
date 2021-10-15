@@ -103,8 +103,9 @@ module CardanoWallet
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
-      def get_public_key(wid, role, index)
-        self.class.get("/wallets/#{wid}/keys/#{role}/#{index}")
+      def get_public_key(wid, role, index, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/keys/#{role}/#{index}#{query_formatted}")
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKey
