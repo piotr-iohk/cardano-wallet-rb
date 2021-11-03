@@ -269,6 +269,18 @@ module CardanoWallet
                         headers: { 'Content-Type' => 'application/json' })
       end
 
+      # Decode transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/decodeTransaction
+      # @param wid [String] source wallet id
+      # @param transaction [String] CBOR base64|base16 encoded transaction
+      def decode(wid, transaction)
+        payload = {}
+        payload[:transaction] = transaction
+        self.class.post("/wallets/#{wid}/transactions-decode",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
+
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructTransaction
       # @param wid [String] source wallet id
