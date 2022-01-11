@@ -12,9 +12,7 @@ task default: :spec
 def wget(url, file = nil)
   file ||= File.basename(url)
   resp = HTTParty.get(url)
-  File.open(file, 'wb') do |f|
-    f.write(resp.body)
-  end
+  File.binwrite(file, resp.body)
   puts "#{url} -> #{resp.code}"
 end
 
