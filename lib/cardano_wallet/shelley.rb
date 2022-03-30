@@ -122,6 +122,21 @@ module CardanoWallet
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/wallets/#{wid}/keys#{query_formatted}")
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getPolicyKey
+      def get_policy_key(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/policy-key#{query_formatted}")
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postPolicyKey
+      def create_policy_key(wid, passphrase, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        payload = { passphrase: passphrase }
+        self.class.post("/wallets/#{wid}/policy-key#{query_formatted}",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Wallets
@@ -301,7 +316,7 @@ module CardanoWallet
         payload[:payments] = payments if payments
         payload[:withdrawal] = withdrawal if withdrawal
         payload[:metadata] = metadata if metadata
-        payload[:mint] = mint if mint
+        payload[:mint_burn] = mint if mint
         payload[:delegations] = delegations if delegations
         payload[:validity_interval] = validity_interval if validity_interval
 
