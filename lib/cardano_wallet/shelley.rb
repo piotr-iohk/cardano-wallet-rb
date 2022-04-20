@@ -137,6 +137,14 @@ module CardanoWallet
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postPolicyId
+      def create_policy_id(wid, policy_script_template)
+        payload = { policy_script_template: policy_script_template }
+        self.class.post("/wallets/#{wid}/policy-id",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Wallets
