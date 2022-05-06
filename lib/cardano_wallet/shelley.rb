@@ -362,8 +362,9 @@ module CardanoWallet
 
       # Get tx by id
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getTransaction
-      def get(wid, tx_id)
-        self.class.get("/wallets/#{wid}/transactions/#{tx_id}")
+      def get(wid, tx_id, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/wallets/#{wid}/transactions/#{tx_id}#{query_formatted}")
       end
 
       # List all wallet's transactions
