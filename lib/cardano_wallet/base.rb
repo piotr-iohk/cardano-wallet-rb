@@ -23,7 +23,7 @@ module CardanoWallet
 
       unless opt[:cacert].empty?
         ENV['SSL_CERT_FILE'] = opt[:cacert]
-        self.class.ssl_ca_file(File.read(ENV['SSL_CERT_FILE']))
+        self.class.ssl_ca_file(File.read(ENV.fetch('SSL_CERT_FILE', nil)))
       end
       self.class.pem(File.read(opt[:pem])) unless opt[:pem].empty?
 
