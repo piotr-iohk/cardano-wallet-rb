@@ -26,6 +26,44 @@ module CardanoWallet
       def addresses
         Addresses.new @opt
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
+      def transactions
+        Transactions.new @opt
+      end
+    end
+
+    # API for Transactions
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
+    class Transactions < Base
+      # Construct transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructSharedTransaction
+      # @param wid [String] source wallet id
+      # @param payments [Array of Hashes] full payments payload with assets
+      # @param withdrawal [String or Array] 'self' or mnemonic sentence
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param mint [Array of Hashes] mint object
+      # @param delegations [Array of Hashes] delegations object
+      # @param validity_interval [Hash] validity_interval object
+      def construct(wid,
+                    payments = nil,
+                    withdrawal = nil,
+                    metadata = nil,
+                    delegations = nil,
+                    mint = nil,
+                    validity_interval = nil)
+        payload = {}
+        payload[:payments] = payments if payments
+        payload[:withdrawal] = withdrawal if withdrawal
+        payload[:metadata] = metadata if metadata
+        payload[:mint_burn] = mint if mint
+        payload[:delegations] = delegations if delegations
+        payload[:validity_interval] = validity_interval if validity_interval
+
+        self.class.post("/shared-wallets/#{wid}/transactions-construct",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Addresses
