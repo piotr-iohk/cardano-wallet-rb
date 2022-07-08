@@ -17,7 +17,7 @@ def wget(url, file = nil)
 end
 
 def mk_dir(path)
-  Dir.mkdir(path) unless File.exist?(path)
+  FileUtils.mkdir_p(path)
 end
 
 task :get_latest_configs, [:env] do |_, args|
