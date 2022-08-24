@@ -23,13 +23,13 @@ end
 task :get_latest_configs, [:env] do |_, args|
   puts "\n  >> Get latest configs for '#{args[:env]}'"
 
-  base_url = 'https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1'
+  base_url = 'https://book.world.dev.cardano.org/environments'
   env = args[:env]
   path = File.join(Dir.pwd, 'configs')
   mk_dir(path)
-  wget("#{base_url}/#{env}-config.json", "#{path}/#{env}-config.json")
-  wget("#{base_url}/#{env}-byron-genesis.json", "#{path}/#{env}-byron-genesis.json")
-  wget("#{base_url}/#{env}-alonzo-genesis.json", "#{path}/#{env}-alonzo-genesis.json")
-  wget("#{base_url}/#{env}-shelley-genesis.json", "#{path}/#{env}-shelley-genesis.json")
-  wget("#{base_url}/#{env}-topology.json", "#{path}/#{env}-topology.json")
+  wget("#{base_url}/#{env}/config.json", "#{path}/config.json")
+  wget("#{base_url}/#{env}/byron-genesis.json", "#{path}/byron-genesis.json")
+  wget("#{base_url}/#{env}/alonzo-genesis.json", "#{path}/alonzo-genesis.json")
+  wget("#{base_url}/#{env}/shelley-genesis.json", "#{path}/shelley-genesis.json")
+  wget("#{base_url}/#{env}/topology.json", "#{path}/topology.json")
 end
