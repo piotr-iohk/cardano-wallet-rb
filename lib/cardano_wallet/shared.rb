@@ -64,6 +64,18 @@ module CardanoWallet
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
+
+      # Decode transaction
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/decodeSharedTransaction
+      # @param wid [String] source wallet id
+      # @param transaction [String] CBOR base64|base16 encoded transaction
+      def decode(wid, transaction)
+        payload = {}
+        payload[:transaction] = transaction
+        self.class.post("/shared-wallets/#{wid}/transactions-decode",
+                        body: payload.to_json,
+                        headers: { 'Content-Type' => 'application/json' })
+      end
     end
 
     # API for Addresses
