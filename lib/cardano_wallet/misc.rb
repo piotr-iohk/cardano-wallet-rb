@@ -31,6 +31,19 @@ module CardanoWallet
       def settings
         Settings.new @opt
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Node
+      def node
+        Node.new @opt
+      end
+    end
+
+    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Node
+    class Node < Base
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Node/paths/~1blocks~1latest~1header/get
+      def block_header
+        self.class.get('/blocks/latest/header')
+      end
     end
 
     # API for Network
