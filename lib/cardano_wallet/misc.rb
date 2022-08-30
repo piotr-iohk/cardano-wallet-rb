@@ -44,7 +44,6 @@ module CardanoWallet
       def block_header
         self.class.get('/blocks/latest/header')
       end
-
     end
 
     # API for Network
