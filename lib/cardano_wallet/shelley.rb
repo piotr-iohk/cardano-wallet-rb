@@ -313,13 +313,15 @@ module CardanoWallet
       # @param mint [Array of Hashes] mint object
       # @param delegations [Array of Hashes] delegations object
       # @param validity_interval [Hash] validity_interval object
+      # @param encoding [String] output encoding ("base16" or "base64")
       def construct(wid,
                     payments = nil,
                     withdrawal = nil,
                     metadata = nil,
                     delegations = nil,
                     mint = nil,
-                    validity_interval = nil)
+                    validity_interval = nil,
+                    encoding = nil)
         payload = {}
         payload[:payments] = payments if payments
         payload[:withdrawal] = withdrawal if withdrawal
@@ -327,6 +329,7 @@ module CardanoWallet
         payload[:mint_burn] = mint if mint
         payload[:delegations] = delegations if delegations
         payload[:validity_interval] = validity_interval if validity_interval
+        payload[:encoding] = encoding if encoding
 
         self.class.post("/wallets/#{wid}/transactions-construct",
                         body: payload.to_json,
@@ -338,12 +341,13 @@ module CardanoWallet
       # @param wid [String] source wallet id
       # @param passphrase [String] wallet's passphrase
       # @param transaction [String] CBOR transaction data
-      def sign(wid, passphrase, transaction)
+      # @param encoding [String] output encoding ("base16" or "base64")
+      def sign(wid, passphrase, transaction, encoding = nil)
         payload = {
           'passphrase' => passphrase,
           'transaction' => transaction
         }
-
+        payload[:encoding] = encoding if encoding
         self.class.post("/wallets/#{wid}/transactions-sign",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
