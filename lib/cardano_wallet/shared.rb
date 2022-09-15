@@ -92,7 +92,7 @@ module CardanoWallet
           'transaction' => transaction
         }
         payload[:encoding] = encoding if encoding
-        self.class.post("/wallets/#{wid}/transactions-sign",
+        self.class.post("/shared-wallets/#{wid}/transactions-sign",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
@@ -103,7 +103,7 @@ module CardanoWallet
       # @param transaction [String] CBOR transaction data
       def submit(wid, transaction)
         payload = { 'transaction' => transaction }
-        self.class.post("/wallets/#{wid}/transactions-submit",
+        self.class.post("/shared-wallets/#{wid}/transactions-submit",
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
