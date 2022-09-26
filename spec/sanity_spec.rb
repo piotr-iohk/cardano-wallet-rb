@@ -56,7 +56,7 @@ RSpec.describe 'Sanity suite' do
     w = SHELLEY.wallets
     wallet = w.create({ name: 'Wallet from mnemonic_sentence',
                         passphrase: 'Secure Passphrase',
-                        mnemonic_sentence: mnemonic_sentence(24) })
+                        mnemonic_sentence: UTILS.mnemonic_sentence(24) })
     expect(wallet.code).to eq 201
     wid = wallet['id']
     expect(w.get(wid).code).to eq 200
@@ -67,7 +67,7 @@ RSpec.describe 'Sanity suite' do
     wallet = BYRON.wallets.create({ style: 'icarus',
                                     name: 'Wallet from mnemonic_sentence',
                                     passphrase: 'Secure Passphrase',
-                                    mnemonic_sentence: mnemonic_sentence(15) })
+                                    mnemonic_sentence: UTILS.mnemonic_sentence(15) })
     expect(wallet).to have_http 201
     wid = wallet['id']
     expect(BYRON.wallets.get(wid)).to have_http 200
@@ -78,7 +78,7 @@ RSpec.describe 'Sanity suite' do
     wallet = BYRON.wallets.create({ style: 'random',
                                     name: 'Wallet from mnemonic_sentence',
                                     passphrase: 'Secure Passphrase',
-                                    mnemonic_sentence: mnemonic_sentence(12) })
+                                    mnemonic_sentence: UTILS.mnemonic_sentence(12) })
     expect(wallet).to have_http 201
     wid = wallet['id']
     expect(BYRON.wallets.get(wid)).to have_http 200

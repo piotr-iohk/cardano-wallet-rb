@@ -4,6 +4,51 @@ module CardanoWallet
   ##
   # General Utils not connected to API
   module Utils
+    def self.new(opt)
+      Init.new opt
+    end
+
+    # Init
+    class Init < Base
+      # Generate mnemonic sentence
+      #
+      # @example Default 24-word English mnemonic sentence
+      # CardanoWallet.new.utils.mnemonic_sentence
+      # ["kiwi", "rent", "denial",...]
+      #
+      # @example 15-word French mnemonic sentence
+      # CardanoWallet.new.utils.mnemonic_sentence(15, 'french')
+      # ["ruser", "malaxer", "forgeron",...]
+      def mnemonic_sentence(word_count = 24, language = 'english')
+        languages = %w[english french spanish korean japanese
+                       italian chinese_traditional chinese_simplified]
+        unless languages.include?(language)
+          raise ArgumentError,
+                %(Not supported language: '#{language}'. Supported languages are: #{languages}.)
+        end
+
+        words = [9, 12, 15, 18, 21, 24]
+        case word_count
+        when 9
+          bits = 96
+        when 12
+          bits = 128
+        when 15
+          bits = 164
+        when 18
+          bits = 196
+        when 21
+          bits = 224
+        when 24
+          bits = 256
+        else
+          raise ArgumentError,
+                %(Not supported count of words #{word_count}. Supported counts are: #{words}.)
+        end
+        BipMnemonic.to_mnemonic(bits: bits, language: language).split
+      end
+    end
+
     def self.verify_param_is_hash!(param)
       raise ArgumentError, 'argument should be Hash' unless param.is_a?(Hash)
     end
