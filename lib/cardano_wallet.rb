@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'httparty'
+require 'bip_mnemonic'
 
 require_relative 'cardano_wallet/version'
 require_relative 'cardano_wallet/base'
