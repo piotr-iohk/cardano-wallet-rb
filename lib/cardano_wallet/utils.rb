@@ -8,6 +8,7 @@ module CardanoWallet
       Init.new opt
     end
 
+    # Init
     class Init < Base
       # Generate mnemonic sentence
       #

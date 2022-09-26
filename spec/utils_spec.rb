@@ -22,12 +22,12 @@ RSpec.describe CardanoWallet::Utils do
     expect do
       UTILS.mnemonic_sentence(8)
     end.to raise_error ArgumentError,
-                       'Not supported count of words 8. Supported counts are: [9, 12, 15, 18, 21, 24].'
+                       /Not supported count of words 8. Supported counts are:/
     expect do
       UTILS.mnemonic_sentence(15,
                               'spanglish')
     end.to raise_error ArgumentError,
-                       "Not supported language: 'spanglish'. Supported languages are: [\"english\", \"french\", \"spanish\", \"korean\", \"japanese\", \"italian\", \"chinese_traditional\", \"chinese_simplified\"]."
+                       /Not supported language: 'spanglish'. Supported languages are:/
   end
 
   it 'to_query' do
