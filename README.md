@@ -13,11 +13,9 @@
 
 # cardano-wallet-rb
 
-Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST [API](https://input-output-hk.github.io/cardano-wallet/api/edge/).
+Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST [API](https://input-output-hk.github.io/cardano-wallet/api/edge/). Requires running `cardano-wallet`.
 
-## E2E tests
-
-Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/test/e2e) against public testnet.
+Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/test/e2e) and also as a backend of [Ikar](https://github.com/piotr-iohk/ikar).
 
 
 ## Installation
@@ -38,7 +36,7 @@ For ruby doc see: https://rubydoc.info/gems/cardano_wallet.
 
 For `cardano-wallet` REST Api see: https://input-output-hk.github.io/cardano-wallet/api/edge/.
 
-## Usage
+## Examples
 
 ```ruby
 CW = CardanoWallet.new
@@ -48,16 +46,48 @@ SHELLEY = CW.shelley
 MISC = CW.misc
 
 #Byron
+BYRON.wallets.create({name: "Byron",
+                       style: "random",
+                       mnemonic_sentence: CW.utils.mnemonic_sentence,
+                       passphrase: "Secure Passphrase"})
+
 BYRON.wallets.list.each_with_index do |wal, i|
   BYRON.wallets.update_metadata(wal['id'], {name: "Wallet number #{i}"})
 end
 
+BYRON.wallets.list.each do |wal|
+  puts wal['name']
+end
+
 #Shelley
-w = SHELLEY.wallets.create{name: "Wallet1",
-                       mnemonic_sentence: %w[vintage poem topic machine hazard cement dune glimpse fix brief account badge mass silly business],
-                       passphrase: "Secure Passphrase"}
+w = SHELLEY.wallets.create({name: "Shelley",
+                       mnemonic_sentence: CW.utils.mnemonic_sentence,
+                       passphrase: "Secure Passphrase"})
 
 SHELLEY.wallets.get(w['id'])
+SHELLEY.wallets.delete(w['id'])
+
+# Transaction
+wid = '1f82e...ccd95'
+metadata = { "1" => "test"}
+tx_c = SHELLEY.transactions.construct(wid, payments = nil, withdrawal = nil, metadata)
+tx_s = SHELLEY.transactions.sign(wid, 'Secure Passphrase', tx_c['transaction'])
+tx_sub = SHELLEY.transactions.submit(wid, tx_s['transaction'])
+puts SHELLEY.transactions.get(wid, tx_sub['id'])
+
+# Delegation
+wid = '1f82e...ccd95'
+random_stake_pool_id = SHELLEY.stake_pools.list({stake: 10000}).sample['id']
+delegation = [{
+                "join" => {
+                            "pool" => random_stake_pool_id,
+                            "stake_key_index" => "0H"
+                          }
+              }]
+tx_c = SHELLEY.transactions.construct(wid, payments = nil, withdrawal = nil, metadata = nil, delegation)
+tx_s = SHELLEY.transactions.sign(wid, 'Secure Passphrase', tx_c['transaction'])
+tx_sub = SHELLEY.transactions.submit(wid, tx_s['transaction'])
+puts SHELLEY.transactions.get(wid, tx_sub['id'])
 
 #Misc
 MISC.network.information
@@ -68,25 +98,6 @@ MISC.utils.addresses("addr_test1vqrlltfahghjxl5sy5h5mvfrrlt6me5fqphhwjqvj5jd88cc
 
 Refer to [documentation](https://rubydoc.info/gems/cardano_wallet) for more details.
 
-## Development
-
-In order to spin up environment for development and testing `docker-compose` can be used. For instance:
-
-    # Byron testnet
-    $ NETWORK=testnet WALLET=dev-master-byron NODE=latest docker-compose up --detach
-
-or
-
-    # Shelley testnet
-    $ NODE=1.13.0 WALLET=dev-master-shelley NODE_CONFIG_PATH=`pwd`/spec/shelley-testnet/ docker-compose -f docker-compose-shelley.yml up
-
-Run tests on top of that:
-
-    $ rake
-
-Clean up docker stuff after, e.g.:
-
-    $ NETWORK=... docker-compose down --rmi all --remove-orphans
 
 ## Contributing
 
