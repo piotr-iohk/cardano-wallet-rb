@@ -1,6 +1,35 @@
 # frozen_string_literal: true
 
 RSpec.describe CardanoWallet::Utils do
+  it 'mnemonic_sentence default' do
+    expect(UTILS.mnemonic_sentence.size).to eq 24
+  end
+
+  it 'mnemonic_sentence OK' do
+    languages = %w[english french spanish korean japanese
+                   italian chinese_traditional chinese_simplified]
+    words = [9, 12, 15, 18, 21, 24]
+
+    languages.each do |l|
+      words.each do |w|
+        s = UTILS.mnemonic_sentence(w, l)
+        expect(s.size).to eq w
+      end
+    end
+  end
+
+  it 'mnemonic_sentence raise' do
+    expect do
+      UTILS.mnemonic_sentence(8)
+    end.to raise_error ArgumentError,
+                       'Not supported count of words 8. Supported counts are: [9, 12, 15, 18, 21, 24].'
+    expect do
+      UTILS.mnemonic_sentence(15,
+                              'spanglish')
+    end.to raise_error ArgumentError,
+                       "Not supported language: 'spanglish'. Supported languages are: [\"english\", \"french\", \"spanish\", \"korean\", \"japanese\", \"italian\", \"chinese_traditional\", \"chinese_simplified\"]."
+  end
+
   it 'to_query' do
     q = CardanoWallet::Utils.to_query({ a: 1, b: 2 })
     expect(q).to eq '?a=1&b=2'
