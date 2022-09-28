@@ -7,7 +7,9 @@
 <a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ATests">
   <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Tests/badge.svg" />
 </a>
-
+<a href="https://github.com/piotr-iohk/cardano-wallet-rb/actions?query=workflow%3ADocs">
+  <img src="https://github.com/piotr-iohk/cardano-wallet-rb/workflows/Docs/badge.svg" />
+</a>
 
 # cardano-wallet-rb
 
@@ -35,7 +37,7 @@ Or:
 |  [Ruby API (edge)](https://piotr-iohk.github.io/cardano-wallet-rb/master/) | cardano-wallet-rb API |
 |[REST API (edge)](https://input-output-hk.github.io/cardano-wallet/api/edge/)| [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST API|
 
-> :warning: Links point to `edge` APIs corresponding to `master` branches for both cardano-wallet and cardano-wallet-rb. Refer to release pages for API doc suitable for the latest release.
+> :warning: Links point to `edge` APIs corresponding to `master` branches for both cardano-wallet and cardano-wallet-rb. Refer to [release page](https://github.com/piotr-iohk/cardano-wallet-rb/releases) for API doc suitable for the latest release.
 
 ## Examples
 

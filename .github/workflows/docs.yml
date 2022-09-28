@@ -1,11 +1,11 @@
-name: docs
+name: Docs
 
 on:
   push:
     branches:
       - master
     tags:
-      - 'v*'
+      - '*'
   pull_request:
 
 jobs:
@@ -19,11 +19,6 @@ jobs:
     - name: '💎 Setup Ruby'
       uses: actions/setup-ruby@v1
 
-    - name: '🔨 Build'
-      run: |
-        gem install yard
-        yard
-
     - name: '🔧 Set versions'
       if: ${{ startsWith(github.ref, 'refs/tags') }}
       id: versions
@@ -32,6 +27,20 @@ jobs:
         commit_message="Release $tag"
         echo "::set-output name=commit_message::$commit_message"
         echo "::set-output name=tag::$tag"
+
+    - name: '🔨 Build'
+      run: |
+        gem install yard
+        yard
+        if [[ $GITHUB_REF =~ ^refs/tags/ ]]; then
+          version=${{ steps.versions.outputs.tag }}
+        else
+          version=master
+        fi
+        sed -i "s|Documentation by YARD|Documentation for cardano_wallet ($version) - by YARD|" ./doc/_index.html
+        sed -i "s|<a href=\"index.html\" title=\"README\">|<a href=\"https://github.com/piotr-iohk/cardano-wallet-rb/blob/$version/README.md\" title=\"README\">|" ./doc/_index.html
+
+        cp ./doc/_index.html ./doc/index.html
 
     - name: '🚀 Publish'
       # if: ${{ github.ref == 'refs/heads/master' }}
