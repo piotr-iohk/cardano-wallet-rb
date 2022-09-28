@@ -376,12 +376,12 @@
       <pre class="lines">
 
 
-523
 524
-525</pre>
+525
+526</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 523</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 524</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delegation_fees'>delegation_fees</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_content'>/delegation-fees</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -424,14 +424,14 @@
       <pre class="lines">
 
 
-507
 508
 509
 510
-511</pre>
+511
+512</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 507</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 508</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_sp_id'>sp_id</span><span class='comma'>,</span> <span class='id identifier rubyid_wid'>wid</span><span class='comma'>,</span> <span class='id identifier rubyid_passphrase'>passphrase</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_put'>put</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/stake-pools/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sp_id'>sp_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
@@ -476,13 +476,13 @@
       <pre class="lines">
 
 
-494
 495
 496
-497</pre>
+497
+498</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 494</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 495</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_stake'>stake</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='id identifier rubyid_stake'>stake</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../Utils.html" title="CardanoWallet::Utils (module)">Utils</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_query'><span class='object_link'><a href="../Utils.html#to_query-class_method" title="CardanoWallet::Utils.to_query (method)">to_query</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_stake'>stake</span><span class='rparen'>)</span>
@@ -526,12 +526,12 @@
       <pre class="lines">
 
 
-501
 502
-503</pre>
+503
+504</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 501</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 502</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_stake_keys'>list_stake_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_content'>/stake-keys</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -574,14 +574,14 @@
       <pre class="lines">
 
 
-515
 516
 517
 518
-519</pre>
+519
+520</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 515</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 516</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_quit'>quit</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='comma'>,</span> <span class='id identifier rubyid_passphrase'>passphrase</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@api</span><span class='embexpr_end'>}</span><span class='tstring_content'>/stake-pools/*/wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
@@ -634,15 +634,15 @@
       <pre class="lines">
 
 
-479
 480
 481
 482
 483
-484</pre>
+484
+485</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 479</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 480</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_trigger_maintenance_actions'>trigger_maintenance_actions</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Utils.html" title="CardanoWallet::Utils (module)">Utils</a></span></span><span class='period'>.</span><span class='id identifier rubyid_verify_param_is_hash!'><span class='object_link'><a href="../Utils.html#verify_param_is_hash!-class_method" title="CardanoWallet::Utils.verify_param_is_hash! (method)">verify_param_is_hash!</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='rparen'>)</span>
@@ -688,12 +688,12 @@
       <pre class="lines">
 
 
-488
 489
-490</pre>
+490
+491</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 488</span>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shelley.rb', line 489</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_view_maintenance_actions'>view_maintenance_actions</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/stake-pools/maintenance-actions</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -708,7 +708,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Sep 28 19:21:41 2022 by
+  Generated on Wed Sep 28 19:29:07 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.1.2).
 </div>
