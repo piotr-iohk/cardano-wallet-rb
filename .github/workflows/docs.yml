@@ -1,0 +1,51 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  build:
+    name: Build + Publish Docs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: '📥 Checkout repository'
+      uses: actions/checkout@v2
+    - name: '💎 Setup Ruby'
+      uses: actions/setup-ruby@v1
+
+    - name: '🔨 Build'
+      run: |
+        gem install yard
+        yard
+
+    - name: '🔧 Set versions'
+      if: ${{ startsWith(github.ref, 'refs/tags') }}
+      id: versions
+      run: |
+        tag="${GITHUB_REF/refs\/tags\//}"
+        commit_message="Release $tag"
+        echo "::set-output name=commit_message::$commit_message"
+        echo "::set-output name=tag::$tag"
+
+    - name: '🚀 Publish'
+      # if: ${{ github.ref == 'refs/heads/master' }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: doc
+        destination_dir: master
+
+    - name: '🚀 Publish release'
+      if: ${{ startsWith(github.ref, 'refs/tags') }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: doc
+        destination_dir: ${{ steps.versions.outputs.tag }}
+        full_commit_message: ${{ steps.versions.outputs.commit_message }}

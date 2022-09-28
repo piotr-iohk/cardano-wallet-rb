@@ -155,7 +155,8 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWalletPassphrase
       #
       # @example
-      #   @cw.byron.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase", new_passphrase: "Securer Passphrase"})
+      #   @cw.byron.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase",
+      #                                             new_passphrase: "Securer Passphrase"})
       def update_passphrase(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/byron-wallets/#{wid}/passphrase",
