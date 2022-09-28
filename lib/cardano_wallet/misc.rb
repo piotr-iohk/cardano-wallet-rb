@@ -2,7 +2,10 @@
 
 module CardanoWallet
   ##
-  # misc
+  # Misc
+  # @example
+  #  @cw = CardanoWallet.new
+  #  @cw.misc
   module Misc
     def self.new(opt)
       Init.new opt
@@ -39,6 +42,9 @@ module CardanoWallet
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Node
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.misc.node
     class Node < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Node/paths/~1blocks~1latest~1header/get
       def block_header
@@ -48,6 +54,9 @@ module CardanoWallet
 
     # API for Network
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Settings
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.misc.settings
     class Settings < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSettings
       def get
@@ -65,6 +74,9 @@ module CardanoWallet
 
     # API for Network
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Network
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.misc.network
     class Network < Base
       # Get network information
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getNetworkInformation
@@ -86,6 +98,9 @@ module CardanoWallet
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Utils
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.misc.utils
     class Utils < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
       def sign_metadata(wid, role, index, pass, metadata)
@@ -128,6 +143,9 @@ module CardanoWallet
     end
 
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Proxy
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.misc.proxy
     class Proxy < Base
       # Submit a transaction that was created and signed outside of cardano-wallet.
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postExternalTransaction

@@ -12,7 +12,7 @@ require_relative 'cardano_wallet/misc'
 require_relative 'cardano_wallet/shared'
 
 ##
-# Main module
+# Main module. Go to {Base.initialize} for more details no how to start.
 module CardanoWallet
   def self.new(options = {})
     CardanoWallet::Base.new(options)

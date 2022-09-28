@@ -3,13 +3,24 @@
 module CardanoWallet
   ##
   # Byron APIs
+  # @example
+  #  @cw = CardanoWallet.new
+  #  @cw.byron # API for Byron
   module Byron
     def self.new(opt)
       Init.new opt
     end
 
     ##
-    # Init class for Byron APIs
+    # Init class for Byron APIs.
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.wallets # API for Byron wallets
+    #  @cw.byron.assets # API for Byron assets
+    #  @cw.byron.coin_selections # API for Byron coin_selections
+    #  @cw.byron.addresses # API for Byron addresses
+    #  @cw.byron.transactions # API for Byron transactions
+    #  @cw.byron.migrations # API for Byron migrations
     class Init < Base
       # Get API for Byron wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
@@ -50,10 +61,15 @@ module CardanoWallet
 
     ##
     # Init for Byron assets APIs
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.assets # API for Byron assets
     class Assets < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAssets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAssetDefault
+      # @example Get all assets that were ever involved in wallet transaction and been on balance
+      #  @cw.byron.assets.get(wallet_id)
       def get(wid, policy_id = nil, asset_name = nil)
         ep = "/byron-wallets/#{wid}/assets"
         ep += "/#{policy_id}" if policy_id
@@ -64,15 +80,22 @@ module CardanoWallet
 
     # Byron wallets
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.wallets # API for Byron wallets
     class Wallets < Base
       # List Byron wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronWallets
+      # @example Get all Byron wallets
+      #  @cw.byron.wallets.get
       def list
         self.class.get('/byron-wallets')
       end
 
       # Get Byron wallet details
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWallet
+      # @example Get Byron wallet details
+      #  @cw.byron.wallets.get(wallet_id)
       def get(wid)
         self.class.get("/byron-wallets/#{wid}")
       end
@@ -95,6 +118,8 @@ module CardanoWallet
 
       # Delete Byron wallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteByronWallet
+      # @example Delete Byron wallet
+      #  @cw.byron.wallets.delete(wallet_id)
       def delete(wid)
         self.class.delete("/byron-wallets/#{wid}")
       end
@@ -103,7 +128,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWallet
       #
       # @example
-      #   update_metadata(wid, {name: "New wallet name"})
+      #   @cw.byron.wallets.update_metadata(wid, {name: "New wallet name"})
       def update_metadata(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/byron-wallets/#{wid}",
@@ -113,11 +138,15 @@ module CardanoWallet
 
       # See Byron wallet's utxo distribution
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronUTxOsStatistics
+      # @example
+      #   @cw.byron.wallets.utxo(wallet_id)
       def utxo(wid)
         self.class.get("/byron-wallets/#{wid}/statistics/utxos")
       end
 
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWalletUtxoSnapshot
+      # @example
+      #   @cw.byron.wallets.utxo_snapshot(wallet_id)
       def utxo_snapshot(wid)
         self.class.get("/byron-wallets/#{wid}/utxo")
       end
@@ -126,7 +155,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWalletPassphrase
       #
       # @example
-      #   update_passphrase(wid, {old_passphrase: "Secure Passphrase", new_passphrase: "Securer Passphrase"})
+      #   @cw.byron.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase", new_passphrase: "Securer Passphrase"})
       def update_passphrase(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/byron-wallets/#{wid}/passphrase",
@@ -137,12 +166,15 @@ module CardanoWallet
 
     # Byron addresses
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Addresses
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.addresses # API for Byron addresses
     class Addresses < Base
       # List Byron addresses.
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAddresses
       #
       # @example
-      #   list(wid, {state: "used"})
+      #   @cw.byron.addresses.list(wid, {state: "used"})
       def list(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/byron-wallets/#{wid}/addresses#{query_formatted}")
@@ -154,9 +186,9 @@ module CardanoWallet
       # @param params [Hash] passphrase and (optional) address_index
       #
       # @example Create address with index.
-      #   create(wid, {passphrase: "Secure Passphrase", address_index: 2147483648})
+      #   @cw.byron.addresses.create(wid, {passphrase: "Secure Passphrase", address_index: 2147483648})
       # @example Create address with random index.
-      #   create(wid, {passphrase: "Secure Passphrase"})
+      #   @cw.byron.addresses.create(wid, {passphrase: "Secure Passphrase"})
       def create(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.post("/byron-wallets/#{wid}/addresses",
@@ -185,13 +217,16 @@ module CardanoWallet
 
     # API for CoinSelections
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.coin_selections # API for Byron coin_selections
     class CoinSelections < Base
       # Show random coin selection for particular payment
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/byronSelectCoins
       #
       # @example
-      #   random(wid, [{addr1: 1000000}, {addr2: 1000000}])
-      #   random(wid, [{ "address": "addr1..",
+      #   @cw.byron.coin_selections.random(wid, [{addr1: 1000000}, {addr2: 1000000}])
+      #   @cw.byron.coin_selections.random(wid, [{ "address": "addr1..",
       #                  "amount": { "quantity": 42000000, "unit": "lovelace" },
       #                  "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def random(wid, payments)
@@ -209,6 +244,9 @@ module CardanoWallet
 
     # Byron transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.transactions # API for Byron Transactions
     class Transactions < Base
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructByronTransaction
@@ -266,7 +304,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronTransactions
       #
       # @example
-      #   list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
+      #   @cw.byron.transactions.list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
       def list(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/byron-wallets/#{wid}/transactions#{query_formatted}")
@@ -279,8 +317,8 @@ module CardanoWallet
       # @param payments [Array of Hashes] addres, amount pair
       #
       # @example
-      #   create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}])
-      #   create(wid, passphrase, [{ "address": "addr1..",
+      #   @cw.byron.transactions.create(wid, passphrase, [{addr1: 1000000}, {addr2: 1000000}])
+      #   @cw.byron.transactions.create(wid, passphrase, [{ "address": "addr1..",
       #                              "amount": { "quantity": 42000000, "unit": "lovelace" },
       #                              "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
 
@@ -301,8 +339,8 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
-      #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
-      #   payment_fees(wid, [{ "address": "addr1..",
+      #   @cw.byron.transactions.payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
+      #   @cw.byron.transactions.payment_fees(wid, [{ "address": "addr1..",
       #                        "amount": { "quantity": 42000000, "unit": "lovelace" },
       #                        "assets": [{"policy_id": "pid", "asset_name": "name", "quantity": 0 } ] } ])
       def payment_fees(wid, payments)
@@ -326,6 +364,9 @@ module CardanoWallet
 
     # Byron migrations
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.byron.migrations # API for Byron Migrations
     class Migrations < Base
       # Get migration plan
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createByronWalletMigrationPlan

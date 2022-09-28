@@ -2,6 +2,9 @@
 
 module CardanoWallet
   # Init API for Shelley Shared wallets
+  # @example
+  #  @cw = CardanoWallet.new
+  #  @cw.shared # API for Shared
   module Shared
     def self.new(opt)
       Init.new opt
@@ -35,6 +38,9 @@ module CardanoWallet
 
     # API for Transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shared.transactions # API for Shared transactions
     class Transactions < Base
       # Construct transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructSharedTransaction
@@ -111,6 +117,9 @@ module CardanoWallet
 
     # API for Addresses
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shared.addresses # API for Shared addresses
     class Addresses < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedAddresses
       def list(wid, query = {})
@@ -121,9 +130,11 @@ module CardanoWallet
 
     # API for Keys
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shared.keys # API for Shared Keys
     class Keys < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getSharedWalletKey
-      # https://localhost:8090/v2/shared-wallets/{walletId}/keys/{role}/{index}?hash=false
       def get_public_key(wid, role, index, hash = {})
         hash_query = hash.empty? ? '' : Utils.to_query(hash)
         self.class.get("/shared-wallets/#{wid}/keys/#{role}/#{index}#{hash_query}")
@@ -147,6 +158,9 @@ module CardanoWallet
 
     # API for Wallets
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shared.wallets # API for Shared Wallets
     class Wallets < Base
       # List all wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedWallets

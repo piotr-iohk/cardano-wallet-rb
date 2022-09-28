@@ -8,6 +8,16 @@ module CardanoWallet
 
     attr_accessor :opt
 
+    # Initialize CardanoWallet.
+    # @example Initialize CardanoWallet with default settings
+    #  @cw = CardanoWallet.new
+    #
+    # @example Initialize CardanoWallet with custom settings
+    #  @cw = CardanoWallet.new({ port: 4445,
+    #                            protocol: 'https',
+    #                            cacert: '/path/to/cacert',
+    #                            pem: '/path/to/client.pem',
+    #                            timeout: 600 })
     def initialize(opt = {})
       raise ArgumentError, 'argument should be Hash' unless opt.is_a?(Hash)
 
