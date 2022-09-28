@@ -1,5 +1,3 @@
-
-
 <a href="https://badge.fury.io/rb/cardano_wallet">
   <img src="https://badge.fury.io/rb/cardano_wallet.svg" alt="Gem Version">
 </a>
@@ -32,9 +30,12 @@ Or:
 
 ## Documentation
 
-For ruby doc see: https://rubydoc.info/gems/cardano_wallet.
+| Link | Description  |
+|--|--|
+|  [Ruby API (edge)](https://piotr-iohk.github.io/cardano-wallet-rb/master/) | cardano-wallet-rb API |
+|[REST API (edge)](https://input-output-hk.github.io/cardano-wallet/api/edge/)| [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST API|
 
-For `cardano-wallet` REST Api see: https://input-output-hk.github.io/cardano-wallet/api/edge/.
+> :warning: Links point to `edge` APIs corresponding to `master` branches for both cardano-wallet and cardano-wallet-rb. Refer to release pages for API doc suitable for the latest release.
 
 ## Examples
 
@@ -95,9 +96,6 @@ MISC.network.clock
 MISC.proxy.submit_external_transaction(File.new("/tmp/blob.bin").read)
 MISC.utils.addresses("addr_test1vqrlltfahghjxl5sy5h5mvfrrlt6me5fqphhwjqvj5jd88cccqcek")
 ```
-
-Refer to [documentation](https://rubydoc.info/gems/cardano_wallet) for more details.
-
 
 ## Contributing
 
