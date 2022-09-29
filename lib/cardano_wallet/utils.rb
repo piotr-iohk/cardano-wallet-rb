@@ -3,22 +3,23 @@
 module CardanoWallet
   ##
   # General Utils not connected to API
+  # @example
+  #  @cw = CardanoWallet.new
+  #  @cw.utils
   module Utils
     def self.new(opt)
-      Init.new opt
+      Mnemonic.new opt
     end
 
-    # Init
-    class Init < Base
+    # Utils for mnemonics
+    class Mnemonic < Base
       # Generate mnemonic sentence
       #
       # @example Default 24-word English mnemonic sentence
-      # CardanoWallet.new.utils.mnemonic_sentence
-      # ["kiwi", "rent", "denial",...]
+      #   @cw.utils.mnemonic_sentence
       #
       # @example 15-word French mnemonic sentence
-      # CardanoWallet.new.utils.mnemonic_sentence(15, 'french')
-      # ["ruser", "malaxer", "forgeron",...]
+      #   @cw.utils.mnemonic_sentence(15, 'french')
       def mnemonic_sentence(word_count = 24, language = 'english')
         languages = %w[english french spanish korean japanese
                        italian chinese_traditional chinese_simplified]

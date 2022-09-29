@@ -1,0 +1,50 @@
+name: Docs
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+
+jobs:
+  build:
+    name: Build + Publish Docs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: '📥 Checkout repository'
+      uses: actions/checkout@v2
+    - name: '💎 Setup Ruby'
+      uses: actions/setup-ruby@v1
+
+    - name: '🔧 Set versions'
+      id: versions
+      run: |
+        if [[ $GITHUB_REF =~ ^refs/tags/ ]]; then
+          version="${GITHUB_REF/refs\/tags\//}"
+          commit_message="Release $version"
+        else
+          version=master
+          commit_message="Master"
+        fi
+        echo "::set-output name=commit_message::$commit_message"
+        echo "::set-output name=version::$version"
+
+    - name: '🔨 Build'
+      run: |
+        gem install yard
+        readme_link=https://github.com/piotr-iohk/cardano-wallet-rb/blob/${{ steps.versions.outputs.version }}/README.md
+        yard doc --title "Documentation for cardano_wallet (${{ steps.versions.outputs.version }})"
+        sed -i "s|<a href=\"index.html\" title=\"README\">|<a href=\"$readme_link\" title=\"README\">|" ./doc/_index.html
+        cp ./doc/_index.html ./doc/index.html
+
+    - name: '🚀 Publish'
+      if: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags') }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: doc
+        destination_dir: ${{ steps.versions.outputs.version }}
+        full_commit_message: ${{ steps.versions.outputs.commit_message }}

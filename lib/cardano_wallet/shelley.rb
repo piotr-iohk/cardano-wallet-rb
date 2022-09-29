@@ -2,13 +2,26 @@
 
 module CardanoWallet
   # Init API for Shelley
+  # @example
+  #  @cw = CardanoWallet.new
+  #  @cw.shelley # API for Shelley
   module Shelley
     def self.new(opt)
       Init.new opt
     end
 
     ##
-    # Base class for Shelley API
+    # Init class for Shelley API
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.wallets # API for Shelley wallets
+    #  @cw.shelley.assets # API for Shelley assets
+    #  @cw.shelley.coin_selections # API for Shelley coin_selections
+    #  @cw.shelley.addresses # API for Shelley addresses
+    #  @cw.shelley.transactions # API for Shelley transactions
+    #  @cw.shelley.migrations # API for Shelley migrations
+    #  @cw.shelley.stake_pools # API for Shelley stake_pools
+    #  @cw.shelley.keys # API for Shelley keys
     class Init < Base
       # Call API for Wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
@@ -61,22 +74,10 @@ module CardanoWallet
 
     ##
     # Base class for Shelley Assets API
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.assets # API for Shelley assets
     class Assets < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/mintBurnAssets
-      def mint(wid, mint_burn, pass, metadata = nil, ttl = nil)
-        payload = {
-          mint_burn: mint_burn,
-          passphrase: pass
-        }
-
-        payload[:metadata] = metadata if metadata
-        payload[:time_to_live] = { quantity: ttl, unit: 'second' } if ttl
-
-        self.class.post("/wallets/#{wid}/assets",
-                        body: payload.to_json,
-                        headers: { 'Content-Type' => 'application/json' })
-      end
-
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
@@ -90,6 +91,9 @@ module CardanoWallet
 
     ##
     # Base class for Shelley Keys API
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.keys # API for Shelley Keys
     class Keys < Base
       # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
       def sign_metadata(wid, role, index, pass, metadata)
@@ -149,6 +153,9 @@ module CardanoWallet
 
     # API for Wallets
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.wallets # API for Shelley wallets
     class Wallets < Base
       # List all wallets
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listWallets
@@ -166,12 +173,12 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postWallet
       #
       # @example Create wallet from mnemonic sentence
-      #   create({name: "Wallet from mnemonic_sentence",
+      #   @cw.shelley.wallets.create({name: "Wallet from mnemonic_sentence",
       #           passphrase: "Secure Passphrase",
       #           mnemonic_sentence: %w[story egg fun ... ],
       #          })
       # @example Create wallet from pub key
-      #   create({name: "Wallet from pub key",
+      #   @cw.shelley.wallets.create({name: "Wallet from pub key",
       #           account_public_key: "b47546e...",
       #           address_pool_gap: 20,
       #          })
@@ -192,7 +199,7 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putWallet
       #
       # @example
-      #   update_metadata(wid, {name: "New wallet name"})
+      #   @cw.shelley.wallets.update_metadata(wid, {name: "New wallet name"})
       def update_metadata(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/wallets/#{wid}",
@@ -215,7 +222,8 @@ module CardanoWallet
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putWalletPassphrase
       #
       # @example
-      #   update_passphrase(wid, {old_passphrase: "Secure Passphrase", new_passphrase: "Securer Passphrase"})
+      #   @cw.shelley.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase",
+      #                                               new_passphrase: "Securer Passphrase"})
       def update_passphrase(wid, params)
         Utils.verify_param_is_hash!(params)
         self.class.put("/wallets/#{wid}/passphrase",
@@ -226,6 +234,9 @@ module CardanoWallet
 
     # API for Addresses
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Addresses
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.addresses # API for Shelley addresses
     class Addresses < Base
       # List addresses
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAddresses
@@ -240,6 +251,9 @@ module CardanoWallet
 
     # API for CoinSelections
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.coin_selections # API for Shelley coin_selections
     class CoinSelections < Base
       # Show random coin selection for particular payment
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/selectCoins
@@ -281,6 +295,9 @@ module CardanoWallet
 
     # API for Transactions
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.transactions # API for Shelley Transactions
     class Transactions < Base
       # Balance transaction
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/balanceTransaction
@@ -451,6 +468,9 @@ module CardanoWallet
 
     # API for StakePools
     # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.stake_pools # API for Shelley StakePools
     class StakePools < Base
       # Stake pools maintenance actions
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postMaintenanceAction
@@ -508,6 +528,9 @@ module CardanoWallet
 
     # Shelley migrations
     # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
+    # @example
+    #  @cw = CardanoWallet.new
+    #  @cw.shelley.migrations # API for Shelley migrations
     class Migrations < Base
       # Get migration plan
       # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createShelleyWalletMigrationPlan
