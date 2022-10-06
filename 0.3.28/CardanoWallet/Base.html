@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: CardanoWallet::Base
+  
+    &mdash; Documentation for cardano_wallet (0.3.28)
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "CardanoWallet::Base";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (B)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../CardanoWallet.html" title="CardanoWallet (module)">CardanoWallet</a></span></span>
+     &raquo; 
+    <span class="title">Base</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: CardanoWallet::Base
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">CardanoWallet::Base</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>HTTParty</dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/cardano_wallet/base.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Base class for all APIs</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="Byron/Addresses.html" title="CardanoWallet::Byron::Addresses (class)">CardanoWallet::Byron::Addresses</a></span>, <span class='object_link'><a href="Byron/Assets.html" title="CardanoWallet::Byron::Assets (class)">CardanoWallet::Byron::Assets</a></span>, <span class='object_link'><a href="Byron/CoinSelections.html" title="CardanoWallet::Byron::CoinSelections (class)">CardanoWallet::Byron::CoinSelections</a></span>, <span class='object_link'><a href="Byron/Init.html" title="CardanoWallet::Byron::Init (class)">CardanoWallet::Byron::Init</a></span>, <span class='object_link'><a href="Byron/Migrations.html" title="CardanoWallet::Byron::Migrations (class)">CardanoWallet::Byron::Migrations</a></span>, <span class='object_link'><a href="Byron/Transactions.html" title="CardanoWallet::Byron::Transactions (class)">CardanoWallet::Byron::Transactions</a></span>, <span class='object_link'><a href="Byron/Wallets.html" title="CardanoWallet::Byron::Wallets (class)">CardanoWallet::Byron::Wallets</a></span>, <span class='object_link'><a href="Misc/Init.html" title="CardanoWallet::Misc::Init (class)">Misc::Init</a></span>, <span class='object_link'><a href="Misc/Network.html" title="CardanoWallet::Misc::Network (class)">Misc::Network</a></span>, <span class='object_link'><a href="Misc/Node.html" title="CardanoWallet::Misc::Node (class)">Misc::Node</a></span>, <span class='object_link'><a href="Misc/Proxy.html" title="CardanoWallet::Misc::Proxy (class)">Misc::Proxy</a></span>, <span class='object_link'><a href="Misc/Settings.html" title="CardanoWallet::Misc::Settings (class)">Misc::Settings</a></span>, <span class='object_link'><a href="Misc/Utils.html" title="CardanoWallet::Misc::Utils (class)">Misc::Utils</a></span>, <span class='object_link'><a href="Shared/Addresses.html" title="CardanoWallet::Shared::Addresses (class)">Shared::Addresses</a></span>, <span class='object_link'><a href="Shared/Init.html" title="CardanoWallet::Shared::Init (class)">Shared::Init</a></span>, <span class='object_link'><a href="Shared/Keys.html" title="CardanoWallet::Shared::Keys (class)">Shared::Keys</a></span>, <span class='object_link'><a href="Shared/Transactions.html" title="CardanoWallet::Shared::Transactions (class)">Shared::Transactions</a></span>, <span class='object_link'><a href="Shared/Wallets.html" title="CardanoWallet::Shared::Wallets (class)">Shared::Wallets</a></span>, <span class='object_link'><a href="Shelley/Addresses.html" title="CardanoWallet::Shelley::Addresses (class)">Shelley::Addresses</a></span>, <span class='object_link'><a href="Shelley/Assets.html" title="CardanoWallet::Shelley::Assets (class)">Shelley::Assets</a></span>, <span class='object_link'><a href="Shelley/CoinSelections.html" title="CardanoWallet::Shelley::CoinSelections (class)">Shelley::CoinSelections</a></span>, <span class='object_link'><a href="Shelley/Init.html" title="CardanoWallet::Shelley::Init (class)">Shelley::Init</a></span>, <span class='object_link'><a href="Shelley/Keys.html" title="CardanoWallet::Shelley::Keys (class)">Shelley::Keys</a></span>, <span class='object_link'><a href="Shelley/Migrations.html" title="CardanoWallet::Shelley::Migrations (class)">Shelley::Migrations</a></span>, <span class='object_link'><a href="Shelley/StakePools.html" title="CardanoWallet::Shelley::StakePools (class)">Shelley::StakePools</a></span>, <span class='object_link'><a href="Shelley/Transactions.html" title="CardanoWallet::Shelley::Transactions (class)">Shelley::Transactions</a></span>, <span class='object_link'><a href="Shelley/Wallets.html" title="CardanoWallet::Shelley::Wallets (class)">Shelley::Wallets</a></span>, <span class='object_link'><a href="Utils/Mnemonic.html" title="CardanoWallet::Utils::Mnemonic (class)">Utils::Mnemonic</a></span></p>
+</div>
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#opt-instance_method" title="#opt (instance method)">#<strong>opt</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute opt.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#byron-instance_method" title="#byron (instance method)">#<strong>byron</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Init API for Byron.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(opt = {})  &#x21d2; Base </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize CardanoWallet.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#misc-instance_method" title="#misc (instance method)">#<strong>misc</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Init API for Misc.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#shared-instance_method" title="#shared (instance method)">#<strong>shared</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Init API for Shared wallets.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#shelley-instance_method" title="#shelley (instance method)">#<strong>shelley</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Init API for Shelley.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#utils-instance_method" title="#utils (instance method)">#<strong>utils</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Init API for Utils.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(opt = {})  &#x21d2; <tt><span class='object_link'><a href="" title="CardanoWallet::Base (class)">Base</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize CardanoWallet.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'>
+<p>Initialize CardanoWallet with default settings</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='ivar'>@cw</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../CardanoWallet.html" title="CardanoWallet (module)">CardanoWallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../CardanoWallet.html#new-class_method" title="CardanoWallet.new (method)">new</a></span></span></code></pre>
+    
+      
+        <p class="example_title"><div class='inline'>
+<p>Initialize CardanoWallet with custom settings</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='ivar'>@cw</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../CardanoWallet.html" title="CardanoWallet (module)">CardanoWallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../CardanoWallet.html#new-class_method" title="CardanoWallet.new (method)">new</a></span></span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>port:</span> <span class='int'>4445</span><span class='comma'>,</span>
+                          <span class='label'>protocol:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                          <span class='label'>cacert:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/path/to/cacert</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                          <span class='label'>pem:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/path/to/client.pem</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                          <span class='label'>timeout:</span> <span class='int'>600</span> <span class='rbrace'>}</span><span class='rparen'>)</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>argument should be Hash</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:protocol</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:host</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>localhost</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:port</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='int'>8090</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:protocol</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>://</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:host</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:port</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>/v2</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:cacert</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:pem</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:timeout</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='op'>-</span><span class='int'>1</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_base_uri'>base_uri</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_default_timeout'>default_timeout</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:timeout</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:timeout</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='op'>-</span><span class='int'>1</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:cacert</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SSL_CERT_FILE</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:cacert</span><span class='rbracket'>]</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_ssl_ca_file'>ssl_ca_file</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SSL_CERT_FILE</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_pem'>pem</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:pem</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:pem</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='ivar'>@opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="opt=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="opt-instance_method">
+  
+    #<strong>opt</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute opt.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+9
+10
+11</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 9</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_opt'>opt</span>
+  <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="byron-instance_method">
+  
+    #<strong>byron</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Init API for Byron</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_byron'>byron</span>
+  <span class='const'><span class='object_link'><a href="Byron.html" title="CardanoWallet::Byron (module)">Byron</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Byron.html#new-class_method" title="CardanoWallet::Byron.new (method)">new</a></span></span> <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="misc-instance_method">
+  
+    #<strong>misc</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Init API for Misc</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_misc'>misc</span>
+  <span class='const'><span class='object_link'><a href="Misc.html" title="CardanoWallet::Misc (module)">Misc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Misc.html#new-class_method" title="CardanoWallet::Misc.new (method)">new</a></span></span> <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="shared-instance_method">
+  
+    #<strong>shared</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Init API for Shared wallets</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 49</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_shared'>shared</span>
+  <span class='const'><span class='object_link'><a href="Shared.html" title="CardanoWallet::Shared (module)">Shared</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Shared.html#new-class_method" title="CardanoWallet::Shared.new (method)">new</a></span></span> <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="shelley-instance_method">
+  
+    #<strong>shelley</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Init API for Shelley</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_shelley'>shelley</span>
+  <span class='const'><span class='object_link'><a href="Shelley.html" title="CardanoWallet::Shelley (module)">Shelley</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Shelley.html#new-class_method" title="CardanoWallet::Shelley.new (method)">new</a></span></span> <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="utils-instance_method">
+  
+    #<strong>utils</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Init API for Utils</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/base.rb', line 64</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_utils'>utils</span>
+  <span class='const'><span class='object_link'><a href="Utils.html" title="CardanoWallet::Utils (module)">Utils</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Utils.html#new-class_method" title="CardanoWallet::Utils.new (method)">new</a></span></span> <span class='ivar'>@opt</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Oct  6 15:00:05 2022 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.28 (ruby-3.1.2).
+</div>
+
+    </div>
+  </body>
+</html>
