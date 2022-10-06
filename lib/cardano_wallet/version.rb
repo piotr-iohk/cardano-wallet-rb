@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module CardanoWallet
-  VERSION = '0.3.27'
+  VERSION = '0.3.28'
 end
