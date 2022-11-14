@@ -113,6 +113,23 @@ module CardanoWallet
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
+
+      # Get tx by id
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction
+      def get(wid, tx_id, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/shared-wallets/#{wid}/transactions/#{tx_id}#{query_formatted}")
+      end
+
+      # List all wallet's transactions
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions
+      #
+      # @example
+      #   list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
+      def list(wid, query = {})
+        query_formatted = query.empty? ? '' : Utils.to_query(query)
+        self.class.get("/shared-wallets/#{wid}/transactions#{query_formatted}")
+      end
     end
 
     # API for Addresses
