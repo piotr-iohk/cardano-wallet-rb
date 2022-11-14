@@ -199,6 +199,54 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#get-instance_method" title="#get (instance method)">#<strong>get</strong>(wid, tx_id, query = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get tx by id.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#list-instance_method" title="#list (instance method)">#<strong>list</strong>(wid, query = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>List all wallet’s transactions.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#sign-instance_method" title="#sign (instance method)">#<strong>sign</strong>(wid, passphrase, transaction, encoding = nil)  &#x21d2; Object </a>
     
 
@@ -594,6 +642,114 @@
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="get-instance_method">
+  
+    #<strong>get</strong>(wid, tx_id, query = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get tx by id</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction" target="_parent" title="https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction">https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction</a></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+119
+120
+121
+122</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shared.rb', line 119</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='comma'>,</span> <span class='id identifier rubyid_tx_id'>tx_id</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_query_formatted'>query_formatted</span> <span class='op'>=</span> <span class='id identifier rubyid_query'>query</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../Utils.html" title="CardanoWallet::Utils (module)">Utils</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_query'><span class='object_link'><a href="../Utils.html#to_query-class_method" title="CardanoWallet::Utils.to_query (method)">to_query</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/shared-wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_content'>/transactions/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tx_id'>tx_id</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_query_formatted'>query_formatted</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list-instance_method">
+  
+    #<strong>list</strong>(wid, query = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>List all wallet’s transactions</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='label'>start:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>2012-09-25T10:15:00Z</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>order:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>descending</span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span><span class='rparen'>)</span></code></pre>
+    
+  </div>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions" target="_parent" title="https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions">https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions</a></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+129
+130
+131
+132</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/cardano_wallet/shared.rb', line 129</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_wid'>wid</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_query_formatted'>query_formatted</span> <span class='op'>=</span> <span class='id identifier rubyid_query'>query</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../Utils.html" title="CardanoWallet::Utils (module)">Utils</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_query'><span class='object_link'><a href="../Utils.html#to_query-class_method" title="CardanoWallet::Utils.to_query (method)">to_query</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/shared-wallets/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wid'>wid</span><span class='embexpr_end'>}</span><span class='tstring_content'>/transactions</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_query_formatted'>query_formatted</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="sign-instance_method">
   
     #<strong>sign</strong>(wid, passphrase, transaction, encoding = nil)  &#x21d2; <tt>Object</tt> 
@@ -820,7 +976,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Oct  6 14:57:01 2022 by
+  Generated on Mon Nov 14 10:43:15 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.1.2).
 </div>
