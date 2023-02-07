@@ -230,6 +230,16 @@ module CardanoWallet
                          body: { cosigner => acc_pub_key }.to_json,
                          headers: { 'Content-Type' => 'application/json' })
       end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getUTxOsStatistics
+      def utxo(wid)
+        self.class.get("/shared-wallets/#{wid}/statistics/utxos")
+      end
+
+      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
+      def utxo_snapshot(wid)
+        self.class.get("/shared-wallets/#{wid}/utxo")
+      end
     end
   end
 end
