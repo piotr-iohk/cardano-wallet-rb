@@ -30,12 +30,12 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'bip_mnemonic', '~> 0.0.4'
-  spec.add_runtime_dependency 'httparty', '~> 0.18.0'
+  spec.add_runtime_dependency 'bip_mnemonic', '0.0.4'
+  spec.add_runtime_dependency 'httparty', '~> 0.21.0'
 
-  spec.add_development_dependency 'codecov', '0.2.8'
-  spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rspec', '~> 3.7'
-  spec.add_development_dependency 'rubocop', '~> 1.11'
+  spec.add_development_dependency 'codecov', '0.6.0'
+  spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'rspec', '~> 3.12'
+  spec.add_development_dependency 'rubocop', '~> 1.45'
   spec.add_development_dependency 'simplecov', '~> 0.19.0'
 end
