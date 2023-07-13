@@ -23,3 +23,6 @@ Metrics/CyclomaticComplexity:
 Metrics/ParameterLists:
   Max: 10
   MaxOptionalParameters: 10
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
