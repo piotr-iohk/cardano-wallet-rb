@@ -14,40 +14,40 @@ module CardanoWallet
     # Base class for Shelley Shared Wallets API
     class Init < Base
       # Call API for Wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
       def wallets
         Wallets.new @opt
       end
 
       # Call API for Shared Keys
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
       def keys
         Keys.new @opt
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
       def addresses
         Addresses.new @opt
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
       def transactions
         Transactions.new @opt
       end
     end
 
     # API for Transactions
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Transactions
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shared.transactions # API for Shared transactions
     class Transactions < Base
       # Construct transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructSharedTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/constructSharedTransaction
       # @param wid [String] source wallet id
       # @param payments [Array of Hashes] full payments payload with assets
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
-      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       # @param mint [Array of Hashes] mint object
       # @param delegations [Array of Hashes] delegations object
       # @param validity_interval [Hash] validity_interval object
@@ -75,7 +75,7 @@ module CardanoWallet
       end
 
       # Decode transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/decodeSharedTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/decodeSharedTransaction
       # @param wid [String] source wallet id
       # @param transaction [String] CBOR base64|base16 encoded transaction
       def decode(wid, transaction)
@@ -87,7 +87,7 @@ module CardanoWallet
       end
 
       # Sign transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signSharedTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/signSharedTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] wallet's passphrase
       # @param transaction [String] CBOR transaction data
@@ -104,7 +104,7 @@ module CardanoWallet
       end
 
       # Submit transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/submitSharedTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/submitSharedTransaction
       # @param wid [String] source wallet id
       # @param transaction [String] CBOR transaction data
       def submit(wid, transaction)
@@ -115,14 +115,14 @@ module CardanoWallet
       end
 
       # Get tx by id
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getSharedTransaction
       def get(wid, tx_id, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/shared-wallets/#{wid}/transactions/#{tx_id}#{query_formatted}")
       end
 
       # List all wallet's transactions
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listSharedTransactions
       #
       # @example
       #   list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
@@ -133,12 +133,12 @@ module CardanoWallet
     end
 
     # API for Addresses
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Addresses
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shared.addresses # API for Shared addresses
     class Addresses < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedAddresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listSharedAddresses
       def list(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/shared-wallets/#{wid}/addresses#{query_formatted}")
@@ -146,18 +146,18 @@ module CardanoWallet
     end
 
     # API for Keys
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Keys
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shared.keys # API for Shared Keys
     class Keys < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getSharedWalletKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/getSharedWalletKey
       def get_public_key(wid, role, index, hash = {})
         hash_query = hash.empty? ? '' : Utils.to_query(hash)
         self.class.get("/shared-wallets/#{wid}/keys/#{role}/#{index}#{hash_query}")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKeyShared
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/postAccountKeyShared
       def create_acc_public_key(wid, index, payload)
         # payload = { passphrase: pass, format: format }
         Utils.verify_param_is_hash!(payload)
@@ -166,7 +166,7 @@ module CardanoWallet
                         headers: { 'Content-Type' => 'application/json' })
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAccountKeyShared
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getAccountKeyShared
       def get_acc_public_key(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/shared-wallets/#{wid}/keys#{query_formatted}")
@@ -174,25 +174,25 @@ module CardanoWallet
     end
 
     # API for Wallets
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Shared-Wallets
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shared.wallets # API for Shared Wallets
     class Wallets < Base
       # List all wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listSharedWallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listSharedWallets
       def list
         self.class.get('/shared-wallets')
       end
 
       # Get wallet details
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getSharedWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getSharedWallet
       def get(wid)
         self.class.get("/shared-wallets/#{wid}")
       end
 
       # Create a wallet based on the params.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postSharedWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postSharedWallet
       #
       # @example Create wallet from mnemonic sentence
       #   create({name: "Wallet from mnemonic_sentence",
@@ -210,13 +210,13 @@ module CardanoWallet
       end
 
       # Delete wallet
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteSharedWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/deleteSharedWallet
       def delete(wid)
         self.class.delete("/shared-wallets/#{wid}")
       end
 
       # Update payment script
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInPayment
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInPayment
       def update_payment_script(wid, cosigner, acc_pub_key)
         self.class.patch("/shared-wallets/#{wid}/payment-script-template",
                          body: { cosigner => acc_pub_key }.to_json,
@@ -224,19 +224,19 @@ module CardanoWallet
       end
 
       # Update delegation script
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInDelegation
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/patchSharedWalletInDelegation
       def update_delegation_script(wid, cosigner, acc_pub_key)
         self.class.patch("/shared-wallets/#{wid}/delegation-script-template",
                          body: { cosigner => acc_pub_key }.to_json,
                          headers: { 'Content-Type' => 'application/json' })
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getUTxOsStatistics
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getUTxOsStatistics
       def utxo(wid)
         self.class.get("/shared-wallets/#{wid}/statistics/utxos")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
       def utxo_snapshot(wid)
         self.class.get("/shared-wallets/#{wid}/utxo")
       end

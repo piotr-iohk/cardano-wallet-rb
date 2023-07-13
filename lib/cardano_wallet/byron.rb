@@ -23,37 +23,37 @@ module CardanoWallet
     #  @cw.byron.migrations # API for Byron migrations
     class Init < Base
       # Get API for Byron wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
       def wallets
         Wallets.new @opt
       end
 
       # Get API for Byron addresses
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Addresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Addresses
       def addresses
         Addresses.new @opt
       end
 
       # API for CoinSelections
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
       def coin_selections
         CoinSelections.new @opt
       end
 
       # Get API for Byron transactions
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
       def transactions
         Transactions.new @opt
       end
 
       # Get API for Byron migrations
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
       def migrations
         Migrations.new @opt
       end
 
       # API for Assets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Assets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Assets
       def assets
         Assets.new @opt
       end
@@ -65,9 +65,9 @@ module CardanoWallet
     #  @cw = CardanoWallet.new
     #  @cw.byron.assets # API for Byron assets
     class Assets < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAssets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAsset
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronAssetDefault
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listByronAssets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronAsset
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronAssetDefault
       # @example Get all assets that were ever involved in wallet transaction and been on balance
       #  @cw.byron.assets.get(wallet_id)
       def get(wid, policy_id = nil, asset_name = nil)
@@ -79,13 +79,13 @@ module CardanoWallet
     end
 
     # Byron wallets
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Wallets
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.byron.wallets # API for Byron wallets
     class Wallets < Base
       # List Byron wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronWallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listByronWallets
       # @example Get all Byron wallets
       #  @cw.byron.wallets.get
       def list
@@ -93,7 +93,7 @@ module CardanoWallet
       end
 
       # Get Byron wallet details
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronWallet
       # @example Get Byron wallet details
       #  @cw.byron.wallets.get(wallet_id)
       def get(wid)
@@ -101,7 +101,7 @@ module CardanoWallet
       end
 
       # Create a Byron wallet based on the params.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postByronWallet
       #
       # @example
       #   create({style: "random",
@@ -117,7 +117,7 @@ module CardanoWallet
       end
 
       # Delete Byron wallet
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteByronWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/deleteByronWallet
       # @example Delete Byron wallet
       #  @cw.byron.wallets.delete(wallet_id)
       def delete(wid)
@@ -125,7 +125,7 @@ module CardanoWallet
       end
 
       # Update Byron wallet's metadata
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/putByronWallet
       #
       # @example
       #   @cw.byron.wallets.update_metadata(wid, {name: "New wallet name"})
@@ -137,14 +137,14 @@ module CardanoWallet
       end
 
       # See Byron wallet's utxo distribution
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronUTxOsStatistics
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronUTxOsStatistics
       # @example
       #   @cw.byron.wallets.utxo(wallet_id)
       def utxo(wid)
         self.class.get("/byron-wallets/#{wid}/statistics/utxos")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronWalletUtxoSnapshot
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronWalletUtxoSnapshot
       # @example
       #   @cw.byron.wallets.utxo_snapshot(wallet_id)
       def utxo_snapshot(wid)
@@ -152,7 +152,7 @@ module CardanoWallet
       end
 
       # Update Byron wallet's passphrase.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putByronWalletPassphrase
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/putByronWalletPassphrase
       #
       # @example
       #   @cw.byron.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase",
@@ -166,13 +166,13 @@ module CardanoWallet
     end
 
     # Byron addresses
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Addresses
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Addresses
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.byron.addresses # API for Byron addresses
     class Addresses < Base
       # List Byron addresses.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronAddresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listByronAddresses
       #
       # @example
       #   @cw.byron.addresses.list(wid, {state: "used"})
@@ -182,7 +182,7 @@ module CardanoWallet
       end
 
       # Create address for Byron random wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createAddress
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/createAddress
       # @param wid [String] wallet id
       # @param params [Hash] passphrase and (optional) address_index
       #
@@ -198,7 +198,7 @@ module CardanoWallet
       end
 
       # Import address to Byron wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/importAddress
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/importAddress
       # @param wid [String] wallet id
       # @param addr_id [String] address id
       def import(wid, addr_id)
@@ -206,7 +206,7 @@ module CardanoWallet
       end
 
       # Import addresses to Byron wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/importAddresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/importAddresses
       # @param wid [String] wallet id
       # @param addresses [Array] array of addresses
       def bulk_import(wid, addresses)
@@ -217,13 +217,13 @@ module CardanoWallet
     end
 
     # API for CoinSelections
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Coin-Selections
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.byron.coin_selections # API for Byron coin_selections
     class CoinSelections < Base
       # Show random coin selection for particular payment
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/byronSelectCoins
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/byronSelectCoins
       #
       # @example
       #   @cw.byron.coin_selections.random(wid, [{addr1: 1000000}, {addr2: 1000000}])
@@ -244,16 +244,16 @@ module CardanoWallet
     end
 
     # Byron transactions
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postByronTransactionFee
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.byron.transactions # API for Byron Transactions
     class Transactions < Base
       # Construct transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/constructByronTransaction
       # @param wid [String] source wallet id
       # @param payments [Array of Hashes] full payments payload with assets
-      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       # @param mint [Array of Hashes] mint object
       # @param validity_interval [Hash] validity_interval object
       def construct(wid, payments = nil, metadata = nil, mint = nil, validity_interval = nil)
@@ -269,7 +269,7 @@ module CardanoWallet
       end
 
       # Sign transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/signByronTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] wallet's passphrase
       # @param transaction [String] CBOR transaction data
@@ -285,7 +285,7 @@ module CardanoWallet
       end
 
       # Submit transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/submitByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/submitByronTransaction
       # @param wid [String] source wallet id
       # @param transaction [String] CBOR transaction data
       def submit(wid, transaction)
@@ -296,13 +296,13 @@ module CardanoWallet
       end
 
       # Get tx by id
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getByronTransaction
       def get(wid, tx_id)
         self.class.get("/byron-wallets/#{wid}/transactions/#{tx_id}")
       end
 
       # List all Byron wallet's transactions.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listByronTransactions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listByronTransactions
       #
       # @example
       #   @cw.byron.transactions.list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
@@ -312,7 +312,7 @@ module CardanoWallet
       end
 
       # Create a transaction from the Byron wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postByronTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
       # @param payments [Array of Hashes] addres, amount pair
@@ -337,7 +337,7 @@ module CardanoWallet
       end
 
       # Estimate fees for transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
       #   @cw.byron.transactions.payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}])
@@ -357,20 +357,20 @@ module CardanoWallet
       end
 
       # Forget a transaction.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteByronTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/deleteByronTransaction
       def forget(wid, txid)
         self.class.delete("/byron-wallets/#{wid}/transactions/#{txid}")
       end
     end
 
     # Byron migrations
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Byron-Migrations
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.byron.migrations # API for Byron Migrations
     class Migrations < Base
       # Get migration plan
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createByronWalletMigrationPlan
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/createByronWalletMigrationPlan
       def plan(wid, addresses)
         self.class.post("/byron-wallets/#{wid}/migrations/plan",
                         body: { addresses: addresses }.to_json,
@@ -378,7 +378,7 @@ module CardanoWallet
       end
 
       # Migrate all funds from Byron wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/migrateByronWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/migrateByronWallet
       # @param wid [String] wallet id
       # @param passphrase [String] wallet's passphrase
       # @param [Array] array of addresses

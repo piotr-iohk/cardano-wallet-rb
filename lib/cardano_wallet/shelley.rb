@@ -24,49 +24,49 @@ module CardanoWallet
     #  @cw.shelley.keys # API for Shelley keys
     class Init < Base
       # Call API for Wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Wallets
       def wallets
         Wallets.new @opt
       end
 
       # API for Addresses
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Addresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Addresses
       def addresses
         Addresses.new @opt
       end
 
       # API for CoinSelections
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
       def coin_selections
         CoinSelections.new @opt
       end
 
       # API for Transactions
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Transactions
       def transactions
         Transactions.new @opt
       end
 
       # API for StakePools
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
       def stake_pools
         StakePools.new @opt
       end
 
       # API for Migrations
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#tag/Migrations
       def migrations
         Migrations.new @opt
       end
 
       # API for Keys
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Keys
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#tag/Keys
       def keys
         Keys.new @opt
       end
 
       # API for Assets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Assets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Assets
       def assets
         Assets.new @opt
       end
@@ -78,9 +78,9 @@ module CardanoWallet
     #  @cw = CardanoWallet.new
     #  @cw.shelley.assets # API for Shelley assets
     class Assets < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAssets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAsset
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listAssets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getAsset
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getAssetDefault
       def get(wid, policy_id = nil, asset_name = nil)
         ep = "/wallets/#{wid}/assets"
         ep += "/#{policy_id}" if policy_id
@@ -95,7 +95,7 @@ module CardanoWallet
     #  @cw = CardanoWallet.new
     #  @cw.shelley.keys # API for Shelley Keys
     class Keys < Base
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/signMetadata
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/signMetadata
       def sign_metadata(wid, role, index, pass, metadata)
         payload = { passphrase: pass }
         payload[:metadata] = metadata if metadata
@@ -106,13 +106,13 @@ module CardanoWallet
                                    'Accept' => 'application/octet-stream' })
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/getWalletKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/getWalletKey
       def get_public_key(wid, role, index, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/wallets/#{wid}/keys/#{role}/#{index}#{query_formatted}")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postAccountKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/postAccountKey
       def create_acc_public_key(wid, index, payload)
         # payload = { passphrase: pass, format: format, purpose: purpose }
         Utils.verify_param_is_hash!(payload)
@@ -121,19 +121,19 @@ module CardanoWallet
                         headers: { 'Content-Type' => 'application/json' })
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getAccountKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getAccountKey
       def get_acc_public_key(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/wallets/#{wid}/keys#{query_formatted}")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getPolicyKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getPolicyKey
       def get_policy_key(wid, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/wallets/#{wid}/policy-key#{query_formatted}")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postPolicyKey
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/postPolicyKey
       def create_policy_key(wid, passphrase, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         payload = { passphrase: passphrase }
@@ -142,7 +142,7 @@ module CardanoWallet
                         headers: { 'Content-Type' => 'application/json' })
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/postPolicyId
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/postPolicyId
       def create_policy_id(wid, policy_script_template)
         payload = { policy_script_template: policy_script_template }
         self.class.post("/wallets/#{wid}/policy-id",
@@ -152,25 +152,25 @@ module CardanoWallet
     end
 
     # API for Wallets
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Wallets
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Wallets
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.wallets # API for Shelley wallets
     class Wallets < Base
       # List all wallets
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listWallets
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listWallets
       def list
         self.class.get('/wallets')
       end
 
       # Get wallet details
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getWallet
       def get(wid)
         self.class.get("/wallets/#{wid}")
       end
 
       # Create a wallet based on the params.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postWallet
       #
       # @example Create wallet from mnemonic sentence
       #   @cw.shelley.wallets.create({name: "Wallet from mnemonic_sentence",
@@ -190,13 +190,13 @@ module CardanoWallet
       end
 
       # Delete wallet
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/deleteWallet
       def delete(wid)
         self.class.delete("/wallets/#{wid}")
       end
 
       # Update wallet's metadata
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/putWallet
       #
       # @example
       #   @cw.shelley.wallets.update_metadata(wid, {name: "New wallet name"})
@@ -208,18 +208,18 @@ module CardanoWallet
       end
 
       # See wallet's utxo distribution
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getUTxOsStatistics
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getUTxOsStatistics
       def utxo(wid)
         self.class.get("/wallets/#{wid}/statistics/utxos")
       end
 
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getWalletUtxoSnapshot
       def utxo_snapshot(wid)
         self.class.get("/wallets/#{wid}/utxo")
       end
 
       # Update wallet's passphrase
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/putWalletPassphrase
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/putWalletPassphrase
       #
       # @example
       #   @cw.shelley.wallets.update_passphrase(wid, {old_passphrase: "Secure Passphrase",
@@ -233,13 +233,13 @@ module CardanoWallet
     end
 
     # API for Addresses
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Addresses
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Addresses
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.addresses # API for Shelley addresses
     class Addresses < Base
       # List addresses
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listAddresses
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listAddresses
       #
       # @example
       #   list(wid, {state: "used"})
@@ -250,13 +250,13 @@ module CardanoWallet
     end
 
     # API for CoinSelections
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Coin-Selections
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.coin_selections # API for Shelley coin_selections
     class CoinSelections < Base
       # Show random coin selection for particular payment
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/selectCoins
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/selectCoins
       #
       # @example
       #   random(wid, [{addr1: 1000000}, {addr2: 1000000}])
@@ -275,12 +275,13 @@ module CardanoWallet
         payload[:metadata] = metadata if metadata
 
         self.class.post("/wallets/#{wid}/coin-selections/random",
+                        debug_output: $stdout,
                         body: payload.to_json,
                         headers: { 'Content-Type' => 'application/json' })
       end
 
       # Coin selection -> Delegation action
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/selectCoins
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/selectCoins
       #
       # @example
       #   random(wid, {action: "join", pool: "poolid"})
@@ -294,13 +295,13 @@ module CardanoWallet
     end
 
     # API for Transactions
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Transactions
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Transactions
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.transactions # API for Shelley Transactions
     class Transactions < Base
       # Balance transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/balanceTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/balanceTransaction
       # @param wid [String] source wallet id
       # @param payload [Hash] payload object
       def balance(wid, payload)
@@ -310,7 +311,7 @@ module CardanoWallet
       end
 
       # Decode transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/decodeTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/decodeTransaction
       # @param wid [String] source wallet id
       # @param transaction [String] CBOR base64|base16 encoded transaction
       def decode(wid, transaction)
@@ -322,11 +323,11 @@ module CardanoWallet
       end
 
       # Construct transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/constructTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/constructTransaction
       # @param wid [String] source wallet id
       # @param payments [Array of Hashes] full payments payload with assets
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
-      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       # @param mint [Array of Hashes] mint object
       # @param delegations [Array of Hashes] delegations object
       # @param validity_interval [Hash] validity_interval object
@@ -354,7 +355,7 @@ module CardanoWallet
       end
 
       # Sign transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/signTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/signTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] wallet's passphrase
       # @param transaction [String] CBOR transaction data
@@ -371,7 +372,7 @@ module CardanoWallet
       end
 
       # Submit transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/submitTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/submitTransaction
       # @param wid [String] source wallet id
       # @param transaction [String] CBOR transaction data
       def submit(wid, transaction)
@@ -382,14 +383,14 @@ module CardanoWallet
       end
 
       # Get tx by id
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getTransaction
       def get(wid, tx_id, query = {})
         query_formatted = query.empty? ? '' : Utils.to_query(query)
         self.class.get("/wallets/#{wid}/transactions/#{tx_id}#{query_formatted}")
       end
 
       # List all wallet's transactions
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listTransactions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listTransactions
       #
       # @example
       #   list(wid, {start: "2012-09-25T10:15:00Z", order: "descending"})
@@ -399,12 +400,12 @@ module CardanoWallet
       end
 
       # Create a transaction from the wallet
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransaction
       # @param wid [String] source wallet id
       # @param passphrase [String] source wallet's passphrase
       # @param payments [Array of Hashes] address / amount list or full payments payload with assets
       # @param withdrawal [String or Array] 'self' or mnemonic sentence
-      # @param metadata [Hash] special metadata JSON subset format (cf: https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransaction)
+      # @param metadata [Hash] special metadata JSON subset format (cf: https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransaction)
       # @param ttl [Int] transaction's time-to-live in seconds
       #
       # @example
@@ -432,7 +433,7 @@ module CardanoWallet
       end
 
       # Estimate fees for transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postTransactionFee
       #
       # @example
       #   payment_fees(wid, [{addr1: 1000000}, {addr2: 1000000}], {"1": "abc"}, ttl = 10)
@@ -460,20 +461,20 @@ module CardanoWallet
       end
 
       # Forget a transaction
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/deleteTransaction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/deleteTransaction
       def forget(wid, txid)
         self.class.delete("/wallets/#{wid}/transactions/#{txid}")
       end
     end
 
     # API for StakePools
-    # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#tag/Stake-Pools
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.stake_pools # API for Shelley StakePools
     class StakePools < Base
       # Stake pools maintenance actions
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/postMaintenanceAction
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/postMaintenanceAction
       #
       # @example
       #   maintenance_action({ "maintenance_action": "gc_stake_pools" })
@@ -485,26 +486,26 @@ module CardanoWallet
       end
 
       # Metdata GC Status
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getMaintenanceActions
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getMaintenanceActions
       def view_maintenance_actions
         self.class.get('/stake-pools/maintenance-actions')
       end
 
       # List all stake pools
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listStakePools
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listStakePools
       def list(stake = {})
         query = stake.empty? ? '' : Utils.to_query(stake)
         self.class.get("/stake-pools#{query}")
       end
 
       # List all stake keys
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/listStakeKeys
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/listStakeKeys
       def list_stake_keys(wid)
         self.class.get("/wallets/#{wid}/stake-keys")
       end
 
       # Join stake pool
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/joinStakePool
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/joinStakePool
       def join(sp_id, wid, passphrase)
         self.class.put("/stake-pools/#{sp_id}/wallets/#{wid}",
                        body: { passphrase: passphrase }.to_json,
@@ -512,7 +513,7 @@ module CardanoWallet
       end
 
       # Quit stape pool
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/quitStakePool
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/quitStakePool
       def quit(wid, passphrase)
         self.class.delete("#{@api}/stake-pools/*/wallets/#{wid}",
                           body: { passphrase: passphrase }.to_json,
@@ -520,20 +521,20 @@ module CardanoWallet
       end
 
       # Estimate delegation fees
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/getDelegationFee
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/getDelegationFee
       def delegation_fees(wid)
         self.class.get("/wallets/#{wid}/delegation-fees")
       end
     end
 
     # Shelley migrations
-    # @see https://input-output-hk.github.io/cardano-wallet/api/#tag/Migrations
+    # @see https://cardano-foundation.github.io/cardano-wallet/api/#tag/Migrations
     # @example
     #  @cw = CardanoWallet.new
     #  @cw.shelley.migrations # API for Shelley migrations
     class Migrations < Base
       # Get migration plan
-      # @see https://input-output-hk.github.io/cardano-wallet/api/edge/#operation/createShelleyWalletMigrationPlan
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/edge/#operation/createShelleyWalletMigrationPlan
       def plan(wid, addresses)
         self.class.post("/wallets/#{wid}/migrations/plan",
                         body: { addresses: addresses }.to_json,
@@ -541,7 +542,7 @@ module CardanoWallet
       end
 
       # Migrate all funds from Shelley wallet.
-      # @see https://input-output-hk.github.io/cardano-wallet/api/#operation/migrateShelleyWallet
+      # @see https://cardano-foundation.github.io/cardano-wallet/api/#operation/migrateShelleyWallet
       # @param wid [String] wallet id
       # @param passphrase [String] wallet's passphrase
       # @param [Array] array of addresses

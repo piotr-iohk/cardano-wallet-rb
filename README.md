@@ -13,10 +13,9 @@
 
 # cardano-wallet-rb
 
-Ruby wrapper over [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST [API](https://input-output-hk.github.io/cardano-wallet/api/edge/). Requires running `cardano-wallet`.
+Ruby wrapper over [cardano-wallet's](https://github.com/cardano-foundation/cardano-wallet) REST [API](https://cardano-foundation.github.io/cardano-wallet/api/edge/). Requires running `cardano-wallet`.
 
-Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/test/e2e) and also as a backend of [Ikar](https://github.com/piotr-iohk/ikar).
-
+Cardano-wallet-rb is used for e2e testing of [cardano-wallet](https://github.com/cardano-foundation/cardano-wallet/test/e2e) and also as a backend of [Ikar](https://github.com/piotr-iohk/ikar).
 
 ## Installation
 
@@ -32,10 +31,10 @@ Or:
 
 ## Documentation
 
-| Link | Description  |
-|--|--|
-|  [Ruby API (edge)](https://piotr-iohk.github.io/cardano-wallet-rb/master/) | cardano-wallet-rb API |
-|[REST API (edge)](https://input-output-hk.github.io/cardano-wallet/api/edge/)| [cardano-wallet's](https://github.com/input-output-hk/cardano-wallet) REST API|
+| Link                                                                             | Description                                                                       |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Ruby API (edge)](https://piotr-iohk.github.io/cardano-wallet-rb/master/)        | cardano-wallet-rb API                                                             |
+| [REST API (edge)](https://cardano-foundation.github.io/cardano-wallet/api/edge/) | [cardano-wallet's](https://github.com/cardano-foundation/cardano-wallet) REST API |
 
 > :warning: Links point to `edge` APIs corresponding to `master` branches for both cardano-wallet and cardano-wallet-rb. Refer to [release page](https://github.com/piotr-iohk/cardano-wallet-rb/releases) for API doc suitable for the latest release.
 
@@ -102,7 +101,6 @@ MISC.utils.addresses("addr_test1vqrlltfahghjxl5sy5h5mvfrrlt6me5fqphhwjqvj5jd88cc
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/piotr-iohk/cardano-wallet-rb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/piotr-iohk/cardano-wallet-rb/blob/master/CODE_OF_CONDUCT.md).
-
 
 ## License
 
